@@ -1,0 +1,13 @@
+package com.aplicacionGym.gymapp.repository;
+
+import com.aplicacionGym.gymapp.entity.Professor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProfessorRepository extends JpaRepository<Professor, Long> {
+    
+    List<Professor> findByActiveTrue();
+
+    List<Professor> findByActiveFalse();
+}
