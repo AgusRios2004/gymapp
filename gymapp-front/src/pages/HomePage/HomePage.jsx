@@ -1,12 +1,32 @@
-// src/pages/HomePage.jsx
 import styles from './HomePage.module.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import {getClients} from '../../services/clientService';
+import {getRutines} from '../../services/rutineService';
+import {getPayments} from '../../services/paymentService';
+
+// Components
 import SummaryCard from '../../components/SummaryCard/SummaryCard';
 import Button from '../../components/Button/Button';
-import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
+  const [cantClients, setCantClients] = useState(null);
+  const [cantRutines, setCantRutines] = useState(null);
+  const [cantPayments, setCantPayments] = useState(null);
+  const [err, setErr] = useState(null);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    getClients()
+    .then(clients => setCantClients(clients.data.length))
+    .catch(error => setErr(error.message));
+    getRutines()
+    .then(rutines => setCantRutines(rutines.data.length))
+    .catch(error => setErr(error.message));
+    getPayments()
+    .then(payments => setCantPayments(payments.data.length))
+  }, []);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -15,9 +35,9 @@ export default function HomePage() {
       </header>
 
       <section className={styles.summary}>
-        <SummaryCard number={150} label="Clientes" />
-        <SummaryCard number={30} label="Rutinas" />
-        <SummaryCard number={2000} label="Pagos" />
+        <SummaryCard number={cantClients} label="Clientes" />
+        <SummaryCard number={cantRutines} label="Rutinas" />
+        <SummaryCard number={cantPayments} label="Pagos" />
       </section>
 
       <nav className={styles.nav}>
