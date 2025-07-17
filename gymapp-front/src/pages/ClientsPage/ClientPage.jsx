@@ -7,8 +7,8 @@ import ClientCard from '../../components/ClientCard/ClientCard';
 
 export default function ClientPage(){
 
-    const [clients, setClients] = useState(null);
-    const [err, setErr] = useState(null)
+    const [clients, setClients] = useState([]);
+    const [err, setErr] = useState([])
 
     useEffect(() => {
     getClients().then(res => {
@@ -36,17 +36,17 @@ export default function ClientPage(){
     console.log(clients)
 
     return (
-        <div className = {styles.container}>
-            <h1>Clientes</h1>
-            {clients && clients.map(client => (
-            <ClientCard
-                key={client.id}
-                name={`${client.name} ${client.lastName}`}
-                isActive={client.active}
-                lastPaymentDate={client.lastPaymentDate}
-                onClickDetails={() => console.log('Ver detalles de', client.id)}
-            />
-            ))}
+        <div className={styles.container}>
+            <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Clientes</h2>
+            <div className={styles.grid}>
+                {clients && clients.length > 0 ? (
+                    clients.map(client => (
+                        <ClientCard key={client.id} client={client} />
+                    ))
+                    ) : (
+                    <p>No hay clientes disponibles.</p>
+                )}
+            </div>
         </div>
     )
 }
