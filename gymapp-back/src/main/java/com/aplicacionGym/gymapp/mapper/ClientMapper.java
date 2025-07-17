@@ -12,6 +12,7 @@ public class ClientMapper {
         dto.setId(client.getId());
         dto.setDni(client.getDni());
         dto.setName(client.getName());
+        dto.setPhone(client.getPhone());
         dto.setLastName(client.getLastName());
         dto.setActive(client.isActive());
         dto.setRoutineActive(RoutineMapper.mapRoutineSummary(client.getRoutineActive()));

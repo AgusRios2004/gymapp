@@ -22,10 +22,9 @@ export default function ClientPage(){
             const lastPayment = payments.length > 0
             ? payments.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b)
             : null;
-
             return {
             ...client,
-            lastPaymentDate: lastPayment?.date || null,
+            lastPaymentDate: lastPayment,
             };
         })
         ).then(fullClients => setClients(fullClients));

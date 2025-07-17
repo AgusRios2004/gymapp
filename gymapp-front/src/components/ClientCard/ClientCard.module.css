@@ -1,36 +1,67 @@
 .card {
   background-color: #fff;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 300px;
-  transition: 0.3s;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  transform: scale(1.02);
+  transform: translateY(-5px) scale(1.03);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+}
+
+.name {
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .active {
   color: green;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .inactive {
   color: red;
   font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.info {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #333;
 }
 
 .date {
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  color: #555;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.onTime {
+  color: green;
+  font-weight: bold;
+}
+
+.late {
+  color: red;
+  font-weight: bold;
 }
