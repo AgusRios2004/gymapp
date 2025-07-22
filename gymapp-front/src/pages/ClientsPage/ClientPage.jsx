@@ -4,6 +4,7 @@ import { getClients, getClientPayments } from '../../services/clientService'
 
 //Components
 import ClientCard from '../../components/ClientCard/ClientCard';
+import Stats from '../../components/Stats/Stats';
 
 export default function ClientPage(){
 
@@ -32,20 +33,51 @@ export default function ClientPage(){
     .catch(error => setErr(error.message));
     }, []);
 
+    const isUpToDate = (client) => {
+        const today = new Date();
+
+        if (!client.lastPaymentDate || !client.lastPaymentDate.date) {
+            console.warn("Cliente sin pago:", client);
+            return false;
+        }
+
+        const paymentDate = new Date(client.lastPaymentDate.date);
+        return (
+            paymentDate.getFullYear() === today.getFullYear() &&
+            paymentDate.getMonth() === today.getMonth() &&
+            paymentDate.getDate() <= 10
+        );
+    };
+   
+    const statsData = [
+        { label: 'Total clientes', value: clients.length },
+        { label: 'Al día', value: clients.filter(c => isUpToDate(c)).length },
+        { label: 'Con deuda', value: clients.filter(c => !isUpToDate(c)).length }
+    ]
+
     console.log(clients)
 
-    return (
+      return (
         <div className={styles.container}>
-            <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Clientes</h2>
-            <div className={styles.grid}>
-                {clients && clients.length > 0 ? (
-                    clients.map(client => (
-                        <ClientCard key={client.id} client={client} />
-                    ))
-                    ) : (
-                    <p>No hay clientes disponibles.</p>
-                )}
+        <div className={styles.header}>
+            <h2 className={styles.title}>Clientes</h2>
+            <div className={styles.actions}>
+            <Stats stats={statsData} />
             </div>
         </div>
+
+        <div className={styles.grid}>
+            {clients && clients.length > 0 ? (
+            clients.map(client => (
+                <ClientCard key={client.id} client={client} />
+            ))
+            ) : (
+            <p>No hay clientes disponibles.</p>
+            )}
+        </div>
+        </div>
     )
+
+
+
 }
