@@ -1,0 +1,58 @@
+.container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f4f6f8;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tr:hover {
+  background-color: #eef6ff;
+}
+
+.table td {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.amount {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.mensualidad {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.producto {
+  color: #2980b9;
+  font-weight: 500;
+}
