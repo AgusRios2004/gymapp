@@ -44,8 +44,7 @@ export default function ClientPage() {
 
         return (
             paymentDate.getFullYear() === today.getFullYear() &&
-            paymentDate.getMonth() === today.getMonth() &&
-            paymentDate.getDate() <= 10
+            paymentDate.getMonth() === today.getMonth()
         );
     };
 

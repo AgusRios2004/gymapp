@@ -1,16 +1,19 @@
 // src/pages/ClientDetails.jsx
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getClientById, getClientPayments } from '../../services/clientService';
+import styles from './ClientDetails.module.css'
 
 import PaymentHistory from '../../components/PaymentHistory/PaymentHistory';
 import ClientInfo from '../../components/ClientInfo/ClientInfo';
+import Button from '../../components/Button/Button'
 
 export default function ClientDetails() {
   const { id } = useParams();
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     getClientById(id)
@@ -55,11 +58,30 @@ export default function ClientDetails() {
       );
   };
 
-
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className={styles.pageContainer}>
       <ClientInfo client={client} isUpToDate={isUpToDate} />
       <PaymentHistory payments={client.payments}/>
+      <div styles={'button'}>
+      <Button
+      text={'Volver a clientes'}
+      onClick={() => navigate('/clientes')}
+      variant={'primary'}
+      type={'button'}
+      />
+      <Button
+      text={'Editar cliente'}
+      onClick={() => navigate('/clients/:id/edit')}
+      variant={'primary'}
+      type={'button'}
+      />
+      <Button
+      text={'Agregar pagos'}
+      onClick={() => navigate('/clients/:id/add-payment')}
+      variant={'primary'}
+      type={'button'}
+      />
+      </div>
     </div>
   );
 }

@@ -3,8 +3,8 @@ import styles from './PaymentHistory.module.css';
 export default function PaymentHistory({ payments }) {
   if (!payments || payments.length === 0) {
     return <p>Este cliente no tiene pagos registrados.</p>;
-  }
-
+  }  
+  const totalAmount = payments.reduce((acc, p) => acc + p.amount, 0);
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Historial de pagos</h3>
@@ -26,6 +26,11 @@ export default function PaymentHistory({ payments }) {
               </td>
             </tr>
           ))}
+         <tr className={styles.totalRow}>
+          <td colSpan={3} className={styles.totalCombined}>
+            Total: ${totalAmount}
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>

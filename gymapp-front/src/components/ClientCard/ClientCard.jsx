@@ -19,9 +19,8 @@ export default function ClientCard({ client }) {
 
     const sameMonth = lastPaymentDate.getMonth() === today.getMonth();
     const sameYear = lastPaymentDate.getFullYear() === today.getFullYear();
-    const dayInRange = lastPaymentDate.getDate() >= 1 && lastPaymentDate.getDate() <= 10;
 
-    const isOnTime = sameMonth && sameYear && dayInRange;
+    const isOnTime = sameMonth && sameYear;
 
     return (
       <span className={isOnTime ? styles.active : styles.inactive}>
