@@ -85,7 +85,7 @@ The server will start at `http://localhost:8080`.
 ## 👤 Author
 
 **Agustín Rios** - *Backend Developer*
-* [LinkedIn](https://www.linkedin.com/in/agustin-rios-dev)
+* [LinkedIn](https://www.linkedin.com/in/agustin-rios)
 * [GitHub Profile](https://github.com/AgusRios2004)
 
 ---
