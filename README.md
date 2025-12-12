@@ -1,133 +1,92 @@
-# 🏋️‍♀️ GymApp API: Sistema de Gestión de Gimnasio
-¡Bienvenido al repositorio de GymApp API! Esta es una API RESTful desarrollada con Spring Boot para la administración integral de un gimnasio o centro deportivo.
+# 🏋️‍♀️ GymApp API - Sports Center Management System
 
-El sistema maneja la gestión de clientes, pagos, rutinas de ejercicio, asistencia y personal (administradores y profesores), con énfasis en la seguridad y la estructura modular.
+![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.0-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 
-🚀 Tecnologías y Herramientas
-La API está construida sobre las siguientes tecnologías principales:
+> **Comprehensive RESTful API** designed to streamline administration for gyms and sports centers. It handles complex logic for memberships, workout routines, and financial tracking with a focus on security and scalability.
 
-Java: Lenguaje de programación.
+## 📖 Project Overview
 
-Spring Boot: Base del framework de la aplicación.
+**GymApp** is a backend solution built to digitize the daily operations of a fitness center. Unlike simple CRUD applications, this system implements specific business logic for workout planning (routines/exercises), attendance tracking, and product sales, all secured by role-based access control.
 
-Spring Data JPA: Para la capa de acceso a datos y mapeo objeto-relacional.
+## ✨ Key Features
 
-Spring Security: Encargado de la autenticación, autorización y configuración de CORS (SecurityConfig.java, CorsConfig.java).
+* **👥 User Management:** Role-based system for Administrators, Professors, and Clients.
+* **💪 Workout Logic:** Creation of complex workout routines, assigning specific exercises and days.
+* **💰 Financial Module:** Management of monthly membership fees, product inventory, and sales records.
+* **🛡️ Robust Security:** Implementation of **Spring Security** for authentication, authorization, and CORS policies.
+* **📐 Clean Architecture:** Utilization of **DTO Pattern** and **MapStruct/Mappers** to decouple the internal domain model from the API layer.
+* **⚡ Global Exception Handling:** Centralized error management for consistent JSON responses.
 
-Maven: Herramienta de gestión de dependencias y construcción.
+## 🛠️ Tech Stack
 
-Patrón Arquitectónico: Sigue el patrón Model-Service-Controller.
+* **Core:** Java 17, Spring Boot 3+
+* **Security:** Spring Security (RBAC & CORS)
+* **Data:** Spring Data JPA, Hibernate, MySQL
+* **Utilities:** Maven, Lombok (optional if used), ModelMapper/MapStruct.
 
-📁 Estructura del Código
-El proyecto está organizado en paquetes lógicos dentro del directorio src/main/java/com/aplicacionGym/gymapp/:
+## 🚀 Installation & Setup
 
-## Capa de Entidades (Modelos)
-Ubicación: .../entity/
+### Prerequisites
+* Java JDK 17+
+* Maven
+* MySQL Database
 
-Contiene las clases que representan los objetos de la base de datos (JPA Entities):
+### Getting Started
 
-Usuarios: Client, Professor, Administrator (probablemente heredando de Person).
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/AgusRios2004/gymapp.git](https://github.com/AgusRios2004/gymapp.git)
+    cd gymapp
+    ```
 
-Entrenamiento: Routine, Exercise, RoutineDay, RoutineExercise.
+2.  **Database Configuration:**
+    Update `src/main/resources/application.properties` with your credentials:
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/gymapp_db
+    spring.datasource.username=your_user
+    spring.datasource.password=your_password
+    spring.jpa.hibernate.ddl-auto=update
+    ```
 
-Finanzas/Comercio: Payment, MonthlyType, Product, PaymentProduct.
+3.  **Build and Run:**
+    ```bash
+    ./mvnw clean install
+    ./mvnw spring-boot:run
+    ```
 
-Operación: Assistance.
+The server will start at `http://localhost:8080`.
 
-## Lógica del Negocio (Servicios)
-Ubicación: .../service/
+---
 
-Implementa la lógica central y las transacciones, desacoplando los controladores del acceso directo a los datos. Ejemplos incluyen ClientService, RoutineService, y PaymentService.
+## 🔌 API Endpoints (Preview)
 
-## Capa de Control (API Endpoints)
-Ubicación: .../controller/
+| Module | Method | Endpoint | Description |
+| :--- | :---: | :--- | :--- |
+| **Clients** | `POST` | `/clients` | Register a new gym member. |
+| | `GET` | `/clients/{id}` | Retrieve member details. |
+| **Routines** | `POST` | `/routines` | Create a workout plan. |
+| | `GET` | `/routines/client/{id}` | Get routines assigned to a client. |
+| **Payments** | `POST` | `/payments` | Process a membership payment. |
+| **Auth** | `POST` | `/login` | User authentication (if implemented). |
 
-Maneja las peticiones HTTP y devuelve las respuestas. Cada controlador gestiona un módulo principal:
+> **Dev Note:** The API follows strictly typed JSON responses using DTOs to ensure data integrity.
 
-ClientController
+## 🤝 Contribution
 
-PaymentController
+1.  Fork the project.
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the Branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
 
-RoutineController
+## 👤 Author
 
-ProductController
+**Agustín Rios** - *Backend Developer*
+* [LinkedIn](https://www.linkedin.com/in/agustin-rios-dev)
+* [GitHub Profile](https://github.com/AgusRios2004)
 
-AdministratorController
-
-ProfessorController
-
-## Objetos de Transferencia de Datos (DTOs)
-Ubicación: .../dto/
-
-Define los formatos de datos para la comunicación con el cliente:
-
-request/: Estructuras para la entrada de datos (ej. RoutineRequestDTO).
-
-response/: Estructuras para la salida de datos (ej. ClientResponseDTO, WebApiResponse).
-
-## Repositorios, Mapeo y Excepciones
-repository/: Interfaces de Spring Data JPA para las operaciones CRUD.
-
-mapper/: Clases para convertir datos entre Entidades y DTOs (ej. ClientMapper).
-
-exception/ y handler/: Manejo centralizado de errores con excepciones específicas (ResourceNotFoundException, GlobalExceptionHandler).
-
-⚙️ Configuración y Ejecución
-## Requisitos
-Java Development Kit (JDK) (versión 17+ recomendada).
-
-Maven (opcional, se incluye Maven Wrapper).
-
-Una Base de Datos (MySQL, PostgreSQL, etc.).
-
-## Pasos para Iniciar
-Clonar el Repositorio:
-
-Bash
-
-git clone [URL_DE_TU_REPOSITORIO]
-cd gymapp
-Configurar la Base de Datos: Asegúrate de configurar los detalles de conexión en src/main/resources/application.properties.
-
-Properties
-
-spring.datasource.url=jdbc:[tipo_db]://[host]:[puerto]/[nombre_db]
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_password
-Compilar y Ejecutar (Usando Maven Wrapper): Abre la terminal en la raíz del proyecto y usa el wrapper de Maven:
-
-Bash
-
-# Para construir el proyecto
-./mvnw clean install
-
-# Para ejecutar la aplicación
-./mvnw spring-boot:run
-La API se iniciará en http://localhost:8080 (a menos que se especifique lo contrario en la configuración).
-
-💡 Módulos y Endpoints Clave
-Módulo	Descripción	Endpoints de Ejemplo
-Clientes	Gestión completa de miembros del gimnasio.	POST /clients, GET /clients/{id}
-Pagos	Registro de cuotas mensuales y pagos de productos.	POST /payments, GET /payments/client/{clientId}
-Rutinas	Creación y asignación de planes de entrenamiento.	POST /routines, GET /routines/{id}
-Asistencia	Registro de ingreso/egreso de clientes.	POST /assistance
-Productos	Gestión de inventario y venta (suplementos, etc.).	GET /products, PUT /products/{id}
-
-Exportar a Hojas de cálculo
-
-🛡️ Seguridad (Spring Security)
-El paquete config/ (con SecurityConfig.java y CorsConfig.java) indica que la API implementa seguridad y maneja políticas de CORS para integrarse con una aplicación frontend moderna. Las rutas están protegidas y requieren autenticación (probablemente basada en roles: Administrator, Professor, Client).
-
-🤝 Contribución
-Si deseas contribuir, por favor sigue los siguientes pasos:
-
-Haz un fork del repositorio.
-
-Crea tu rama de funcionalidad (git checkout -b feature/nueva-funcionalidad).
-
-Asegúrate de que tus cambios pasen las pruebas.
-
-Abre un Pull Request.
-
-📄 Licencia
-Este proyecto está bajo la Licencia [AÑADIR TIPO DE LICENCIA AQUÍ].
+---
+*Built with Spring Boot power.* 🍃
