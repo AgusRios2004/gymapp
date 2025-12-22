@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # --- SERVICIO 1: BASE DE DATOS (PostgreSQL) ---
+  db:
+    image: postgres:15-alpine  # Usamos la versión ligera (Alpine)
+    container_name: gym-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user_gym      # Usuario maestro
+      POSTGRES_PASSWORD: user_gym  # Contraseña maestra
+      POSTGRES_DB: gym_db            # Crea esta BDD automáticamente al iniciar
+    ports:
+      - "5432:5432" # Puerto estándar de Postgres
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data # ¡Aquí se guardan tus datos en tu PC!
+
+  # --- SERVICIO 2: BACKEND (Spring Boot) ---
+  backend:
+    build: ./gymapp-back # Busca el Dockerfile en esta carpeta
+    container_name: gym-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db # Espera a que la DB intente arrancar antes de iniciar
+    environment:
+      # CONFIGURACIÓN DINÁMICA DE SPRING BOOT
+      # Sobrescribimos el application.properties desde aquí
+
+      # 1. La URL de conexión:
+      #    Nota que dice 'jdbc:postgresql://db:5432'.
+      #    'db' es el nombre del servicio de arriba. Docker resuelve la IP solo.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/gym_db
+
+      # 2. Credenciales (Deben coincidir con las de arriba)
+      SPRING_DATASOURCE_USERNAME: user_gym
+      SPRING_DATASOURCE_PASSWORD: user_gym
+
+      # 3. Configuración específica de Hibernate para Postgres
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      # Esto hace que Hibernate cree las tablas automáticamente si no existen
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  # --- SERVICIO 3: FRONTEND (React + Nginx) ---
+  frontend:
+    build: ./gymapp-front # Busca el Dockerfile en esta carpeta
+    container_name: gym-frontend
+    ports:
+      - "80:80" # Tu app estará en http://localhost
+    depends_on:
+      - backend # Inicia después del back

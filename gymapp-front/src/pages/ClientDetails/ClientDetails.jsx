@@ -2,7 +2,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getClientById, getClientPayments } from '../../services/clientService';
-import styles from './ClientDetails.module.css'
 
 import PaymentHistory from '../../components/PaymentHistory/PaymentHistory';
 import ClientInfo from '../../components/ClientInfo/ClientInfo';
@@ -59,28 +58,28 @@ export default function ClientDetails() {
   };
 
   return (
-    <div className={styles.pageContainer}>
+    <div className="max-w-4xl mx-auto p-4 md:p-8">
       <ClientInfo client={client} isUpToDate={isUpToDate} />
       <PaymentHistory payments={client.payments}/>
-      <div styles={'button'}>
-      <Button
-      text={'Volver a clientes'}
-      onClick={() => navigate('/clientes')}
-      variant={'primary'}
-      type={'button'}
-      />
-      <Button
-      text={'Editar cliente'}
-      onClick={() => navigate('/clients/:id/edit')}
-      variant={'primary'}
-      type={'button'}
-      />
-      <Button
-      text={'Agregar pagos'}
-      onClick={() => navigate('/clients/:id/add-payment')}
-      variant={'primary'}
-      type={'button'}
-      />
+      <div className="flex flex-wrap gap-4 mt-6">
+        <Button
+          text={'Volver a clientes'}
+          onClick={() => navigate('/clientes')}
+          variant={'outline'}
+          type={'button'}
+        />
+        <Button
+          text={'Editar cliente'}
+          onClick={() => navigate(`/clients/${id}/edit`)}
+          variant={'primary'}
+          type={'button'}
+        />
+        <Button
+          text={'Agregar pagos'}
+          onClick={() => navigate(`/clients/${id}/add-payment`)}
+          variant={'primary'}
+          type={'button'}
+        />
       </div>
     </div>
   );

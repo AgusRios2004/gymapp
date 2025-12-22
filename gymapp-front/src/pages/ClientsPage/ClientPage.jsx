@@ -1,4 +1,3 @@
-import styles from './ClientPage.module.css';
 import { useEffect, useState } from 'react';
 import { getClients, getClientPayments } from '../../services/clientService';
 
@@ -64,24 +63,24 @@ export default function ClientPage() {
     ];
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h2 className={styles.title}>Clientes</h2>
-                <div className={styles.actions}>
-                    <Stats stats={statsData} />
-                </div>
-                <div className={styles.actions}>
+        <div className="p-4 md:p-8 max-w-7xl mx-auto">
+            <div className="mb-8 text-center">
+                <h2 className="text-4xl font-bold text-text-main mb-6">Clientes</h2>
+                <Stats stats={statsData} />
+                <div className="mt-6 flex justify-center">
                     <SearchBar value={search} onChange={handleSearchChange} />
                 </div>
             </div>
 
-            <div className={styles.grid}>
+            {err && <p className="text-center text-red-500">Error: {err}</p>}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredClients.length > 0 ? (
                     filteredClients.map(client => (
                         <ClientCard key={client.id} client={client} />
                     ))
                 ) : (
-                    <p>No hay clientes disponibles.</p>
+                    <p className="col-span-full text-center text-gray-500 mt-8">No hay clientes que coincidan con la búsqueda.</p>
                 )}
             </div>
         </div>
