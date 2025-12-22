@@ -1,9 +1,7 @@
-import styles from './PaymentPage.module.css';
-
 export default function PaymentPage() {
     return (
-        <div className={styles.container}>
-            <h1>Pagos</h1>
+        <div className="p-8">
+            <h1 className="text-3xl font-bold">Pagos</h1>
         </div>
     );
 }
