@@ -43,4 +43,11 @@ public class Payment {
     // CAMBIO PRINCIPAL: @OneToMany en lugar de @ManyToMany
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PaymentProduct> paymentProducts;
+
+    public LocalDate getExpirationDate() {
+        if (this.date != null && this.monthlyType != null) {
+            return this.date.plusDays(this.monthlyType.getDurationDays());
+        }
+        return null;
+    }
 }

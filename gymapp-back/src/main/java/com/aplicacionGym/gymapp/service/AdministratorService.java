@@ -1,6 +1,5 @@
 package com.aplicacionGym.gymapp.service;
 
-import com.aplicacionGym.gymapp.config.SecurityConfig;
 import com.aplicacionGym.gymapp.dto.request.AdministratorRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.AdministratorResponseDTO;
 import com.aplicacionGym.gymapp.entity.Administrator;
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AdministratorService {

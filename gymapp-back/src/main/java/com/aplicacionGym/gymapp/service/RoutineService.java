@@ -1,7 +1,6 @@
 package com.aplicacionGym.gymapp.service;
 
 import com.aplicacionGym.gymapp.dto.request.RoutineDayRequestDTO;
-import com.aplicacionGym.gymapp.dto.request.RoutineExerciseRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.entity.Exercise;

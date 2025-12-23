@@ -1,6 +1,5 @@
 package com.aplicacionGym.gymapp.dto.response;
 
-import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

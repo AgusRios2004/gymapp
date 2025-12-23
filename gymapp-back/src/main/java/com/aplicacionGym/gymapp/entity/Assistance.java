@@ -1,6 +1,5 @@
 package com.aplicacionGym.gymapp.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +36,3 @@ public class Assistance {
     }
 
 }
-
-

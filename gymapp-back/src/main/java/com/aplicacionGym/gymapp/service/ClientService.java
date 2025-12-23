@@ -1,7 +1,6 @@
 package com.aplicacionGym.gymapp.service;
 
 import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
-import com.aplicacionGym.gymapp.dto.response.PaymentResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.ProductsPurchasedResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.entity.Client;
@@ -28,8 +27,6 @@ public class ClientService {
     private RoutineRepository routineRepository;
     @Autowired
     private PaymentProductRepository paymentProductRepository;
-    @Autowired
-    private ClientMapper clientMapper;
 
     public Client createClient(Client client){
         return clientRepository.save(client);
@@ -133,7 +130,7 @@ public class ClientService {
     }
 
     public List<ProductsPurchasedResponseDTO> getProductsPurchasedByClient(Long id){
-        Client client = clientRepository.findById(id)
+        clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+id));
         List<PaymentProduct> paymentProducts = paymentProductRepository.findByClientId(id);
         return paymentProducts.stream().map(purchase -> {

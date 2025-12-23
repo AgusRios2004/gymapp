@@ -34,7 +34,7 @@ public class ExerciseController {
     @PostMapping
     private ResponseEntity<WebApiResponse> createExercise(@RequestBody Exercise exercise){
         Exercise exerciseCreated = exerciseService.createExercise(exercise);
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise found successfully", exercise));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise created successfully", exerciseCreated));
     }
 
     @PutMapping("/{id}")
