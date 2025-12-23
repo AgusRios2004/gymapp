@@ -1,9 +1,8 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
+import ClientesPage from './pages/ClientsPage';
 
-//Mockeado
-const ClientesPage = () => <h1 className="text-2xl font-bold">Gestión de Clientes</h1>;
 const PagosPage = () => <h1 className="text-2xl font-bold">Gestión de Pagos</h1>;
 
 function App() {
