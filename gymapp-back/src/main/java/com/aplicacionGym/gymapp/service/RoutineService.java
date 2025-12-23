@@ -13,49 +13,38 @@ import com.aplicacionGym.gymapp.mapper.RoutineMapper;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.ExerciseRepository;
 import com.aplicacionGym.gymapp.repository.RoutineRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
+@Transactional
 public class RoutineService {
 
-    @Autowired
-    private RoutineRepository routineRepository;
-    @Autowired
-    private ExerciseRepository exerciseRepository;
-    @Autowired
-    private RoutineMapper routineMapper;
-    @Autowired
-    private ClientRepository clientRepository;
+    private final RoutineRepository routineRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final ClientRepository clientRepository;
+
+    public RoutineService(RoutineRepository routineRepository,
+                          ExerciseRepository exerciseRepository,
+                          ClientRepository clientRepository) {
+        this.routineRepository = routineRepository;
+        this.exerciseRepository = exerciseRepository;
+        this.clientRepository = clientRepository;
+    }
 
     public RoutineResponseDTO createRoutine(RoutineRequestDTO dto){
+        validateUniqueDays(dto.getDays());
+
         Routine routine = new Routine();
-        routine.setActive(dto.isActive());
-        routine.setName(dto.getName());
-        routine.setGoal(dto.getGoal());
+        updateRoutineData(routine, dto);
 
-        List<RoutineDay> routineDays = dto.getDays().stream().map( routineDayRequestDTO -> {
-            RoutineDay day = new RoutineDay();
-            day.setDay(routineDayRequestDTO.getDay());
-            day.setRoutine(routine);
-
-            List<RoutineExercise> routineExercises = routineDayRequestDTO.getExercises().stream().map(routineExerciseRequestDTO -> {
-                Exercise exercise = exerciseRepository.findById(routineExerciseRequestDTO.getIdExercise())
-                        .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: "+routineExerciseRequestDTO.getIdExercise()));
-
-                RoutineExercise re = new RoutineExercise();
-                re.setExercise(exercise);
-                re.setSets(routineExerciseRequestDTO.getSets());
-                re.setRepetitions(routineExerciseRequestDTO.getRepetitions());
-                re.setRoutineDay(day);
-                return re;
-            }).toList();
-            day.setExercises(routineExercises);
-            return day;
-        }).toList();
+        List<RoutineDay> routineDays = mapDaysToRoutine(dto.getDays(), routine);
         routine.setDays(routineDays);
+        
         return RoutineMapper.toDTO(routineRepository.save(routine));
     }
 
@@ -72,38 +61,16 @@ public class RoutineService {
     }
 
     public RoutineResponseDTO updateRoutine(Long id, RoutineRequestDTO routineRequestDTO){
+        validateUniqueDays(routineRequestDTO.getDays());
+
         Routine routine = routineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: "+id));
-        routine.setGoal(routineRequestDTO.getGoal());
-        routine.setName(routineRequestDTO.getName());
-        routine.setActive(routineRequestDTO.isActive());
+        updateRoutineData(routine, routineRequestDTO);
 
         routine.getDays().clear();
+        List<RoutineDay> routineDays = mapDaysToRoutine(routineRequestDTO.getDays(), routine);
 
-        List<RoutineDay> routineDays = routineRequestDTO.getDays().stream().map(RoutineDayRequestDTO -> {
-            RoutineDay routineDay = new RoutineDay();
-            routineDay.setDay(RoutineDayRequestDTO.getDay());
-            routineDay.setRoutine(routine);
-
-            List<RoutineExercise> exercises = RoutineDayRequestDTO.getExercises().stream().map(RoutineExerciseRequestDTO -> {
-                Exercise exercise = exerciseRepository.findById(RoutineExerciseRequestDTO.getIdExercise())
-                        .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: "+id));
-
-                RoutineExercise routineExercise = new RoutineExercise();
-                routineExercise.setExercise(exercise);
-                routineExercise.setSets(RoutineExerciseRequestDTO.getSets());
-                routineExercise.setRepetitions(RoutineExerciseRequestDTO.getRepetitions());
-                routineExercise.setRoutineDay(routineDay);
-
-                return routineExercise;
-            }).toList();
-
-            routineDay.setExercises(exercises);
-            return routineDay;
-
-        }).toList();
-
-        routine.setDays(routineDays);
+        routine.getDays().addAll(routineDays);
         return RoutineMapper.toDTO(routineRepository.save(routine));
     }
 
@@ -117,6 +84,43 @@ public class RoutineService {
 
 
         routineRepository.delete(routine);
+    }
+
+    private void validateUniqueDays(List<RoutineDayRequestDTO> days) {
+        Set<String> uniqueDays = new HashSet<>();
+        for (RoutineDayRequestDTO day : days) {
+            if (!uniqueDays.add(day.getDay().name())) {
+                throw new IllegalArgumentException("Duplicate day found in routine: " + day.getDay());
+            }
+        }
+    }
+
+    private void updateRoutineData(Routine routine, RoutineRequestDTO dto) {
+        routine.setActive(dto.isActive());
+        routine.setName(dto.getName());
+        routine.setGoal(dto.getGoal());
+    }
+
+    private List<RoutineDay> mapDaysToRoutine(List<RoutineDayRequestDTO> daysDTO, Routine routine) {
+        return daysDTO.stream().map(dayDTO -> {
+            RoutineDay day = new RoutineDay();
+            day.setDay(dayDTO.getDay());
+            day.setRoutine(routine);
+
+            List<RoutineExercise> routineExercises = dayDTO.getExercises().stream().map(exDTO -> {
+                Exercise exercise = exerciseRepository.findById(exDTO.getIdExercise())
+                        .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + exDTO.getIdExercise()));
+
+                RoutineExercise re = new RoutineExercise();
+                re.setExercise(exercise);
+                re.setSets(exDTO.getSets());
+                re.setRepetitions(exDTO.getRepetitions());
+                re.setRoutineDay(day);
+                return re;
+            }).toList();
+            day.setExercises(routineExercises);
+            return day;
+        }).toList();
     }
 
 }

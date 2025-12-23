@@ -2,22 +2,23 @@ package com.aplicacionGym.gymapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 public class CorsConfig {
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Aplica a todos los endpoints
-                        .allowedOrigins("http://localhost:5173") // Reemplazá por el origen de tu front
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true); // si usás cookies o auth
-            }
-        };
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.addAllowedOriginPattern("*");
+        config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, OPTIONS
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
+
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }
