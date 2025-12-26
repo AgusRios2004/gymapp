@@ -4,9 +4,10 @@ import { Badge } from '../ui/Badge';
 
 interface ClientItemProps {
   client: Client;
+  onEdit?: () => void;
 }
 
-export const ClientItem = ({ client }: ClientItemProps) => {
+export const ClientItem = ({ client, onEdit }: ClientItemProps) => {
   return (
     <div className="group bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
 
@@ -47,7 +48,10 @@ export const ClientItem = ({ client }: ClientItemProps) => {
 
         {/* 3. ACCIONES (Botón de menú) */}
         <div className="flex justify-end md:w-10">
-          <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+          <button 
+            onClick={onEdit}
+            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+          >
             <MoreVertical size={20} />
           </button>
         </div>
