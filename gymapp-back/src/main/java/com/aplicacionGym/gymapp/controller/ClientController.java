@@ -4,6 +4,7 @@ import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
+import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
 import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.service.ClientService;
