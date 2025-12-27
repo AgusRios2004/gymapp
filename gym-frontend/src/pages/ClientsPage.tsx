@@ -11,14 +11,6 @@ import { ClientSchema } from '../types/schema.type';
 // Inferimos el tipo para usarlo en el estado y mutaciones
 type ClientFormData = z.infer<typeof ClientSchema>;
 
-// --- MOCK DATA TEMPORAL ---
-const MOCK_CLIENTS = [
-  { id: 1, name: 'Juan', lastName: 'Pérez', dni: '12.345.678', phone: '261-555-001', email: 'juan@test.com', active: true },
-  { id: 2, name: 'Maria', lastName: 'Gomez', dni: '23.456.789', phone: '261-555-002', email: 'maria@test.com', active: false },
-  { id: 3, name: 'Carlos', lastName: 'Lopez', dni: '34.567.890', phone: '261-555-003', email: 'carlos@gym.com', active: true },
-  { id: 4, name: 'Ana', lastName: 'Torres', dni: '45.678.901', phone: '261-555-004', email: 'ana@gym.com', active: true },
-];
-
 // Cambio de nombre para consistencia (Inglés en código)
 export default function ClientsPage() {
   const queryClient = useQueryClient();
@@ -32,12 +24,9 @@ export default function ClientsPage() {
   const { data: clients = [], isLoading, isError } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
-      // SIMULACIÓN DE API (Comenta esto cuando tengas el backend listo)
-      await new Promise(resolve => setTimeout(resolve, 800)); // Delay para ver el loading
-      return MOCK_CLIENTS;
-
-      // const data = await getClients();
-      // return Array.isArray(data) ? data : [];
+      // 2. Descomentamos la llamada real a la API
+      const data = await getClients();
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -71,6 +60,7 @@ export default function ClientsPage() {
       lastName: client.lastName,
       dni: client.dni,
       phone: client.phone,
+      active: client.active,
     });
     setIsModalOpen(true);
   };

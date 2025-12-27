@@ -23,7 +23,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 #5. El truco: Copiamos el .jar desde la etapa "builder"
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/*.jar /app/app.jar
 
 # 6. Le decimos qué puerto va a "escuchar" el contenedor (Informativo)
 EXPOSE 8080

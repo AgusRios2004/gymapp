@@ -28,8 +28,10 @@ public class ClientService {
     @Autowired
     private PaymentProductRepository paymentProductRepository;
 
-    public Client createClient(Client client){
-        return clientRepository.save(client);
+    public ClientResponseDTO createClient(Client client){
+        client.setActive(true); // Por defecto, un nuevo cliente nace activo
+        Client saved = clientRepository.save(client);
+        return ClientMapper.toDTO(saved);
     }
 
     public List<ClientResponseDTO> getAllClients() {

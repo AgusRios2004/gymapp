@@ -49,8 +49,9 @@ services:
 
   # --- SERVICIO 3: FRONTEND (React + Nginx) ---
   frontend:
-    build: ./gymapp-front # Busca el Dockerfile en esta carpeta
+    build: ./gym-frontend # Busca el Dockerfile en esta carpeta
     container_name: gym-frontend
+    restart: always
     ports:
       - "80:80" # Tu app estará en http://localhost
     depends_on:

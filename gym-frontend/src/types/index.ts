@@ -9,8 +9,8 @@ export interface Person {
 
 export interface Client extends Person {
     active: boolean;
-    routineActive?: Routine;
-    routines?: Routine[];
+    routineActive?: Routine | null; // El JSON muestra que puede ser null
+    // routines?: Routine[]; // El DTO 'ClientResponseDTO' NO devuelve la lista de rutinas, así que lo quitamos o dejamos opcional
 }
 
 export interface Routine {

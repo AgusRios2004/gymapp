@@ -26,6 +26,7 @@ export const ClientSchema = z.object({
     name: z.string().min(4, 'El nombre debe tener al menos 4 caracteres'),
     lastName: z.string().min(4, 'El apellido debe tener al menos 4 caracteres'),
     phone: z.string().min(10, 'El teléfono debe tener al menos 10 caracteres'),
-    dni: z.string().min(8, 'El DNI debe tener al menos 8 caracteres'),
+    dni: z.string().min(7, 'El DNI debe tener al menos 7 caracteres'), // Ajuste menor opcional
     routineActiveId: z.number().optional().nullable(),
+    active: z.boolean().optional(),
 });

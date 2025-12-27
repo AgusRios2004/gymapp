@@ -30,7 +30,8 @@ const ClientModal: React.FC<ClientModalProps> = ({
     lastName: '',
     email: '',
     dni: '',
-    phone: ''
+    phone: '',
+    active: true
   } as ClientFormData); 
 
   // Efecto: Cuando se abre el modal o cambia initialData, actualizamos el formulario
@@ -45,7 +46,8 @@ const ClientModal: React.FC<ClientModalProps> = ({
         lastName: '',
         email: '',
         dni: '',
-        phone: ''
+        phone: '',
+        active: true
       } as ClientFormData);
     }
   }, [isOpen, initialData]);

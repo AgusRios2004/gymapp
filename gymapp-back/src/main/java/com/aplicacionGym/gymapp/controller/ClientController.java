@@ -23,7 +23,7 @@ public class ClientController {
 
     @PostMapping
     private ResponseEntity<WebApiResponse> createClient(@RequestBody Client client) {
-        Client created = clientService.createClient(client);
+        ClientResponseDTO created = clientService.createClient(client);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Client created successfully", created));
     }
 
