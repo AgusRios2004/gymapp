@@ -29,15 +29,15 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<WebApiResponse> getAllClients(@RequestParam(required = false) Boolean active) {
-        List<ClientResponseDTO> dto;
-        if (active == null) {
-            dto = clientService.getAllClients();
-        } else if (active) {
-            dto = clientService.getAllClients();
-        } else {
-            dto = clientService.getAllClients();
+        List<ClientResponseDTO> dto = clientService.getAllClients();
+
+        // Filtramos la lista en el controlador antes de enviarla
+        if (active != null) {
+            dto = dto.stream()
+                    .filter(c -> active.equals(c.isActive())) // Asumiendo que el DTO tiene isActive() o getActive()
+                    .toList();
         }
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Clients foudns successfully", dto));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Clients found successfully", dto));
     }
 
     @GetMapping("/{id}")

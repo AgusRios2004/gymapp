@@ -8,13 +8,9 @@ type ClientFormData = z.infer<typeof ClientSchema>;
 
 const path = '/clients';
 
-export const getClients = async (): Promise<Client[]> => {
-    // api.get ya usa la baseURL, así que solo ponemos la ruta relativa
-    // El backend devuelve ApiResponse<Client[]>, no Client[] directo
-    const response = await api.get<ApiResponse<Client[]>>(path);
-    // Retornamos response.data.data porque:
-    // 1er .data es de Axios
-    // 2do .data es de tu WebApiResponse ({ success: true, data: [...] })
+export const getClients = async (active?: boolean): Promise<Client[]> => {
+    const params = active !== undefined ? { active } : {};
+    const response = await api.get<ApiResponse<Client[]>>(path, { params });
     return response.data.data;
 };
 
