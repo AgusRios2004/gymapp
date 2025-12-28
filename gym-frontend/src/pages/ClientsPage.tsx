@@ -7,24 +7,20 @@ import { ClientItem } from '../components/clients/ClientItem';
 import ClientModal from '../components/clients/ClientModal';
 import { getClients, createClient, updateClient } from '../services/clientService';
 import { ClientSchema } from '../types/schema.type'; 
+import { toast } from 'react-toastify';
 
-// Inferimos el tipo para usarlo en el estado y mutaciones
 type ClientFormData = z.infer<typeof ClientSchema>;
 
-// Cambio de nombre para consistencia (Inglés en código)
 export default function ClientsPage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Estados del Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientFormData | null>(null);
 
-  // 1. QUERY: Obtener clientes
   const { data: clients = [], isLoading, isError } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
-      // 2. Descomentamos la llamada real a la API
       const data = await getClients();
       return Array.isArray(data) ? data : [];
     }
@@ -35,7 +31,12 @@ export default function ClientsPage() {
     mutationFn: createClient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success("✅ Alumno registrado correctamente");
       handleCloseModal();
+    },
+    onError: (error) => {
+      console.error("Error al crear el cliente:", error);
+      toast.error("Error al crear el cliente");
     }
   });
 
@@ -43,7 +44,12 @@ export default function ClientsPage() {
     mutationFn: ({ id, data }: { id: number, data: ClientFormData }) => updateClient(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success("✅ Datos actualizados");
       handleCloseModal();
+    },
+    onError: (error) => {
+      console.error("Error al actualizar el cliente:", error);
+      toast.error("Error al actualizar el cliente");
     }
   });
 
@@ -95,7 +101,7 @@ export default function ClientsPage() {
         
         <button 
           onClick={handleNewClient}
-          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 sm:py-2 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition-all active:scale-95"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all active:scale-95 font-bold"
         >
           <Plus size={20} />
           <span className="font-medium">Nuevo Alumno</span>

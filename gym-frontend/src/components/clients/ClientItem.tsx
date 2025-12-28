@@ -9,13 +9,13 @@ interface ClientItemProps {
 
 export const ClientItem = ({ client, onEdit }: ClientItemProps) => {
   return (
-    <div className="group bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+    <div className="group bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-100 transition-all duration-200">
 
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         
         {/* 1. INFO PRINCIPAL (Avatar + Nombre) */}
         <div className="flex items-center gap-3 flex-1">
-          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shrink-0">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
             <User size={24} />
           </div>
           <div>
@@ -50,7 +50,7 @@ export const ClientItem = ({ client, onEdit }: ClientItemProps) => {
         <div className="flex justify-end md:w-10">
           <button 
             onClick={onEdit}
-            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors active:scale-90"
           >
             <MoreVertical size={20} />
           </button>
