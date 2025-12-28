@@ -31,6 +31,7 @@ public class Client {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(unique = true, nullable = false)
     private String dni;
 
     private String phone;

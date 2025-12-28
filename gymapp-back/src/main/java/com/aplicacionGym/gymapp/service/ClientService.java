@@ -29,7 +29,15 @@ public class ClientService {
     private PaymentProductRepository paymentProductRepository;
 
     public ClientResponseDTO createClient(Client client){
-        client.setActive(true); // Por defecto, un nuevo cliente nace activo
+        if (client.getDni() != null) {
+            client.setDni(client.getDni().trim());
+        }
+
+        clientRepository.findByDni(client.getDni())
+                .ifPresent(existingClient -> {
+                    throw new IllegalArgumentException("Client with DNI " + client.getDni() + " already exists.");
+                });
+        client.setActive(true);
         Client saved = clientRepository.save(client);
         return ClientMapper.toDTO(saved);
     }
