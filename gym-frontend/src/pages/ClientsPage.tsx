@@ -8,7 +8,6 @@ import ClientModal from '../components/clients/ClientModal';
 import { getClients, createClient, updateClient } from '../services/clientService';
 import { ClientSchema } from '../types/schema.type'; 
 import Button from '../components/ui/Button';
-import MainLayout from '../layouts/MainLayout';
 
 import { toast } from 'react-toastify';
 
