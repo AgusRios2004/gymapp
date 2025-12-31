@@ -9,6 +9,7 @@ export interface Person {
 
 export interface RoutineExercise {
     id?: number;
+    exerciseId?: number;
     sets: number;
     repetitions: number;
     weight?: number;
@@ -27,7 +28,7 @@ export interface Routine {
     goal: string;
     active: boolean;
     isTemplate?: boolean;
-    routineDays?: RoutineDay[];
+    days?: RoutineDay[];
 }
 
 export interface Client extends Person {

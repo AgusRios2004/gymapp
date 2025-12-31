@@ -36,7 +36,7 @@ export const Sidebar = () => {
           icon={<Dumbbell size={20} />} 
         />
         <SidebarItem 
-          path="/rutines" 
+          path="/routines" 
           label="Rutinas" 
           icon={<PersonStanding size={20} />} 
         />

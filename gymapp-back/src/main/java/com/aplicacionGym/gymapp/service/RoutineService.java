@@ -86,6 +86,7 @@ public class RoutineService {
     }
 
     private void validateUniqueDays(List<RoutineDayRequestDTO> days) {
+        if (days == null) return;
         Set<Integer> uniqueDays = new HashSet<>();
         for (RoutineDayRequestDTO day : days) {
             if (!uniqueDays.add(day.getDayOrder())) {
@@ -101,6 +102,7 @@ public class RoutineService {
     }
 
     private List<RoutineDay> mapDaysToRoutine(List<RoutineDayRequestDTO> daysDTO, Routine routine) {
+        if (daysDTO == null) return List.of();
         return daysDTO.stream().map(dayDTO -> {
             RoutineDay day = new RoutineDay();
             day.setDayOrder(dayDTO.getDayOrder());

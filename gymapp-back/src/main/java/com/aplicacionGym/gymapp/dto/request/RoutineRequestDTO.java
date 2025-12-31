@@ -8,11 +8,11 @@ import jakarta.validation.constraints.Size;
 public class RoutineRequestDTO {
 
     @NotBlank(message = "Name cannot be blank")
-    @Size(min = 7, max = 30, message = "Name must be between 7 and 30 characters")
+    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     private String name;
 
     @NotBlank(message = "Goal cannot be blank")
-    @Size(min = 10, max = 50, message = "Goal must be between 10 and 50 characters")
+    @Size(min = 5, max = 100, message = "Goal must be between 5 and 100 characters")
     private String goal;
 
     private boolean active;

@@ -92,7 +92,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       return;
     }
 
-    if (selectedRoutine?.routineDays && schedule.length < selectedRoutine.routineDays.length) {
+    if (selectedRoutine?.days && schedule.length < selectedRoutine.days.length) {
         setErrors(["Debes asignar un día de la semana a cada día de la rutina."]);
         return;
     }
@@ -147,12 +147,12 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
           </div>
 
           {/* Mapeo de Días */}
-          {selectedRoutine && selectedRoutine.routineDays && (
+          {selectedRoutine && selectedRoutine.days && (
             <div className="space-y-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
               <h4 className="font-semibold text-gray-800 text-sm uppercase tracking-wider">Planificación Semanal</h4>
               <p className="text-xs text-gray-500 mb-4">Asigna qué día de la semana realizará cada sesión.</p>
               
-              {selectedRoutine.routineDays.sort((a: any, b: any) => a.dayOrder - b.dayOrder).map((day: any) => (
+              {selectedRoutine.days.sort((a: any, b: any) => a.dayOrder - b.dayOrder).map((day: any) => (
                 <div key={day.id || day.dayOrder} className="flex items-center justify-between gap-4">
                   <span className="text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border shadow-sm min-w-[80px] text-center">
                     Día {day.dayOrder}

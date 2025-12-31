@@ -10,6 +10,7 @@ export const ExerciseSchema = z.object({
 
 export const RoutineExerciseSchema = z.object({
     id: z.number().optional(),
+    exerciseId: z.number({ error: "Debes seleccionar un ejercicio" }),
     sets: z.number().min(1, 'Mínimo 1 serie').max(20),
     repetitions: z.number().min(1, 'Mínimo 1 repetición').max(100),
     weight: z.coerce.number().min(0).optional(),
@@ -26,7 +27,7 @@ export const RoutineSchema = z.object({
     name: z.string().min(3, 'Nombre muy corto').max(50),
     goal: z.string().min(5, 'Objetivo muy corto').max(100),
     active: z.boolean().optional().default(true),
-    routineDays: z.array(RoutineDaySchema).optional(),
+    days: z.array(RoutineDaySchema).optional(),
 });
 
 export const ClientSchema = z.object({
