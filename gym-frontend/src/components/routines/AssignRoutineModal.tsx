@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import Button from '../ui/Button';
+import { Input } from '../ui/Input';
+import { TextArea } from '../ui/TextArea';
 import { AssignRoutineSchema } from '../../types/schema.type';
 import type { Client, Routine } from '../../types/index';
 // Asumimos que existe este servicio, si no, deberás crearlo
 import { getRoutines } from '../../services/routineService';
+import { DAYS_OF_WEEK } from '../../constants/time';
 
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
@@ -18,16 +21,6 @@ interface AssignRoutineModalProps {
   isLoading?: boolean;
 }
 
-const DAYS_OF_WEEK = [
-  { value: 'MONDAY', label: 'Lunes' },
-  { value: 'TUESDAY', label: 'Martes' },
-  { value: 'WEDNESDAY', label: 'Miércoles' },
-  { value: 'THURSDAY', label: 'Jueves' },
-  { value: 'FRIDAY', label: 'Viernes' },
-  { value: 'SATURDAY', label: 'Sábado' },
-  { value: 'SUNDAY', label: 'Domingo' },
-];
-
 const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   isOpen,
   onClose,
@@ -38,6 +31,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const [selectedRoutineId, setSelectedRoutineId] = useState<number | null>(null);
   // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY")
   const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
 
   // Cargar rutinas (templates)
@@ -56,6 +51,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     if (isOpen) {
       setSelectedRoutineId(null);
       setScheduleMap({});
+      setSearchTerm('');
+      setNotes('');
       setErrors([]);
     }
   }, [isOpen, client]);
@@ -63,13 +60,18 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   // Obtener la rutina seleccionada completa para ver sus días
   const selectedRoutine = routines.find((r: Routine) => r.id === selectedRoutineId);
 
+  // Filtrar rutinas para el buscador (mantenemos la seleccionada visible aunque no coincida con el filtro)
+  const filteredRoutines = routines.filter((r: Routine) => 
+    r.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    r.id === selectedRoutineId
+  );
+
   const handleSave = () => {
     if (!client || !selectedRoutineId) {
       setErrors(["Debes seleccionar una rutina."]);
       return;
     }
 
-    // Construir el objeto según el esquema
     const schedule = Object.entries(scheduleMap).map(([dayOrder, assignedDay]) => ({
       dayOrder: Number(dayOrder),
       assignedDay,
@@ -79,9 +81,9 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       clientId: client.id,
       routineTemplateId: selectedRoutineId,
       schedule,
+      notes,
     };
 
-    // Validar con Zod
     const result = AssignRoutineSchema.safeParse(payload);
 
     if (!result.success) {
@@ -90,7 +92,6 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       return;
     }
 
-    // Validar que todos los días de la rutina tengan un día asignado
     if (selectedRoutine?.routineDays && schedule.length < selectedRoutine.routineDays.length) {
         setErrors(["Debes asignar un día de la semana a cada día de la rutina."]);
         return;
@@ -105,7 +106,6 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
-        {/* Header */}
         <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold text-gray-900">Asignar Rutina</h3>
@@ -116,22 +116,29 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-6 overflow-y-auto">
           
-          {/* Selector de Rutina */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Seleccionar Plantilla</label>
+            <Input
+              label="Seleccionar Plantilla"
+              placeholder="Buscar por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              disabled={isLoading}
+              className="mb-2"
+            />
+            
             <select
               className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               value={selectedRoutineId || ''}
               onChange={(e) => {
                 setSelectedRoutineId(Number(e.target.value));
-                setScheduleMap({}); // Resetear mapeo al cambiar rutina
+                setScheduleMap({});
               }}
+              disabled={isLoading}
             >
               <option value="">-- Selecciona una rutina --</option>
-              {routines.map((routine: Routine) => (
+              {filteredRoutines.map((routine: Routine) => (
                 <option key={routine.id} value={routine.id}>
                   {routine.name} ({routine.goal})
                 </option>
@@ -166,7 +173,14 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
             </div>
           )}
 
-          {/* Errores */}
+          <TextArea
+            label="Notas / Observaciones"
+            placeholder="Instrucciones especiales para el alumno..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            disabled={isLoading}
+          />
+
           {errors.length > 0 && (
             <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
               {errors.map((err, idx) => <p key={idx}>• {err}</p>)}
@@ -174,7 +188,6 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
           )}
         </div>
 
-        {/* Footer */}
         <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
           <Button variant="primary" onClick={handleSave} disabled={isLoading}>
