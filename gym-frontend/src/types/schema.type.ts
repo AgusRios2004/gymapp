@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+export const MUSCLE_GROUPS = ["Pecho", "Espalda", "Piernas", "Hombros", "Bíceps", "Tríceps", "Core", "Cardio", "Glúteos", "Otros"] as const;
+
+export const ExerciseSchema = z.object({
+    name: z.string().min(1, "El nombre es requerido"),
+    muscleGroup: z.enum(MUSCLE_GROUPS),
+    description: z.string().optional(),
+});
+
 export const RoutineExerciseSchema = z.object({
     id: z.number().optional(),
     sets: z.number().min(1, 'Mínimo 1 serie').max(20),

@@ -19,33 +19,33 @@ public class ExerciseController {
     private ExerciseService exerciseService;
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getAllExercise(){
+    public ResponseEntity<WebApiResponse> getAllExercise(){
         List<Exercise> exercises = exerciseService.getAllExercises();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercises found successfully", exercises));
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<WebApiResponse> getExerciseById(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> getExerciseById(@PathVariable Long id){
         Exercise exercise = exerciseService.getExerciseById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise with id not found: "));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise found successfully", exercise));
     }
 
     @PostMapping
-    private ResponseEntity<WebApiResponse> createExercise(@RequestBody Exercise exercise){
+    public ResponseEntity<WebApiResponse> createExercise(@RequestBody Exercise exercise){
         Exercise exerciseCreated = exerciseService.createExercise(exercise);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise created successfully", exerciseCreated));
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<WebApiResponse> updateExercise(@PathVariable Long id, @RequestBody Exercise exercise){
+    public ResponseEntity<WebApiResponse> updateExercise(@PathVariable Long id, @RequestBody Exercise exercise){
         Exercise exerciseUpdated = exerciseService.updateExercise(id, exercise)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: "+id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise updated successfully", exerciseUpdated));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<WebApiResponse> deleteExercise(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> deleteExercise(@PathVariable Long id){
         exerciseService.deleteExercise(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise deleted successfully", null));
     }
