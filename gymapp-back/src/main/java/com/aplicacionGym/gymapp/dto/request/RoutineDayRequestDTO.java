@@ -1,27 +1,26 @@
 package com.aplicacionGym.gymapp.dto.request;
 
-import java.time.DayOfWeek;
 import java.util.List;
 
 public class RoutineDayRequestDTO {
 
-    private DayOfWeek day;
+    private Integer dayOrder;
     private List<RoutineExerciseRequestDTO> exercises;
 
     public RoutineDayRequestDTO() {
     }
 
-    public RoutineDayRequestDTO(DayOfWeek day, List<RoutineExerciseRequestDTO> exercises) {
-        this.day = day;
+    public RoutineDayRequestDTO(Integer dayOrder, List<RoutineExerciseRequestDTO> exercises) {
+        this.dayOrder = dayOrder;
         this.exercises = exercises;
     }
 
-    public DayOfWeek getDay() {
-        return day;
+    public Integer getDayOrder() {
+        return dayOrder;
     }
 
-    public void setDay(DayOfWeek day) {
-        this.day = day;
+    public void setDayOrder(Integer dayOrder) {
+        this.dayOrder = dayOrder;
     }
 
     public List<RoutineExerciseRequestDTO> getExercises() {

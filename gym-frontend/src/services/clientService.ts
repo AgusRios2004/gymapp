@@ -1,10 +1,11 @@
 import api from '../lib/axios';
 import type { Client } from '../types/index';
 import type { ApiResponse } from '../types/api.types'; // Asegúrate de importar esto
-import { ClientSchema } from '../types/schema.type';
+import { ClientSchema, AssignRoutineSchema } from '../types/schema.type';
 import { z } from 'zod';
 
 type ClientFormData = z.infer<typeof ClientSchema>;
+type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 const path = '/clients';
 
@@ -28,4 +29,9 @@ export const getClientPayments = async (clientId: number | string) => {
     // Aquí podrías tipar el retorno si tienes una interfaz Payment
     const response = await api.get(`${path}/${clientId}/payments`);
     return response.data;
+};
+
+export const assignRoutine = async (data: AssignRoutineFormData): Promise<void> => {
+    // Ajusta la URL si tu backend usa otra ruta, ej: `${path}/assign-routine`
+    await api.post(`${path}/assign-routine`, data);
 };

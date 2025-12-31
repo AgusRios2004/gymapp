@@ -5,13 +5,15 @@ import { z } from 'zod';
 import type { Client } from '../types/index';
 import { ClientItem } from '../components/clients/ClientItem';
 import ClientModal from '../components/clients/ClientModal';
-import { getClients, createClient, updateClient } from '../services/clientService';
-import { ClientSchema } from '../types/schema.type'; 
+import AssignRoutineModal from '../components/routines/AssignRoutineModal';
+import { getClients, createClient, updateClient, assignRoutine } from '../services/clientService';
+import { ClientSchema, AssignRoutineSchema } from '../types/schema.type'; 
 import Button from '../components/ui/Button';
 
 import { toast } from 'react-toastify';
 
 type ClientFormData = z.infer<typeof ClientSchema>;
+type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 export default function ClientsPage() {
   const queryClient = useQueryClient();
@@ -20,7 +22,9 @@ export default function ClientsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('active');
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientFormData | null>(null);
+  const [selectedClientForRoutine, setSelectedClientForRoutine] = useState<Client | null>(null);
 
   // 2. La query ahora depende del filtro y pasa el parámetro al backend
   const { data: clients = [], isLoading, isError } = useQuery({
@@ -61,6 +65,19 @@ export default function ClientsPage() {
     }
   });
 
+  const assignRoutineMutation = useMutation({
+    mutationFn: assignRoutine,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      toast.success("✅ Rutina asignada correctamente");
+      handleCloseAssignModal();
+    },
+    onError: (error) => {
+      console.error("Error al asignar rutina:", error);
+      toast.error("Error al asignar la rutina");
+    }
+  });
+
   const handleNewClient = () => {
     setEditingClient(null);
     setIsModalOpen(true);
@@ -84,12 +101,26 @@ export default function ClientsPage() {
     setEditingClient(null);
   };
 
+  const handleOpenAssignModal = (client: Client) => {
+    setSelectedClientForRoutine(client);
+    setIsAssignModalOpen(true);
+  };
+
+  const handleCloseAssignModal = () => {
+    setIsAssignModalOpen(false);
+    setSelectedClientForRoutine(null);
+  };
+
   const handleSave = (data: ClientFormData) => {
     if (editingClient?.id) {
       updateMutation.mutate({ id: Number(editingClient.id), data });
     } else {
       createMutation.mutate(data);
     }
+  };
+
+  const handleSaveAssignment = (data: AssignRoutineFormData) => {
+    assignRoutineMutation.mutate(data);
   };
 
   // Filtrado
@@ -179,6 +210,7 @@ export default function ClientsPage() {
                 key={cliente.id} 
                 client={cliente} 
                 onEdit={() => handleEditClient(cliente)}
+                onAssignRoutine={() => handleOpenAssignModal(cliente)}
               />
             ))
           ) : (
@@ -194,6 +226,14 @@ export default function ClientsPage() {
         initialData={editingClient}
         isLoading={createMutation.isPending || updateMutation.isPending}
         onSave={handleSave}
+      />
+
+      <AssignRoutineModal
+        isOpen={isAssignModalOpen}
+        onClose={handleCloseAssignModal}
+        client={selectedClientForRoutine}
+        onSave={handleSaveAssignment}
+        isLoading={assignRoutineMutation.isPending}
       />
     </div>
   );

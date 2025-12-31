@@ -2,31 +2,40 @@ import { z } from 'zod';
 
 export const RoutineExerciseSchema = z.object({
     id: z.number().optional(),
-    sets: z.number().min(1, 'Las series deben ser al menos 1').max(10, 'Las series no deben exceder 10'),
-    repetitions: z.number().min(1, 'Las repeticiones deben ser al menos 1').max(50, 'Las repeticiones no deben exceder 50'),
-    weight: z.float64().min(0, 'El peso no puede ser negativo').max(500, 'El peso no debe exceder 500'),
+    sets: z.number().min(1, 'Mínimo 1 serie').max(20),
+    repetitions: z.number().min(1, 'Mínimo 1 repetición').max(100),
+    weight: z.coerce.number().min(0).optional(),
 });
 
 export const RoutineDaySchema = z.object({
     id: z.number().optional(),
-    dayOfWeek: z.string().min(3, 'El día de la semana debe tener al menos 3 caracteres').max(10, 'El día de la semana no debe exceder los 10 caracteres'),
+    dayOrder: z.number().int().min(1, 'El orden del día es requerido'), 
     routineExercises: z.array(RoutineExerciseSchema).optional(),
 });
 
 export const RoutineSchema = z.object({
     id: z.number().optional(),
-    name: z.string().min(7, 'El nombre debe tener al menos 7 caracteres').max(30, 'El nombre no debe exceder los 30 caracteres'),
-    goal: z.string().min(10, 'El objetivo debe tener al menos 10 caracteres').max(50, 'El objetivo no debe exceder los 50 caracteres'),
+    name: z.string().min(3, 'Nombre muy corto').max(50),
+    goal: z.string().min(5, 'Objetivo muy corto').max(100),
     active: z.boolean().optional().default(true),
     routineDays: z.array(RoutineDaySchema).optional(),
 });
 
 export const ClientSchema = z.object({
     id: z.number().optional(),
-    name: z.string().min(4, 'El nombre debe tener al menos 4 caracteres'),
-    lastName: z.string().min(4, 'El apellido debe tener al menos 4 caracteres'),
-    phone: z.string().min(10, 'El teléfono debe tener al menos 10 caracteres'),
-    dni: z.string().min(7, 'El DNI debe tener al menos 7 caracteres'), // Ajuste menor opcional
-    routineActiveId: z.number().optional().nullable(),
-    active: z.boolean().optional(),
+    name: z.string().min(1, "El nombre es requerido"),
+    lastName: z.string().min(1, "El apellido es requerido"),
+    dni: z.string().min(1, "El DNI es requerido"),
+    phone: z.string().min(1, "El teléfono es requerido"),
+    email: z.string().email("Email inválido").optional().or(z.literal('')),
+    active: z.boolean().default(true),
+});
+
+export const AssignRoutineSchema = z.object({
+    clientId: z.number(),
+    routineTemplateId: z.number({ error: "Debes seleccionar una rutina" }),
+    schedule: z.array(z.object({
+        dayOrder: z.number(),
+        assignedDay: z.string().min(1, "Debes asignar un día de la semana"),
+    })).min(1, "La rutina debe tener días asignados")
 });
