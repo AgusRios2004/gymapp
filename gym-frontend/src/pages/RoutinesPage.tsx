@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Trash2, AlertTriangle, Eye } from 'lucide-react';
+import { Trash2, AlertTriangle, Eye, Pencil } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import CreateRoutineModal from '../components/routines/CreateRoutineModal';
 import RoutineDetailsModal from '../components/routines/RoutineDetailsModal';
+import EditRoutineModal from '../components/routines/EditRoutineModal';
 import { getRoutines, deleteRoutine } from '../services/routineService';
 import type { Routine } from '../types/index';
 
@@ -15,6 +16,7 @@ const RoutinesPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [routineToDelete, setRoutineToDelete] = useState<Routine | null>(null);
   const [routineToView, setRoutineToView] = useState<Routine | null>(null);
+  const [routineToEdit, setRoutineToEdit] = useState<Routine | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Obtener rutinas desde el backend
@@ -40,6 +42,8 @@ const RoutinesPage: React.FC = () => {
   const filteredRoutines = routines.filter((routine: Routine) =>
     routine.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log('RoutinesPage render', routines);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
@@ -97,6 +101,13 @@ const RoutinesPage: React.FC = () => {
                     <Eye size={18} />
                   </button>
                   <button 
+                    onClick={(e) => { e.stopPropagation(); setRoutineToEdit(routine); }}
+                    className="p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
+                    title="Editar rutina"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button 
                     onClick={(e) => { e.stopPropagation(); setRoutineToDelete(routine); }}
                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     title="Eliminar rutina"
@@ -147,6 +158,12 @@ const RoutinesPage: React.FC = () => {
         isOpen={!!routineToView}
         onClose={() => setRoutineToView(null)}
         routine={routineToView}
+      />
+
+      <EditRoutineModal
+        isOpen={!!routineToEdit}
+        onClose={() => setRoutineToEdit(null)}
+        routine={routineToEdit}
       />
 
       {/* Modal de Confirmación de Eliminación */}

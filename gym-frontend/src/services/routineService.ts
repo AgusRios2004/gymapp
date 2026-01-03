@@ -17,3 +17,13 @@ export const createRoutine = async (routineData: Partial<Routine>): Promise<Rout
 export const deleteRoutine = async (routineId: number): Promise<void> => {
     await api.delete<ApiResponse<null>>(`${path}/${routineId}`);
 }
+
+export const updateRoutine = async (routineId: number, routineData: Partial<Routine>): Promise<Routine> => {
+    const response = await api.put<ApiResponse<Routine>>(`${path}/${routineId}`, routineData);
+    return response.data.data;
+}
+
+export const getRoutineById = async (routineId: number): Promise<Routine> => {
+    const response = await api.get<ApiResponse<Routine>>(`${path}/${routineId}`);
+    return response.data.data;
+}

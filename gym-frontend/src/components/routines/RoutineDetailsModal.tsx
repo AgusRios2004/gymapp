@@ -11,6 +11,9 @@ interface RoutineDetailsModalProps {
 const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClose, routine }) => {
   if (!isOpen || !routine) return null;
 
+  // Debug: Ver en consola qué datos llegan realmente (F12 -> Console)
+  console.log('Datos de la rutina en modal:', routine);
+
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -29,16 +32,20 @@ const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClo
         {/* Content */}
         <div className="p-8 overflow-y-auto space-y-6 bg-white flex-1">
           {routine.days && routine.days.length > 0 ? (
-            routine.days.sort((a, b) => a.dayOrder - b.dayOrder).map((day) => (
+            [...routine.days].sort((a, b) => a.dayOrder - b.dayOrder).map((day) => {
+              // Fallback: intenta leer 'routineExercises' o 'exercises' para evitar errores si el nombre cambia
+              const exercises = day.routineExercises || (day as any).exercises || [];
+              
+              return (
               <div key={day.id || day.dayOrder} className="border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
                 <div className="bg-blue-50 px-5 py-3 border-b border-blue-100 flex justify-between items-center">
                   <span className="font-bold text-blue-700">Día {day.dayOrder}</span>
                   <span className="text-xs text-blue-600 font-medium bg-white px-2 py-1 rounded-full border border-blue-200">
-                    {day.routineExercises.length} Ejercicios
+                    {exercises.length} Ejercicios
                   </span>
                 </div>
                 <div className="divide-y divide-gray-100">
-                  {day.routineExercises.map((ex, idx) => (
+                  {exercises.map((ex, idx) => (
                     <div key={ex.id || idx} className="p-4 hover:bg-gray-50 transition-colors flex justify-between items-center">
                       <div>
                         <p className="font-semibold text-gray-800 text-sm">
@@ -65,7 +72,8 @@ const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClo
                   ))}
                 </div>
               </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center py-12 text-gray-400 italic bg-gray-50 rounded-2xl border border-dashed border-gray-200">
               No hay días configurados para esta rutina.
