@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { X, Plus, Trash2, Dumbbell } from 'lucide-react';
 
 import { RoutineSchema } from '../../types/schema.type';
-import { updateRoutine, getRoutineById } from '../../services/routineService';
+import { updateRoutine, getRoutineById, deleteRoutine } from '../../services/routineService';
 import { getExercises } from '../../services/exerciseService';
 import type { Routine } from '../../types/index';
 import type { z } from 'zod';
@@ -80,17 +80,28 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
         days: dataToLoad.days?.map((day) => ({
           id: day.id,
           dayOrder: day.dayOrder,
-          routineExercises: (day.routineExercises || (day as any).exercises || []).map((ex: any) => ({
-            id: ex.id,
-            exerciseId: ex.exerciseId || ex.exercise?.id || ex.idExercise, // Intenta leer el ID de todas las formas posibles
-            sets: ex.sets,
-            repetitions: ex.repetitions,
-            weight: ex.weight
-          })),
+          routineExercises: (day.routineExercises || (day as any).exercises || []).map((ex: any) => {
+            // 1. Intentamos obtener el ID explícito. Si no viene, buscamos por nombre en la lista cargada.
+            let resolvedExerciseId = ex.exerciseId || ex.exercise?.id || ex.idExercise;
+
+            if (!resolvedExerciseId && ex.exerciseName && exercisesList.length > 0) {
+              const found = exercisesList.find((e: any) => e.name === ex.exerciseName);
+              if (found) resolvedExerciseId = found.id;
+            }
+
+            return {
+              id: ex.id,
+              // 2. Usamos el ID encontrado, o fallamos a ex.id (mejor que nada)
+              exerciseId: resolvedExerciseId || ex.id,
+              sets: ex.sets,
+              repetitions: ex.repetitions,
+              weight: ex.weight
+            };
+          }),
         })) || [],
       });
     }
-  }, [isOpen, fullRoutine, routine, reset]);
+  }, [isOpen, fullRoutine, routine, reset, exercisesList]);
 
   // 3. Mutación para guardar
   const mutation = useMutation({
@@ -126,6 +137,28 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
 
   const onSubmit = (data: RoutineFormData) => {
     mutation.mutate(data);
+  };
+
+  // 4. Mutación para eliminar
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteRoutine(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+      toast.success('Rutina eliminada correctamente');
+      onClose();
+    },
+    onError: (error: any) => {
+      console.error(error);
+      // Mensaje amigable: si falla, probablemente es porque tiene datos vinculados
+      toast.error('No se pudo eliminar. Si la rutina está asignada a alumnos, prueba desactivándola (Rutina Activa: No).');
+    },
+  });
+
+  const handleDelete = () => {
+    if (!routine?.id) return;
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta rutina permanentemente?')) {
+      deleteMutation.mutate(routine.id);
+    }
   };
 
   if (!isOpen) return null;
@@ -230,11 +263,28 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
           </div>
 
           {/* Footer */}
-          <div className="px-8 py-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
-            <Button type="button" variant="ghost" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" variant="primary" disabled={isSubmitting || mutation.isPending}>
-              {mutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
-            </Button>
+          <div className="px-8 py-5 border-t border-gray-100 bg-gray-50 flex justify-between items-center rounded-b-3xl">
+            {/* Botón Eliminar (Izquierda) */}
+            <div>
+              {routine?.id && (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                  className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-2 px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 size={18} /> Eliminar Rutina
+                </button>
+              )}
+            </div>
+
+            {/* Botones de Acción (Derecha) */}
+            <div className="flex gap-3">
+              <Button type="button" variant="ghost" onClick={onClose}>Cancelar</Button>
+              <Button type="submit" variant="primary" disabled={isSubmitting || mutation.isPending}>
+                {mutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
+              </Button>
+            </div>
           </div>
         </form>
       </div>
