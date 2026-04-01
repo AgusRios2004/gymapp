@@ -9,10 +9,11 @@ import {
   Edit3, 
   TrendingDown, 
   User,
-  CreditCard
+  CreditCard,
+  History as HistoryIcon
 } from 'lucide-react';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../services/productService';
-import { createProductPayment } from '../services/paymentService';
+import { createProductPayment, getAllPayments } from '../services/paymentService';
 import { getClients } from '../services/clientService';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
@@ -20,12 +21,12 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
-import type { Product, Client, ProductDetailRequest } from '../types';
+import type { Product, Client, ProductDetailRequest, Payment } from '../types';
 
 export default function ProductsPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<'inventory' | 'pos'>('inventory');
+  const [activeTab, setActiveTab] = useState<'inventory' | 'pos' | 'sales'>('inventory');
   const [searchTerm, setSearchTerm] = useState('');
   
   // Inventory Modal State
@@ -52,6 +53,12 @@ export default function ProductsPage() {
     queryKey: ['clients', 'active'],
     queryFn: () => getClients(true),
     enabled: activeTab === 'pos'
+  });
+
+  const { data: allPayments = [] } = useQuery({
+    queryKey: ['payments'],
+    queryFn: getAllPayments,
+    enabled: activeTab === 'sales'
   });
 
   // Mutations
@@ -171,21 +178,29 @@ export default function ProductsPage() {
     c.dni.includes(clientSearch)
   ).slice(0, 5);
 
+  const productSales = allPayments.filter((p: Payment) => p.paymentProducts && p.paymentProducts.length > 0);
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="flex p-1 bg-gray-100 rounded-2xl w-full md:w-auto">
+        <div className="flex p-1 bg-gray-100 rounded-2xl w-full md:w-auto overflow-x-auto">
           <button 
             onClick={() => setActiveTab('inventory')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'inventory' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
           >
             <Package size={18} /> Inventario
           </button>
           <button 
             onClick={() => setActiveTab('pos')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'pos' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'pos' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
           >
             <ShoppingCart size={18} /> Punto de Venta
+          </button>
+          <button 
+            onClick={() => setActiveTab('sales')}
+            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'sales' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+          >
+            <HistoryIcon size={18} /> Historial Ventas
           </button>
         </div>
         
@@ -254,7 +269,7 @@ export default function ProductsPage() {
             </table>
           </div>
         </div>
-      ) : (
+      ) : activeTab === 'pos' ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* POS Catalog */}
           <div className="lg:col-span-2 space-y-6">
@@ -330,7 +345,7 @@ export default function ProductsPage() {
                                </div>
                                <button onClick={() => removeFromCart(item.product.id)} className="text-red-400 hover:text-red-600 transition-colors">
                                   <Trash2 size={16} />
-                               </button>
+                                </button>
                             </div>
                           ))}
                         </div>
@@ -354,6 +369,39 @@ export default function ProductsPage() {
                 </div>
              </div>
           </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50 text-xs font-bold text-gray-500 uppercase">
+              <tr>
+                <th className="px-6 py-4">Fecha</th>
+                <th className="px-6 py-4">Cliente</th>
+                <th className="px-6 py-4">Productos</th>
+                <th className="px-6 py-4">Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {productSales.length === 0 ? (
+                <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-400">No hay ventas registradas</td></tr>
+              ) : productSales.map((s: Payment) => (
+                <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 text-sm text-gray-500">{new Date(s.date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 font-bold text-gray-900">{s.clientName}</td>
+                  <td className="px-6 py-4">
+                     <div className="flex flex-wrap gap-1">
+                        {s.paymentProducts?.map((pp, idx) => (
+                           <span key={idx} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold">
+                              {pp.quantity}x {pp.productName}
+                           </span>
+                        ))}
+                     </div>
+                  </td>
+                  <td className="px-6 py-4 font-black text-blue-600">${s.amount.toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

@@ -7,9 +7,11 @@ import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.entity.Professor;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.AssistanceMapper;
+import com.aplicacionGym.gymapp.entity.Payment;
 import com.aplicacionGym.gymapp.repository.AssistanceRepository;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.ProfessorRepository;
+import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +27,26 @@ public class AssistanceService {
     private ClientRepository clientRepository;
     @Autowired
     private ProfessorRepository professorRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
+
+        // CHECK: Latest monthly payment
+        Payment latestPayment = paymentRepository
+                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId())
+                .orElseThrow(() -> new RuntimeException("El alumno no tiene una membresía registrada."));
+
+        if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
+        }
+
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdProfessor()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
+
         Assistance assistance = AssistanceMapper.toEntity(client, professor, dto);
         assistance = assistanceRepository.save(assistance);
         return AssistanceMapper.toDTO(assistance);
