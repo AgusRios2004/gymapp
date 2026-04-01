@@ -7,19 +7,23 @@ public class PaymentResponseDTO {
 
     private Long id;
     private Long idCliente;
+    private String clientName;
     private Long idProfessor;
+    private String professorName;
 
     private LocalDate date;
     private Double amount;
     private String paymentType;
 
     private Long monthlyType;
+    private String monthlyTypeName;
     private List<PaymentProductResponseDTO> products;
 
     public PaymentResponseDTO() {
     }
 
-    public PaymentResponseDTO(Long id, Long idCliente, Long idProfessor, Double amount, LocalDate date, Long monthlyType, String paymentType, List<PaymentProductResponseDTO> products) {
+    public PaymentResponseDTO(Long id, Long idCliente, Long idProfessor, Double amount, LocalDate date,
+            Long monthlyType, String paymentType, List<PaymentProductResponseDTO> products) {
         this.id = id;
         this.idCliente = idCliente;
         this.idProfessor = idProfessor;
@@ -92,5 +96,29 @@ public class PaymentResponseDTO {
 
     public void setProducts(List<PaymentProductResponseDTO> products) {
         this.products = products;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public String getProfessorName() {
+        return professorName;
+    }
+
+    public void setProfessorName(String professorName) {
+        this.professorName = professorName;
+    }
+
+    public String getMonthlyTypeName() {
+        return monthlyTypeName;
+    }
+
+    public void setMonthlyTypeName(String monthlyTypeName) {
+        this.monthlyTypeName = monthlyTypeName;
     }
 }

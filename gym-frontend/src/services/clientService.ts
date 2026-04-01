@@ -15,6 +15,12 @@ export const getClients = async (active?: boolean): Promise<Client[]> => {
     return response.data.data;
 };
 
+export const getClientById = async (id: number | string): Promise<Client> => {
+    const response = await api.get<ApiResponse<Client>>(`${path}/${id}`);
+    return response.data.data;
+};
+
+
 export const createClient = async (clientData: ClientFormData): Promise<Client> => {
     const response = await api.post<ApiResponse<Client>>(path, clientData);
     return response.data.data;

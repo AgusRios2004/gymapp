@@ -15,4 +15,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     Boolean existsByMonthlyTypeId(Long idMonthlyType);
 
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(p.amount) FROM Payment p WHERE MONTH(p.date) = :month")
+    Double sumAmountByMonth(@org.springframework.data.repository.query.Param("month") int month);
+
 }

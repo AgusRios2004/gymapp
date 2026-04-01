@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+import { toast } from 'react-toastify';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { AssignRoutineSchema } from '../../types/schema.type';
 import type { Client, Routine } from '../../types/index';
-// Asumimos que existe este servicio, si no, deberás crearlo
-import { getRoutines } from '../../services/routineService';
+import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { DAYS_OF_WEEK } from '../../constants/time';
 
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
@@ -17,7 +17,8 @@ interface AssignRoutineModalProps {
   isOpen: boolean;
   onClose: () => void;
   client: Client | null;
-  onSave: (data: AssignRoutineFormData) => void;
+  // Props opcionales para mantener compatibilidad con ClientsPage mientras se actualiza
+  onSave?: (data: any) => void;
   isLoading?: boolean;
 }
 
@@ -25,15 +26,16 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   isOpen,
   onClose,
   client,
-  onSave,
-  isLoading = false,
 }) => {
+  const queryClient = useQueryClient();
   const [selectedRoutineId, setSelectedRoutineId] = useState<number | null>(null);
   // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY")
   const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [notes, setNotes] = useState('');
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [errors, setErrors] = useState<string[]>([]);
+  const shouldCloseRef = useRef(true);
 
   // Cargar rutinas (templates)
   const { data: routines = [] } = useQuery({
@@ -41,7 +43,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     queryFn: async () => {
       // Asumimos que getRoutines acepta filtros o trae todas y filtramos aquí
       const allRoutines = await getRoutines(); 
-      return Array.isArray(allRoutines) ? allRoutines.filter((r: Routine) => r.isTemplate) : [];
+      // Eliminamos el filtro 'isTemplate' ya que esa propiedad no existe en tu esquema actual
+      return Array.isArray(allRoutines) ? allRoutines.filter((r: any) => r.active !== false) : [];
     },
     enabled: isOpen, // Solo cargar cuando se abre el modal
   });
@@ -53,6 +56,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       setScheduleMap({});
       setSearchTerm('');
       setNotes('');
+      setStartDate(new Date().toISOString().split('T')[0]);
       setErrors([]);
     }
   }, [isOpen, client]);
@@ -66,7 +70,33 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     r.id === selectedRoutineId
   );
 
-  const handleSave = () => {
+  // Mutación para asignar la rutina
+  const mutation = useMutation({
+    mutationFn: (data: AssignRoutineFormData) => assignRoutineToClient(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-routine', client?.id] });
+      toast.success('Rutina asignada correctamente');
+      
+      if (shouldCloseRef.current) {
+        onClose();
+      } else {
+        // Resetear formulario para permitir agregar otra inmediatamente
+        setSelectedRoutineId(null);
+        setScheduleMap({});
+        setNotes('');
+        setErrors([]);
+        setSearchTerm('');
+      }
+    },
+    onError: (error: any) => {
+      console.error(error);
+      toast.error(error.message || 'Error al asignar la rutina');
+    }
+  });
+
+  const handleSave = (closeAfterSave: boolean) => {
+    shouldCloseRef.current = closeAfterSave;
+
     if (!client || !selectedRoutineId) {
       setErrors(["Debes seleccionar una rutina."]);
       return;
@@ -82,6 +112,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       routineTemplateId: selectedRoutineId,
       schedule,
       notes,
+      startDate,
     };
 
     const result = AssignRoutineSchema.safeParse(payload);
@@ -97,7 +128,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
         return;
     }
 
-    onSave(result.data);
+    // Enviamos los datos. Aseguramos que startDate vaya en el payload final.
+    mutation.mutate(result.data);
   };
 
   if (!isOpen || !client) return null;
@@ -124,7 +156,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               placeholder="Buscar por nombre..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={isLoading}
+              disabled={mutation.isPending}
               className="mb-2"
             />
             
@@ -135,7 +167,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
                 setSelectedRoutineId(Number(e.target.value));
                 setScheduleMap({});
               }}
-              disabled={isLoading}
+              disabled={mutation.isPending}
             >
               <option value="">-- Selecciona una rutina --</option>
               {filteredRoutines.map((routine: Routine) => (
@@ -149,15 +181,15 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
           {/* Mapeo de Días */}
           {selectedRoutine && selectedRoutine.days && (
             <div className="space-y-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <h4 className="font-semibold text-gray-800 text-sm uppercase tracking-wider">Planificación Semanal</h4>
-              <p className="text-xs text-gray-500 mb-4">Asigna qué día de la semana realizará cada sesión.</p>
+              <h4 className="font-semibold text-gray-800 text-sm uppercase tracking-wider">Agenda Semanal</h4>
+              <p className="text-xs text-gray-500 mb-4">Define qué día de la semana el alumno realizará cada sesión de la rutina.</p>
               
               {selectedRoutine.days.sort((a: any, b: any) => a.dayOrder - b.dayOrder).map((day: any) => (
                 <div key={day.id || day.dayOrder} className="flex items-center justify-between gap-4">
                   <span className="text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border shadow-sm min-w-[80px] text-center">
-                    Día {day.dayOrder}
+                    Sesión {day.dayOrder}
                   </span>
-                  <span className="text-gray-400">➜</span>
+                  <span className="text-gray-400 text-xs">se realiza el</span>
                   <select
                     className="flex-1 h-10 px-3 bg-white border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-sm"
                     value={scheduleMap[day.dayOrder] || ''}
@@ -173,12 +205,20 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
             </div>
           )}
 
+          <Input
+            label="Fecha de Inicio"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            disabled={mutation.isPending}
+          />
+
           <TextArea
             label="Notas / Observaciones"
             placeholder="Instrucciones especiales para el alumno..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            disabled={isLoading}
+            disabled={mutation.isPending}
           />
 
           {errors.length > 0 && (
@@ -188,11 +228,16 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-between gap-3">
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button variant="primary" onClick={handleSave} disabled={isLoading}>
-            {isLoading ? 'Asignando...' : 'Confirmar Asignación'}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={() => handleSave(false)} disabled={mutation.isPending}>
+              Guardar y Agregar Otra
+            </Button>
+            <Button variant="primary" onClick={() => handleSave(true)} disabled={mutation.isPending}>
+              {mutation.isPending ? 'Asignando...' : 'Confirmar y Cerrar'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>,

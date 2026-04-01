@@ -26,16 +26,17 @@ public class AssistanceService {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto){
+    public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
         Client client = clientRepository.findById(dto.getIdClient())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+dto.getIdProfessor()));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdProfessor()));
         Assistance assistance = AssistanceMapper.toEntity(client, professor, dto);
+        assistance = assistanceRepository.save(assistance);
         return AssistanceMapper.toDTO(assistance);
     }
 
-    public List<AssistanceResponseDTO> getAssistanceByClient(Long idClient){
+    public List<AssistanceResponseDTO> getAssistanceByClient(Long idClient) {
         List<Assistance> assistance = assistanceRepository.findByClientId(idClient);
 
         return assistance.stream()
@@ -43,14 +44,12 @@ public class AssistanceService {
                 .toList();
     }
 
-    public List<AssistanceResponseDTO> getAssistanceByDate(LocalDate date){
+    public List<AssistanceResponseDTO> getAssistanceByDate(LocalDate date) {
         List<Assistance> assistance = assistanceRepository.findByDate(date);
 
         return assistance.stream()
                 .map(AssistanceMapper::toDTO)
                 .toList();
     }
-
-
 
 }

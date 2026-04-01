@@ -14,37 +14,42 @@ import java.util.List;
 @Component
 public class PaymentMapper {
 
-    public static PaymentResponseDTO toDTO(Payment payment){
+    public static PaymentResponseDTO toDTO(Payment payment) {
         PaymentResponseDTO paymentResponseDTO = new PaymentResponseDTO();
 
         paymentResponseDTO.setId(payment.getId());
         paymentResponseDTO.setAmount(payment.getAmount());
         paymentResponseDTO.setDate(payment.getDate());
         paymentResponseDTO.setIdCliente(payment.getClient().getId());
+        paymentResponseDTO.setClientName(payment.getClient().getName() + " " + payment.getClient().getLastName());
         paymentResponseDTO.setIdProfessor(payment.getProfessor().getId());
+        paymentResponseDTO
+                .setProfessorName(payment.getProfessor().getName() + " " + payment.getProfessor().getLastName());
 
-        if(payment.getPaymentType() == PaymentType.MONTHLY){
+        if (payment.getPaymentType() == PaymentType.MONTHLY) {
             paymentResponseDTO.setMonthlyType(payment.getMonthlyType().getId());
-        }else if(payment.getPaymentType() == PaymentType.PRODUCTS){
+            paymentResponseDTO.setMonthlyTypeName(payment.getMonthlyType().getType());
+        } else if (payment.getPaymentType() == PaymentType.PRODUCTS) {
             List<PaymentProductResponseDTO> products = payment.getPaymentProducts().stream().map(paymentProduct -> {
                 PaymentProductResponseDTO paymentProductResponseDTO = new PaymentProductResponseDTO();
 
                 paymentProductResponseDTO.setIdProduct(paymentProduct.getId());
                 paymentProductResponseDTO.setProductName(paymentProduct.getProduct().getProductName());
-                paymentProductResponseDTO.setQuantity(paymentProductResponseDTO.getQuantity());
-                paymentProductResponseDTO.setUnitPrice(paymentProductResponseDTO.getUnitPrice());
+                paymentProductResponseDTO.setQuantity(paymentProduct.getQuantity());
+                paymentProductResponseDTO.setUnitPrice(paymentProduct.getUnitPrice());
 
                 return paymentProductResponseDTO;
 
             }).toList();
 
-        paymentResponseDTO.setProducts(products);
+            paymentResponseDTO.setProducts(products);
 
         }
         return paymentResponseDTO;
     }
 
-    public static Payment toMonthlyEntity(MonthlyPaymentRequestDTO dto, Client client, Professor professor, MonthlyType type){
+    public static Payment toMonthlyEntity(MonthlyPaymentRequestDTO dto, Client client, Professor professor,
+            MonthlyType type) {
         Payment payment = new Payment();
 
         payment.setClient(client);
@@ -56,7 +61,8 @@ public class PaymentMapper {
         return payment;
     }
 
-    public static Payment toProductEntity(MonthlyPaymentRequestDTO dto, Client client, Professor professor, List<PaymentProduct> products, double total){
+    public static Payment toProductEntity(MonthlyPaymentRequestDTO dto, Client client, Professor professor,
+            List<PaymentProduct> products, double total) {
         Payment payment = new Payment();
 
         payment.setClient(client);
@@ -68,12 +74,13 @@ public class PaymentMapper {
         return payment;
     }
 
-    public static List<PaymentProduct> toPaymentProductList(List<ProductDetailRequestDTO> dto, List<Product> products){
+    public static List<PaymentProduct> toPaymentProductList(List<ProductDetailRequestDTO> dto, List<Product> products) {
         return dto.stream().map(details -> {
             Product product = products.stream()
                     .filter(p -> p.getId().equals(details.getIdProduct()))
                     .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " +details.getIdProduct()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Product not found with id: " + details.getIdProduct()));
 
             PaymentProduct paymentProduct = new PaymentProduct();
             paymentProduct.setProduct(product);
@@ -84,7 +91,7 @@ public class PaymentMapper {
         }).toList();
     }
 
-    public static PaymentProductResponseDTO toProductDTO(PaymentProduct paymentProduct){
+    public static PaymentProductResponseDTO toProductDTO(PaymentProduct paymentProduct) {
         PaymentProductResponseDTO paymentProductResponseDTO = new PaymentProductResponseDTO();
 
         paymentProductResponseDTO.setQuantity(paymentProductResponseDTO.getQuantity());
@@ -94,6 +101,5 @@ public class PaymentMapper {
 
         return paymentProductResponseDTO;
     }
-
 
 }

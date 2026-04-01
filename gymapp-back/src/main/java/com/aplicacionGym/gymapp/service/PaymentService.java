@@ -29,14 +29,16 @@ public class PaymentService {
     @Autowired
     private PaymentProductRepository paymentProductRepository;
 
-    public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto){
+    public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto) {
         Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
-                        .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                        .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+dto.getIdProfessor()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
         MonthlyType monthlyType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
-                        .orElseThrow(() -> new ResourceNotFoundException("Monthly Type not found with id: "+dto.getIdMonthlyType()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Monthly Type not found with id: " + dto.getIdMonthlyType()));
         payment.setDate(dto.getDate());
         payment.setPaymentType(PaymentType.MONTHLY);
         payment.setMonthlyType(monthlyType);
@@ -49,12 +51,13 @@ public class PaymentService {
         return PaymentMapper.toDTO(payment);
     }
 
-    public PaymentResponseDTO createProductPayment(ProductPaymentRequestDTO dto){
+    public PaymentResponseDTO createProductPayment(ProductPaymentRequestDTO dto) {
         Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+dto.getIdProfessor()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
 
         payment.setClient(client);
         payment.setProfessor(professor);
@@ -62,10 +65,19 @@ public class PaymentService {
         payment.setPaymentType(PaymentType.PRODUCTS);
 
         List<PaymentProduct> productsPayment = dto.getProducts().stream().map(productDetailRequestDTO -> {
-            PaymentProduct paymentProduct = new PaymentProduct();
             Product product = productRepository.findById(productDetailRequestDTO.getIdProduct())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " +productDetailRequestDTO.getIdProduct()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Product not found with id: " + productDetailRequestDTO.getIdProduct()));
 
+            if (product.getStock() < productDetailRequestDTO.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
+            }
+
+            // Decrease stock
+            product.setStock(product.getStock() - productDetailRequestDTO.getQuantity());
+            productRepository.save(product);
+
+            PaymentProduct paymentProduct = new PaymentProduct();
             paymentProduct.setProduct(product);
             paymentProduct.setQuantity(productDetailRequestDTO.getQuantity());
             paymentProduct.setClient(client);
@@ -88,21 +100,21 @@ public class PaymentService {
         return PaymentMapper.toDTO(payment);
     }
 
-    public List<PaymentResponseDTO> getPaymentsByProfessor(Long id){
+    public List<PaymentResponseDTO> getPaymentsByProfessor(Long id) {
         List<Payment> payments = paymentRepository.findByProfessorId(id);
         return payments.stream()
                 .map(PaymentMapper::toDTO)
                 .toList();
     }
 
-    public List<PaymentResponseDTO> getPaymentsByClient(Long id){
+    public List<PaymentResponseDTO> getPaymentsByClient(Long id) {
         List<Payment> payments = paymentRepository.findByClientId(id);
         return payments.stream()
                 .map(PaymentMapper::toDTO)
                 .toList();
     }
 
-    public List<PaymentResponseDTO> getAllPayments(){
+    public List<PaymentResponseDTO> getAllPayments() {
         List<Payment> payments = paymentRepository.findAll();
         return payments.stream()
                 .map(PaymentMapper::toDTO)

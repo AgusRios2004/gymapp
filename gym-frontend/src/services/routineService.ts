@@ -27,3 +27,8 @@ export const getRoutineById = async (routineId: number): Promise<Routine> => {
     const response = await api.get<ApiResponse<Routine>>(`${path}/${routineId}`);
     return response.data.data;
 }
+
+export const assignRoutineToClient = async (data: any): Promise<any> => {
+    const response = await api.post<ApiResponse<any>>(`${path}/assign`, data);
+    return response.data.data;
+}

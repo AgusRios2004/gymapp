@@ -7,6 +7,10 @@ export interface Person {
     email?: string;
 }
 
+export interface Professor extends Person {
+    active: boolean;
+}
+
 export interface RoutineExercise {
     id?: number;
     exerciseId?: number;
@@ -45,4 +49,101 @@ export interface AssignRoutineRequest {
     clientId: number;
     routineTemplateId: number;
     schedule: ClientScheduleMap[];
+}
+
+export interface MonthlyType {
+    id: number;
+    type: string;
+    price: number;
+    durationDays: number;
+}
+
+export interface Product {
+    id: number;
+    productName: string;
+    price: number;
+    stock: number;
+    administratorId?: number;
+}
+
+export interface Payment {
+    id: number;
+    amount: number;
+    date: string;
+    paymentType: 'MONTHLY' | 'PRODUCTS';
+    clientName?: string;
+    professorName?: string;
+    monthlyTypeName?: string;
+}
+
+export interface MonthlyPaymentRequest {
+    idClient: number;
+    idProfessor: number;
+    idMonthlyType: number;
+    date: string;
+}
+
+export interface ProductDetailRequest {
+    idProduct: number;
+    quantity: number;
+}
+
+export interface ProductPaymentRequest {
+    idClient: number;
+    idProfessor: number;
+    products: ProductDetailRequest[];
+    date: string;
+}
+
+export interface DashboardStats {
+    totalClients: number;
+    activeClients: number;
+    totalProfessors: number;
+    totalRoutines: number;
+    monthlyRevenue: number;
+    lowStockCount: number;
+}
+
+export interface Assistance {
+    idClient: number;
+    clientName: string;
+    idProfessor: number;
+    professorName: string;
+    date: string;
+    inputHour: string;
+}
+
+export interface ProductPurchased {
+    nameProduct: string;
+    date: string;
+    price: number;
+    quantity: number;
+}
+
+export interface PhysicalRecord {
+    id: number;
+    clientId: number;
+    date: string;
+    weight: number;
+    muscleMass: number;
+    fatPercentage: number;
+    notes?: string;
+}
+
+export interface User {
+    id: number;
+    name: string;
+    lastName: string;
+    email: string;
+    role: 'ADMIN' | 'PROFESSOR';
+}
+
+export interface GroupClass {
+    id: number;
+    className: string;
+    professor: Professor;
+    dayOfWeek: string;
+    startTime: string;
+    endTime: string;
+    capacity: number;
 }

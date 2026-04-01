@@ -43,6 +43,8 @@ export const ClientSchema = z.object({
 export const AssignRoutineSchema = z.object({
     clientId: z.number(),
     routineTemplateId: z.number({ error: "Debes seleccionar una rutina" }),
+    startDate: z.string().optional(),
+    notes: z.string().optional(),
     schedule: z.array(z.object({
         dayOrder: z.number(),
         assignedDay: z.string().min(1, "Debes asignar un día de la semana"),
