@@ -29,7 +29,7 @@ public class RoutineMapper {
     private static RoutineDayResponseDTO mapRoutineDayToDTO(RoutineDay day) {
         RoutineDayResponseDTO dto = new RoutineDayResponseDTO();
         dto.setId(day.getId());
-        dto.setDay(day.getDay());
+        dto.setDayOrder(day.getDayOrder());
 
         List<RoutineExerciseResponseDTO> exerciseDTOs = day.getExercises()
                 .stream()

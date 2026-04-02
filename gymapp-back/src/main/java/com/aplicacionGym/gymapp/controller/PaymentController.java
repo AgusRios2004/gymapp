@@ -2,7 +2,6 @@ package com.aplicacionGym.gymapp.controller;
 
 import com.aplicacionGym.gymapp.dto.request.MonthlyPaymentRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.ProductPaymentRequestDTO;
-import com.aplicacionGym.gymapp.dto.response.PaymentProductResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.PaymentResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;

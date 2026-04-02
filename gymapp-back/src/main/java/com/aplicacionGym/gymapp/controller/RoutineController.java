@@ -39,7 +39,7 @@ public class RoutineController {
     @PutMapping("/{id}")
     private ResponseEntity<WebApiResponse> updateRoutine(@PathVariable Long id, @RequestBody RoutineRequestDTO routineRequestDTO){
         RoutineResponseDTO routineUpdated = routineService.updateRoutine(id, routineRequestDTO);
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine updated successfully", routineRequestDTO));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine updated successfully", routineUpdated));
     }
 
     @DeleteMapping("/{id}")

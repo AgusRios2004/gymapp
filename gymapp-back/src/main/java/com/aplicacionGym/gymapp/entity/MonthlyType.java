@@ -16,13 +16,16 @@ public class MonthlyType {
 
     private double price;
 
+    private int durationDays;
+
     public MonthlyType() {
     }
 
-    public MonthlyType(Long id, String type, double price) {
+    public MonthlyType(Long id, String type, double price, int durationDays) {
         this.id = id;
         this.type = type;
         this.price = price;
+        this.durationDays = durationDays;
     }
 
     public Long getId() {
@@ -47,5 +50,13 @@ public class MonthlyType {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getDurationDays() {
+        return durationDays;
+    }
+
+    public void setDurationDays(int durationDays) {
+        this.durationDays = durationDays;
     }
 }

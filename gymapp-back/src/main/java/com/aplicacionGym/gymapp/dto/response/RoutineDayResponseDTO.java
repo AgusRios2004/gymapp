@@ -1,11 +1,10 @@
 package com.aplicacionGym.gymapp.dto.response;
 
-import java.time.DayOfWeek;
 import java.util.List;
 
 public class RoutineDayResponseDTO {
     private Long id;
-    private DayOfWeek day;
+    private Integer dayOrder;
     private List<RoutineExerciseResponseDTO> exercises;
 
     public RoutineDayResponseDTO() {
@@ -19,12 +18,12 @@ public class RoutineDayResponseDTO {
         this.id = id;
     }
 
-    public DayOfWeek getDay() {
-        return day;
+    public Integer getDayOrder() {
+        return dayOrder;
     }
 
-    public void setDay(DayOfWeek day) {
-        this.day = day;
+    public void setDayOrder(Integer dayOrder) {
+        this.dayOrder = dayOrder;
     }
 
     public List<RoutineExerciseResponseDTO> getExercises() {

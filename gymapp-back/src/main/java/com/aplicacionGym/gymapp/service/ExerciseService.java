@@ -1,7 +1,6 @@
 package com.aplicacionGym.gymapp.service;
 
 import com.aplicacionGym.gymapp.entity.Exercise;
-import com.aplicacionGym.gymapp.exception.ExerciseInUseException;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.repository.ExerciseRepository;
 import com.aplicacionGym.gymapp.repository.RoutineExerciseRepository;

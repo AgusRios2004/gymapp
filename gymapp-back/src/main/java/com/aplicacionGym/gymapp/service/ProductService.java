@@ -17,39 +17,40 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-     @Autowired
-     private AdministratorRepository administratorRepository;
+    @Autowired
+    private AdministratorRepository administratorRepository;
 
-    public Optional<Product> getProductById(Long id){
+    public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product createProduct(Product product){
+    public Product createProduct(Product product) {
         Administrator admin = administratorRepository.findById(product.getAdministrator().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Admin not found with id: " +product.getAdministrator().getId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Admin not found with id: " + product.getAdministrator().getId()));
         product.setAdministrator(admin);
         return productRepository.save(product);
     }
 
-    public Optional<Product> updateProduct(Long id, Product productUpdated){
+    public Optional<Product> updateProduct(Long id, Product productUpdated) {
         return productRepository.findById(id)
-            .map(product -> {
-                product.setProductName(productUpdated.getProductName());
-                product.setAdministrator(productUpdated.getAdministrator());
-                product.setPrice(productUpdated.getPrice());
-                return product;
-            });
+                .map(product -> {
+                    product.setProductName(productUpdated.getProductName());
+                    product.setAdministrator(productUpdated.getAdministrator());
+                    product.setPrice(productUpdated.getPrice());
+                    product.setStock(productUpdated.getStock());
+                    return productRepository.save(product);
+                });
     }
 
-    public void deleteProduct(Long id){
+    public void deleteProduct(Long id) {
         productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         productRepository.deleteById(id);
     }
-
 
 }

@@ -1,10 +1,14 @@
 package com.aplicacionGym.gymapp.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.DayOfWeek;
 import java.util.List;
 
+@Getter @Setter
+@NoArgsConstructor
 @Entity
 public class RoutineDay {
 
@@ -12,9 +16,8 @@ public class RoutineDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "day_week")
-    private DayOfWeek day; // Enum: MONDAY, TUESDAY...
+    @Column(name = "day_order")
+    private int dayOrder;
 
     @ManyToOne
     private Routine routine;
@@ -22,45 +25,9 @@ public class RoutineDay {
     @OneToMany(mappedBy = "routineDay", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineExercise> exercises;
 
-    public RoutineDay() {
-    }
-
-    public RoutineDay(Long id, Routine routine, DayOfWeek day, List<RoutineExercise> exercises) {
-        this.id = id;
+    // Constructor limpio
+    public RoutineDay(Routine routine, int dayOrder) {
         this.routine = routine;
-        this.day = day;
-        this.exercises = exercises;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public DayOfWeek getDay() {
-        return day;
-    }
-
-    public void setDay(DayOfWeek day) {
-        this.day = day;
-    }
-
-    public List<RoutineExercise> getExercises() {
-        return exercises;
-    }
-
-    public void setExercises(List<RoutineExercise> exercises) {
-        this.exercises = exercises;
-    }
-
-    public Routine getRoutine() {
-        return routine;
-    }
-
-    public void setRoutine(Routine routine) {
-        this.routine = routine;
+        this.dayOrder = dayOrder;
     }
 }

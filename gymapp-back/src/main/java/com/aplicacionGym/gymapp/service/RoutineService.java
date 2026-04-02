@@ -1,7 +1,6 @@
 package com.aplicacionGym.gymapp.service;
 
 import com.aplicacionGym.gymapp.dto.request.RoutineDayRequestDTO;
-import com.aplicacionGym.gymapp.dto.request.RoutineExerciseRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.entity.Exercise;
@@ -87,10 +86,11 @@ public class RoutineService {
     }
 
     private void validateUniqueDays(List<RoutineDayRequestDTO> days) {
-        Set<String> uniqueDays = new HashSet<>();
+        if (days == null) return;
+        Set<Integer> uniqueDays = new HashSet<>();
         for (RoutineDayRequestDTO day : days) {
-            if (!uniqueDays.add(day.getDay().name())) {
-                throw new IllegalArgumentException("Duplicate day found in routine: " + day.getDay());
+            if (!uniqueDays.add(day.getDayOrder())) {
+                throw new IllegalArgumentException("Duplicate day found in routine: " + day.getDayOrder());
             }
         }
     }
@@ -102,9 +102,10 @@ public class RoutineService {
     }
 
     private List<RoutineDay> mapDaysToRoutine(List<RoutineDayRequestDTO> daysDTO, Routine routine) {
+        if (daysDTO == null) return List.of();
         return daysDTO.stream().map(dayDTO -> {
             RoutineDay day = new RoutineDay();
-            day.setDay(dayDTO.getDay());
+            day.setDayOrder(dayDTO.getDayOrder());
             day.setRoutine(routine);
 
             List<RoutineExercise> routineExercises = dayDTO.getExercises().stream().map(exDTO -> {

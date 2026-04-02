@@ -18,19 +18,15 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
-    @JoinTable(
-            name = "client_routines",
-            joinColumns = @JoinColumn(name = "client_id"),
-            inverseJoinColumns = @JoinColumn(name = "routine_id")
-    )
-    private List<Routine> routines;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<ClientRoutine> activeRoutines;
 
     private String name;
 
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(unique = true, nullable = false)
     private String dni;
 
     private String phone;
@@ -40,5 +36,13 @@ public class Client {
     @ManyToOne
     @JoinColumn(name = "routine_active_id")
     private Routine routineActive;
+
+    @ManyToMany
+    @JoinTable(
+            name = "clients_routines",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "routine_id")
+    )
+    private List<Routine> routines;
 
 }
