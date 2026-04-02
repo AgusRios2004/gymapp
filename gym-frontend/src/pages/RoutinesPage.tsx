@@ -33,8 +33,8 @@ const RoutinesPage: React.FC = () => {
       toast.success('Rutina eliminada correctamente');
       setRoutineToDelete(null);
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al eliminar la rutina');
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al obtener rutinas');
     }
   });
 

@@ -4,13 +4,13 @@ import com.aplicacionGym.gymapp.dto.request.AssistanceRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.AssistanceResponseDTO;
 import com.aplicacionGym.gymapp.entity.Assistance;
 import com.aplicacionGym.gymapp.entity.Client;
-import com.aplicacionGym.gymapp.entity.Professor;
+import com.aplicacionGym.gymapp.entity.Person;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.AssistanceMapper;
 import com.aplicacionGym.gymapp.entity.Payment;
 import com.aplicacionGym.gymapp.repository.AssistanceRepository;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
-import com.aplicacionGym.gymapp.repository.ProfessorRepository;
+import com.aplicacionGym.gymapp.repository.PersonRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class AssistanceService {
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private ProfessorRepository professorRepository;
+    private PersonRepository personRepository;
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -43,11 +43,11 @@ public class AssistanceService {
             throw new RuntimeException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
         }
 
-        Professor professor = professorRepository.findById(dto.getIdProfessor())
+        Person staff = personRepository.findById(dto.getIdProfessor())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
+                        () -> new ResourceNotFoundException("Staff member not found with id: " + dto.getIdProfessor()));
 
-        Assistance assistance = AssistanceMapper.toEntity(client, professor, dto);
+        Assistance assistance = AssistanceMapper.toEntity(client, staff, dto);
         assistance = assistanceRepository.save(assistance);
         return AssistanceMapper.toDTO(assistance);
     }

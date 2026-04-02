@@ -34,7 +34,7 @@ const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClo
           {routine.days && routine.days.length > 0 ? (
             [...routine.days].sort((a, b) => a.dayOrder - b.dayOrder).map((day) => {
               // Fallback: intenta leer 'routineExercises' o 'exercises' para evitar errores si el nombre cambia
-              const exercises = day.routineExercises || (day as any).exercises || [];
+              const exercises = day.routineExercises || (day as unknown as { exercises: typeof day.routineExercises }).exercises || [];
               
               return (
               <div key={day.id || day.dayOrder} className="border border-gray-200 rounded-2xl overflow-hidden shadow-sm">

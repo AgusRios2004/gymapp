@@ -37,6 +37,7 @@ export interface Routine {
 
 export interface Client extends Person {
     active: boolean;
+    isDebtor?: boolean;
     activeRoutineId?: number | null; 
 }
 
@@ -74,6 +75,10 @@ export interface Payment {
     clientName?: string;
     professorName?: string;
     monthlyTypeName?: string;
+    paymentProducts?: {
+        productName: string;
+        quantity: number;
+    }[];
 }
 
 export interface MonthlyPaymentRequest {
@@ -102,6 +107,7 @@ export interface DashboardStats {
     totalRoutines: number;
     monthlyRevenue: number;
     lowStockCount: number;
+    debtorsCount: number;
 }
 
 export interface Assistance {

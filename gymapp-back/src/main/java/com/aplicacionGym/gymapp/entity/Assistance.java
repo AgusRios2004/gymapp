@@ -21,16 +21,17 @@ public class Assistance {
     private Client client;
 
     @ManyToOne
-    private Professor professor;
+    @JoinColumn(name = "staff_id")
+    private Person staff;
 
     private LocalDate date;
 
     @Column(name = "input_hour")
     private LocalTime inputHour;
 
-    public Assistance(Client client, Professor professor, LocalDate date, LocalTime inputHour) {
+    public Assistance(Client client, Person staff, LocalDate date, LocalTime inputHour) {
         this.client = client;
-        this.professor = professor;
+        this.staff = staff;
         this.date = date;
         this.inputHour = inputHour;
     }

@@ -9,8 +9,11 @@ type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 const path = '/clients';
 
-export const getClients = async (active?: boolean): Promise<Client[]> => {
-    const params = active !== undefined ? { active } : {};
+export const getClients = async (active?: boolean, debtors?: boolean): Promise<Client[]> => {
+    const params: Record<string, boolean | undefined> = {};
+    if (active !== undefined) params.active = active;
+    if (debtors !== undefined) params.debtors = debtors;
+    
     const response = await api.get<ApiResponse<Client[]>>(path, { params });
     return response.data.data;
 };

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { useForm, useFieldArray, type Control, type UseFormRegister, type UseFormGetValues } from 'react-hook-form';
+import { useForm, useFieldArray, type Control, type UseFormRegister, type UseFormGetValues, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -8,7 +8,7 @@ import { X, Plus, Trash2, Dumbbell } from 'lucide-react';
 
 import { RoutineSchema } from '../../types/schema.type';
 import { updateRoutine, getRoutineById, deleteRoutine } from '../../services/routineService';
-import { getExercises } from '../../services/exerciseService';
+import { getExercises, type Exercise } from '../../services/exerciseService';
 import type { Routine } from '../../types/index';
 import type { z } from 'zod';
 import Button from '../ui/Button';
@@ -47,7 +47,7 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<RoutineFormData>({
-    resolver: zodResolver(RoutineSchema) as any,
+    resolver: zodResolver(RoutineSchema) as Resolver<RoutineFormData>,
     defaultValues: {
       name: '',
       goal: '',
@@ -62,46 +62,50 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
     name: 'days',
   });
 
-  // 2. Cargar datos al abrir
-  useEffect(() => {
-    // Usamos fullRoutine si está disponible, sino routine (aunque routine podría venir incompleto)
-    const dataToLoad = fullRoutine || routine;
+interface RawRoutineExercise {
+  id?: number;
+  exerciseId?: number;
+  exercise?: { id: number };
+  idExercise?: number;
+  exerciseName?: string;
+  sets: number;
+  repetitions: number;
+  weight?: number;
+}
 
-    // Debug: Abre la consola (F12) para ver si 'routineExercises' tiene datos y cómo se llaman sus campos
-    console.log("EditRoutineModal - Datos cargados:", dataToLoad);
+// 2. Cargar datos al abrir
+useEffect(() => {
+  const dataToLoad = fullRoutine || routine;
 
-    if (isOpen && dataToLoad) {
-      reset({
-        id: dataToLoad.id,
-        name: dataToLoad.name,
-        goal: dataToLoad.goal,
-        active: dataToLoad.active,
-        // Mapeo seguro para evitar errores si routineExercises viene nulo o con otro nombre
-        days: dataToLoad.days?.map((day) => ({
-          id: day.id,
-          dayOrder: day.dayOrder,
-          routineExercises: (day.routineExercises || (day as any).exercises || []).map((ex: any) => {
-            // 1. Intentamos obtener el ID explícito. Si no viene, buscamos por nombre en la lista cargada.
-            let resolvedExerciseId = ex.exerciseId || ex.exercise?.id || ex.idExercise;
+  if (isOpen && dataToLoad) {
+    reset({
+      id: dataToLoad.id,
+      name: dataToLoad.name,
+      goal: dataToLoad.goal,
+      active: dataToLoad.active,
+      days: dataToLoad.days?.map((day) => ({
+        id: day.id,
+        dayOrder: day.dayOrder,
+        routineExercises: (day.routineExercises || (day as unknown as { exercises: RawRoutineExercise[] }).exercises || []).map((ex: RawRoutineExercise) => {
+          let resolvedExerciseId = ex.exerciseId || ex.exercise?.id || ex.idExercise;
 
-            if (!resolvedExerciseId && ex.exerciseName && exercisesList.length > 0) {
-              const found = exercisesList.find((e: any) => e.name === ex.exerciseName);
-              if (found) resolvedExerciseId = found.id;
-            }
+          if (!resolvedExerciseId && ex.exerciseName && exercisesList.length > 0) {
+            const found = exercisesList.find((e) => e.name === ex.exerciseName);
+            if (found) resolvedExerciseId = found.id;
+          }
 
-            return {
-              id: ex.id,
-              // 2. Usamos el ID encontrado, o fallamos a ex.id (mejor que nada)
-              exerciseId: resolvedExerciseId || ex.id,
-              sets: ex.sets,
-              repetitions: ex.repetitions,
-              weight: ex.weight
-            };
-          }),
-        })) || [],
-      });
-    }
-  }, [isOpen, fullRoutine, routine, reset, exercisesList]);
+          return {
+            id: ex.id,
+            exerciseId: resolvedExerciseId || ex.id,
+            sets: ex.sets || 0,
+            repetitions: ex.repetitions || 0,
+            weight: ex.weight || 0
+          };
+        }),
+      })) || [],
+    });
+  }
+}, [isOpen, fullRoutine, routine, reset, exercisesList]);
 
   // 3. Mutación para guardar
   const mutation = useMutation({
@@ -117,19 +121,19 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
             idExercise: ex.exerciseId,
             sets: ex.sets,
             repetitions: ex.repetitions,
-            weight: ex.weight
+            weight: ex.weight || 0
           }))
         }))
       };
 
-      return updateRoutine(routine.id, payload as any);
+      return updateRoutine(routine.id, payload as unknown as Partial<Routine>);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['routines'] });
       toast.success('Rutina actualizada correctamente');
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
       toast.error(error.message || 'Error al actualizar la rutina');
     },
@@ -147,7 +151,7 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
       toast.success('Rutina eliminada correctamente');
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
       // Mensaje amigable: si falla, probablemente es porque tiene datos vinculados
       toast.error('No se pudo eliminar. Si la rutina está asignada a alumnos, prueba desactivándola (Rutina Activa: No).');
@@ -294,7 +298,7 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
 };
 
 // Subcomponente para manejar la lista anidada de ejercicios
-const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }: { nestIndex: number, control: Control<any>, register: UseFormRegister<any>, exercisesList: any[], getValues: UseFormGetValues<RoutineFormData> }) => {
+const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }: { nestIndex: number, control: Control<RoutineFormData>, register: UseFormRegister<RoutineFormData>, exercisesList: Exercise[], getValues: UseFormGetValues<RoutineFormData> }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `days.${nestIndex}.routineExercises`,
@@ -306,7 +310,7 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }
         <span className="text-xs font-bold text-gray-500 uppercase">Ejercicios</span>
         <button
           type="button"
-          onClick={() => append({ exerciseId: '', sets: 3, repetitions: 10 })}
+          onClick={() => append({ exerciseId: 0, sets: 3, repetitions: 10, weight: 0 })}
           className="text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1"
         >
           <Plus size={14} /> AGREGAR

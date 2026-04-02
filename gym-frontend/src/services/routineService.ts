@@ -1,5 +1,5 @@
 import api from '../lib/axios';
-import type { Routine } from '../types/index';
+import type { Routine, AssignRoutineRequest } from '../types/index';
 import type { ApiResponse } from '../types/api.types';
 
 const path = '/routines';
@@ -28,7 +28,6 @@ export const getRoutineById = async (routineId: number): Promise<Routine> => {
     return response.data.data;
 }
 
-export const assignRoutineToClient = async (data: any): Promise<any> => {
-    const response = await api.post<ApiResponse<any>>(`${path}/assign`, data);
-    return response.data.data;
+export const assignRoutineToClient = async (data: AssignRoutineRequest): Promise<void> => {
+    await api.post<ApiResponse<null>>(`${path}/assign`, data);
 }

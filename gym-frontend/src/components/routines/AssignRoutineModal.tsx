@@ -7,7 +7,7 @@ import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { AssignRoutineSchema } from '../../types/schema.type';
-import type { Client, Routine } from '../../types/index';
+import type { Client, Routine, AssignRoutineRequest } from '../../types/index';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { DAYS_OF_WEEK } from '../../constants/time';
 
@@ -17,8 +17,7 @@ interface AssignRoutineModalProps {
   isOpen: boolean;
   onClose: () => void;
   client: Client | null;
-  // Props opcionales para mantener compatibilidad con ClientsPage mientras se actualiza
-  onSave?: (data: any) => void;
+  onSave?: (data: AssignRoutineRequest) => void;
   isLoading?: boolean;
 }
 
@@ -41,10 +40,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const { data: routines = [] } = useQuery({
     queryKey: ['routines', 'templates'],
     queryFn: async () => {
-      // Asumimos que getRoutines acepta filtros o trae todas y filtramos aquí
       const allRoutines = await getRoutines(); 
-      // Eliminamos el filtro 'isTemplate' ya que esa propiedad no existe en tu esquema actual
-      return Array.isArray(allRoutines) ? allRoutines.filter((r: any) => r.active !== false) : [];
+      return Array.isArray(allRoutines) ? allRoutines.filter((r: Routine) => r.active !== false) : [];
     },
     enabled: isOpen, // Solo cargar cuando se abre el modal
   });
@@ -88,7 +85,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
         setSearchTerm('');
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error(error);
       toast.error(error.message || 'Error al asignar la rutina');
     }
@@ -184,7 +181,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               <h4 className="font-semibold text-gray-800 text-sm uppercase tracking-wider">Agenda Semanal</h4>
               <p className="text-xs text-gray-500 mb-4">Define qué día de la semana el alumno realizará cada sesión de la rutina.</p>
               
-              {selectedRoutine.days.sort((a: any, b: any) => a.dayOrder - b.dayOrder).map((day: any) => (
+              {[...(selectedRoutine.days || [])].sort((a, b) => (a.dayOrder || 0) - (b.dayOrder || 0)).map((day) => (
                 <div key={day.id || day.dayOrder} className="flex items-center justify-between gap-4">
                   <span className="text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border shadow-sm min-w-[80px] text-center">
                     Sesión {day.dayOrder}

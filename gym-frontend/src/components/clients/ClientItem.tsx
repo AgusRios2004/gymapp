@@ -26,6 +26,11 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${client.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {client.active ? 'Activo' : 'Inactivo'}
           </span>
+          {client.isDebtor && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-amber-100 text-amber-700">
+              Deuda
+            </span>
+          )}
         </div>
         <p className="text-sm text-gray-500 flex items-center gap-2">
           <span className="font-medium">DNI:</span> {client.dni}

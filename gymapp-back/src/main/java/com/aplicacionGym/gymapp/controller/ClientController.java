@@ -28,13 +28,22 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<WebApiResponse> getAllClients(@RequestParam(required = false) Boolean active) {
-        List<ClientResponseDTO> dto = clientService.getAllClients();
+    public ResponseEntity<WebApiResponse> getAllClients(
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) Boolean debtors) {
 
-        // Filtramos la lista en el controlador antes de enviarla
+        List<ClientResponseDTO> dto;
+
+        if (Boolean.TRUE.equals(debtors)) {
+            dto = clientService.getDebtorClients();
+        } else {
+            dto = clientService.getAllClients();
+        }
+
+        // Filtramos la lista en el controlador si se pide por estado activo
         if (active != null) {
             dto = dto.stream()
-                    .filter(c -> active.equals(c.isActive())) // Asumiendo que el DTO tiene isActive() o getActive()
+                    .filter(c -> active.equals(c.isActive()))
                     .toList();
         }
         return ResponseEntity.ok(WebApiResponseBuilder.success("Clients found successfully", dto));
@@ -60,20 +69,20 @@ public class ClientController {
     }
 
     @PostMapping("/{idClient}/routines/{idRoutine}")
-    private ResponseEntity<WebApiResponse> assignedRoutineToClient(@PathVariable Long idClient,@PathVariable Long idRoutine,@RequestParam(defaultValue = "false") boolean activeRoutine) {
+    private ResponseEntity<WebApiResponse> assignedRoutineToClient(@PathVariable Long idClient,
+            @PathVariable Long idRoutine, @RequestParam(defaultValue = "false") boolean activeRoutine) {
         ClientResponseDTO client = clientService.assignRoutine(idClient, idRoutine, activeRoutine);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine assigned successfully", client));
     }
 
-
     @GetMapping("/{idClient}/routines")
-    private ResponseEntity<WebApiResponse> getAllRoutinesByClient(@PathVariable Long idClient){
+    private ResponseEntity<WebApiResponse> getAllRoutinesByClient(@PathVariable Long idClient) {
         List<RoutineResponseDTO> routines = clientService.getAllRoutinesByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routines founds successfully", routines));
     }
 
     @PostMapping("/{idClient}/active-routine/{idRoutine}")
-    private ResponseEntity<WebApiResponse> setActiveRoutine(@PathVariable Long idClient, @PathVariable Long idRoutine){
+    private ResponseEntity<WebApiResponse> setActiveRoutine(@PathVariable Long idClient, @PathVariable Long idRoutine) {
         ClientResponseDTO client = clientService.setActiveRoutine(idClient, idRoutine);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine set as active successfully!", client));
     }

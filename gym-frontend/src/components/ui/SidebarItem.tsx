@@ -7,9 +7,10 @@ interface SidebarItemProps {
   icon: ReactNode;
   end?: boolean;
   relatedPaths?: string[];
+  onClick?: () => void;
 }
 
-export const SidebarItem = ({ path, label, icon, end, relatedPaths }: SidebarItemProps) => {
+export const SidebarItem = ({ path, label, icon, end, relatedPaths, onClick }: SidebarItemProps) => {
   const location = useLocation();
   const isRelatedActive = relatedPaths?.some((p) => location.pathname.startsWith(p));
 
@@ -17,6 +18,7 @@ export const SidebarItem = ({ path, label, icon, end, relatedPaths }: SidebarIte
     <NavLink
       to={path}
       end={end}
+      onClick={onClick}
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
           isActive || isRelatedActive

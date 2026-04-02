@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag } from 'lucide-react';
+import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle } from 'lucide-react';
 import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../types/index';
 
@@ -75,7 +75,7 @@ export default function DashboardPage() {
         <p className="text-gray-500">Resumen general de tu centro deportivo</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <StatCard 
           title="Total Alumnos"
           value={stats.totalClients}
@@ -104,6 +104,13 @@ export default function DashboardPage() {
           color="bg-amber-500"
           description="Recaudación mensual total"
         />
+        <StatCard 
+          title="Deudores"
+          value={stats.debtorsCount}
+          icon={<AlertCircle size={24} />}
+          color="bg-red-500"
+          description="Alumnos con pago vencido"
+        />
       </div>
 
       {stats.lowStockCount > 0 && (
@@ -113,6 +120,16 @@ export default function DashboardPage() {
               <p className="font-medium">Atención: Tienes {stats.lowStockCount} productos con stock crítico.</p>
            </div>
            <a href="/products" className="text-red-700 font-bold hover:underline">Gestionar Stock →</a>
+        </div>
+      )}
+
+      {stats.debtorsCount > 0 && (
+        <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl flex items-center justify-between">
+           <div className="flex items-center gap-3 text-amber-700">
+              <Users size={20} />
+              <p className="font-medium">Atención: Hay {stats.debtorsCount} alumnos con la cuota vencida o sin pagar.</p>
+           </div>
+           <a href="/clients" className="text-amber-700 font-bold hover:underline">Ver Alumnos →</a>
         </div>
       )}
 

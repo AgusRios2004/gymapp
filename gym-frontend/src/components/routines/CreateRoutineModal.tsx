@@ -5,9 +5,9 @@ import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { RoutineSchema } from '../../types/schema.type';
-import type { RoutineDay, RoutineExercise } from '../../types/index';
+import type { Routine, RoutineDay, RoutineExercise } from '../../types/index';
 import { createRoutine } from '../../services/routineService';
-import { getExercises } from '../../services/exerciseService'; 
+import { getExercises, type Exercise } from '../../services/exerciseService'; 
 
 interface CreateRoutineModalProps {
   isOpen: boolean;
@@ -62,7 +62,7 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
     setDays(newDays);
   };
 
-  const updateExercise = (dayIndex: number, exIndex: number, field: keyof RoutineExercise, value: any) => {
+  const updateExercise = (dayIndex: number, exIndex: number, field: keyof RoutineExercise, value: string | number | undefined) => {
     const newDays = [...days];
     newDays[dayIndex].routineExercises[exIndex] = {
       ...newDays[dayIndex].routineExercises[exIndex],
@@ -83,7 +83,7 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
       queryClient.invalidateQueries({ queryKey: ['routines'] });
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       setErrors([error.message || 'Error al crear la rutina']);
     }
   });
@@ -117,7 +117,7 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
       }))
     };
 
-    mutate(payload as any); // Cast necesario si tus tipos de servicio difieren ligeramente
+    mutate(payload as unknown as Partial<Routine>); // Cast necesario para el DTO
   };
 
   if (!isOpen) return null;
@@ -179,7 +179,7 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                           onChange={(e) => updateExercise(dayIndex, exIndex, 'exerciseId', Number(e.target.value))}
                         >
                           <option value="">Seleccionar...</option>
-                          {exercises.map((e: any) => (
+                          {exercises.map((e: Exercise) => (
                             <option key={e.id} value={e.id}>{e.name}</option>
                           ))}
                         </select>

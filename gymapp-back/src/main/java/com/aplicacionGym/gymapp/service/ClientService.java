@@ -11,7 +11,10 @@ import com.aplicacionGym.gymapp.mapper.ClientMapper;
 import com.aplicacionGym.gymapp.mapper.RoutineMapper;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.PaymentProductRepository;
+import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.entity.Payment;
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,10 @@ public class ClientService {
     private RoutineRepository routineRepository;
     @Autowired
     private PaymentProductRepository paymentProductRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
-    public ClientResponseDTO createClient(Client client){
+    public ClientResponseDTO createClient(Client client) {
         if (client.getDni() != null) {
             client.setDni(client.getDni().trim());
         }
@@ -45,27 +50,56 @@ public class ClientService {
     public List<ClientResponseDTO> getAllClients() {
         return clientRepository.findAll()
                 .stream()
-                .map(ClientMapper::toDTO)
+                .map(this::mapToDTOWithDebtorStatus)
                 .toList();
     }
 
     public List<ClientResponseDTO> getActiveClients() {
         return clientRepository.findByActiveTrue()
                 .stream()
-                .map(ClientMapper::toDTO)
+                .map(this::mapToDTOWithDebtorStatus)
                 .toList();
     }
 
     public List<ClientResponseDTO> getInactiveClients() {
         return clientRepository.findByActiveFalse()
                 .stream()
-                .map(ClientMapper::toDTO)
+                .map(this::mapToDTOWithDebtorStatus)
                 .toList();
+    }
+
+    public List<ClientResponseDTO> getDebtorClients() {
+        List<Client> activeClients = clientRepository.findByActiveTrue();
+        return activeClients.stream()
+                .filter(this::isDebtor)
+                .map(c -> {
+                    ClientResponseDTO dto = ClientMapper.toDTO(c);
+                    dto.setDebtor(true);
+                    return dto;
+                })
+                .toList();
+    }
+
+    private boolean isDebtor(Client c) {
+        Optional<Payment> lastPayment = paymentRepository
+                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(c.getId());
+        if (lastPayment.isEmpty())
+            return true;
+        LocalDate expirationDate = lastPayment.get().getExpirationDate();
+        return expirationDate == null || expirationDate.isBefore(LocalDate.now());
+    }
+
+    private ClientResponseDTO mapToDTOWithDebtorStatus(Client c) {
+        ClientResponseDTO dto = ClientMapper.toDTO(c);
+        if (c.isActive()) {
+            dto.setDebtor(isDebtor(c));
+        }
+        return dto;
     }
 
     public Optional<ClientResponseDTO> getClientById(Long id) {
         return clientRepository.findById(id)
-                .map(ClientMapper :: toDTO);
+                .map(ClientMapper::toDTO);
     }
 
     public ClientResponseDTO updateClient(Long id, Client updatedClient) {
@@ -95,7 +129,6 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-
     public ClientResponseDTO assignRoutine(Long idClient, Long idRoutine, boolean setAsActive) {
         Client saved = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
@@ -117,15 +150,15 @@ public class ClientService {
         return ClientMapper.toDTO(client);
     }
 
-    public List<RoutineResponseDTO> getAllRoutinesByClient(Long idClient){
+    public List<RoutineResponseDTO> getAllRoutinesByClient(Long idClient) {
         Client client = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
         return client.getRoutines().stream()
-            .map(RoutineMapper::toDTO)
-            .toList();
+                .map(RoutineMapper::toDTO)
+                .toList();
     }
 
-    public ClientResponseDTO setActiveRoutine(Long idClient, Long idRoutine){
+    public ClientResponseDTO setActiveRoutine(Long idClient, Long idRoutine) {
         Client client = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
 
@@ -139,9 +172,9 @@ public class ClientService {
         return ClientMapper.toDTO(client);
     }
 
-    public List<ProductsPurchasedResponseDTO> getProductsPurchasedByClient(Long id){
+    public List<ProductsPurchasedResponseDTO> getProductsPurchasedByClient(Long id) {
         clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
         List<PaymentProduct> paymentProducts = paymentProductRepository.findByClientId(id);
         return paymentProducts.stream().map(purchase -> {
             ProductsPurchasedResponseDTO dto = new ProductsPurchasedResponseDTO();

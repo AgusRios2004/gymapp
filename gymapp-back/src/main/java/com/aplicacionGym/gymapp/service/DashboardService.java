@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import com.aplicacionGym.gymapp.entity.Client;
+import com.aplicacionGym.gymapp.entity.Payment;
 
 @Service
 public class DashboardService {
@@ -39,6 +43,23 @@ public class DashboardService {
 
         // Count low stock products
         stats.setLowStockCount(productRepository.countByStockLessThan(5));
+
+        // Calculate Debtors
+        List<Client> activeClients = clientRepository.findByActiveTrue();
+        long debtors = 0;
+        for (Client c : activeClients) {
+            Optional<Payment> lastPayment = paymentRepository
+                    .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(c.getId());
+            if (lastPayment.isEmpty()) {
+                debtors++; // Activo pero nunca pago
+            } else {
+                LocalDate expirationDate = lastPayment.get().getExpirationDate();
+                if (expirationDate == null || expirationDate.isBefore(LocalDate.now())) {
+                    debtors++;
+                }
+            }
+        }
+        stats.setDebtorsCount(debtors);
 
         return stats;
     }

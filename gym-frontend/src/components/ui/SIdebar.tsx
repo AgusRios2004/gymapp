@@ -3,11 +3,15 @@ import { SidebarItem } from './SidebarItem';
 import logo from '../../assets/funcional kids.jpeg';
 import { useAuth } from '../../context/AuthContext';
 
-export const Sidebar = () => {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export const Sidebar = ({ onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col fixed left-0 top-4 h-full z-10 font-sans">
+    <aside className="w-64 bg-white border-r border-gray-200 h-full flex flex-col z-10 font-sans shadow-2xl lg:shadow-none">
         
         <div className="flex flex-col items-center justify-center h-22 border-b border-gray-200 p-4">
             <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">Functional</span>
@@ -22,11 +26,13 @@ export const Sidebar = () => {
           label="Dashboard" 
           icon={<LayoutDashboard size={20} />} 
           end
+          onClick={onClose}
         />
         <SidebarItem 
           path="/clients" 
           label="Alumnos" 
           icon={<Users size={20} />} 
+          onClick={onClose}
         />
         {user?.role === 'ADMIN' && (
           <>
@@ -34,11 +40,13 @@ export const Sidebar = () => {
               path="/staff" 
               label="Personal" 
               icon={<ShieldPlus size={20} />} 
+              onClick={onClose}
             />
             <SidebarItem 
               path="/plans" 
               label="Planes" 
               icon={<Tag size={20} />} 
+              onClick={onClose}
             />
           </>
         )}
@@ -46,32 +54,38 @@ export const Sidebar = () => {
           path="/payments" 
           label="Pagos" 
           icon={<CreditCard size={20} />} 
+          onClick={onClose}
         />
 
         <SidebarItem 
           path="/exercises" 
           label="Ejercicios" 
           icon={<Dumbbell size={20} />} 
+          onClick={onClose}
         />
         <SidebarItem 
           path="/routines" 
           label="Rutinas" 
           icon={<PersonStanding size={20} />} 
+          onClick={onClose}
         />
         <SidebarItem 
           path="/attendance" 
           label="Asistencia" 
           icon={<UserCheck size={20} />} 
+          onClick={onClose}
         />
         <SidebarItem 
           path="/products" 
           label="Tienda y Stock" 
           icon={<Tag size={20} />} 
+          onClick={onClose}
         />
         <SidebarItem 
           path="/classes" 
           label="Clases" 
           icon={<LayoutDashboard size={20} />} 
+          onClick={onClose}
         />
       </nav>
       

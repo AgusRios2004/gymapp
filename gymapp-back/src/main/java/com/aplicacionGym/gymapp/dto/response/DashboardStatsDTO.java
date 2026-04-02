@@ -16,4 +16,5 @@ public class DashboardStatsDTO {
     private long totalRoutines;
     private double monthlyRevenue;
     private long lowStockCount;
+    private long debtorsCount;
 }

@@ -19,7 +19,7 @@ export default function ClientsPage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   // 1. Estado inicial: Solo 'active' para no cargar todos al principio
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('active');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'debtors'>('active');
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -31,9 +31,9 @@ export default function ClientsPage() {
     queryKey: ['clients', filterStatus], // Al cambiar filterStatus, React Query refesca
     queryFn: async () => {
       // Mapeamos el estado del filtro a booleano o undefined para el servicio
-      const activeParam = filterStatus === 'all' ? undefined : filterStatus === 'active';
-      // Nota: Asegúrate de actualizar getClients en clientService.ts para aceptar este parámetro
-      const data = await getClients(activeParam);
+      const activeParam = filterStatus === 'all' ? undefined : (filterStatus === 'inactive' ? false : (filterStatus === 'active' ? true : undefined));
+      const debtorsParam = filterStatus === 'debtors';
+      const data = await getClients(activeParam, debtorsParam);
       return Array.isArray(data) ? data : [];
     }
   });
@@ -193,6 +193,14 @@ export default function ClientsPage() {
             }`}
           >
             Inactivos
+          </button>
+          <button
+            onClick={() => setFilterStatus('debtors')}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              filterStatus === 'debtors' ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Deudores
           </button>
         </div>
       </div>
