@@ -11,6 +11,11 @@ RUN npm ci
 
 # Copiamos el resto del código y construimos
 COPY . .
+
+# Argumento para la URL de la API (Render lo pasará durante el build)
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN npm run build
 
 # Etapa 2: Servidor Producción (Nginx)
