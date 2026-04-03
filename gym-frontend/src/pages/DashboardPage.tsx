@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle } from 'lucide-react';
 import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../types/index';
@@ -119,7 +120,7 @@ export default function DashboardPage() {
               <Tag size={20} />
               <p className="font-medium">Atención: Tienes {stats.lowStockCount} productos con stock crítico.</p>
            </div>
-           <a href="/products" className="text-red-700 font-bold hover:underline">Gestionar Stock →</a>
+           <Link to="/products" className="text-red-700 font-bold hover:underline">Gestionar Stock →</Link>
         </div>
       )}
 
@@ -129,7 +130,7 @@ export default function DashboardPage() {
               <Users size={20} />
               <p className="font-medium">Atención: Hay {stats.debtorsCount} alumnos con la cuota vencida o sin pagar.</p>
            </div>
-           <a href="/clients?filter=debtors" className="text-amber-700 font-bold hover:underline">Ver Alumnos →</a>
+           <Link to="/clients?filter=debtors" className="text-amber-700 font-bold hover:underline">Ver Alumnos →</Link>
         </div>
       )}
 
@@ -171,18 +172,18 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-3xl text-white shadow-xl shadow-gray-200/50">
           <h3 className="text-xl font-bold mb-4">Acciones Rápidas</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <a href="/clients" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
+            <Link to="/clients" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
               <div className="p-2 bg-blue-500 rounded-xl"><Users size={20} /></div>
               <span className="font-medium">Gestionar Alumnos</span>
-            </a>
-            <a href="/payments" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
+            </Link>
+            <Link to="/payments" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
               <div className="p-2 bg-amber-500 rounded-xl"><DollarSign size={20} /></div>
               <span className="font-medium">Registrar Pago</span>
-            </a>
-            <a href="/routines" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
+            </Link>
+            <Link to="/routines" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
               <div className="p-2 bg-purple-500 rounded-xl"><Dumbbell size={20} /></div>
               <span className="font-medium">Nueva Rutina</span>
-            </a>
+            </Link>
             <button 
               onClick={handleDownloadReport}
               className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors border-0"
