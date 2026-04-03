@@ -11,7 +11,7 @@ const MainLayout = () => {
       {/* Botón de Hamburguesa para Móvil */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 right-4 z-50 p-3 bg-white rounded-2xl shadow-xl border border-gray-100 text-blue-600 active:scale-95 transition-all"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-2xl shadow-xl border border-gray-100 text-blue-600 active:scale-95 transition-all"
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>

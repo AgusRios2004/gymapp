@@ -173,7 +173,7 @@ export default function ClientsPage() {
         </div>
 
         {/* Filtros (Pills) */}
-        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start md:self-auto">
+        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
