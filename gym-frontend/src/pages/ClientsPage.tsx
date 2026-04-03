@@ -133,7 +133,7 @@ export default function ClientsPage() {
     const matchesSearch = `${client.name} ${client.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
     
     // (Opcional) Doble chequeo por seguridad, aunque el back ya lo hace
-    const matchesStatus = filterStatus === 'all' ? true : (filterStatus === 'active' ? client.active : !client.active);
+    const matchesStatus = (filterStatus === 'all' || filterStatus === 'debtors') ? true : (filterStatus === 'active' ? client.active : !client.active);
 
     return matchesSearch && matchesStatus;
   });
