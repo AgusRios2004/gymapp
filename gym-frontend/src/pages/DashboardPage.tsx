@@ -129,7 +129,7 @@ export default function DashboardPage() {
               <Users size={20} />
               <p className="font-medium">Atención: Hay {stats.debtorsCount} alumnos con la cuota vencida o sin pagar.</p>
            </div>
-           <a href="/clients" className="text-amber-700 font-bold hover:underline">Ver Alumnos →</a>
+           <a href="/clients?filter=debtors" className="text-amber-700 font-bold hover:underline">Ver Alumnos →</a>
         </div>
       )}
 

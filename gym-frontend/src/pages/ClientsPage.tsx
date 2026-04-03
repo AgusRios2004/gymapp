@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Plus, Search } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -16,10 +17,13 @@ type ClientFormData = z.infer<typeof ClientSchema>;
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 export default function ClientsPage() {
+  const [searchParams] = useSearchParams();
+  const initialFilter = (searchParams.get('filter') as 'all' | 'active' | 'inactive' | 'debtors') || 'active';
+
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  // 1. Estado inicial: Solo 'active' para no cargar todos al principio
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'debtors'>('active');
+  // 1. Estado inicial: Solo 'active' o el extraído de la URL
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'debtors'>(initialFilter);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
