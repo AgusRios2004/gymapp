@@ -16,3 +16,4 @@ target/
 .idea/
 .vscode/
 .DS_Store
+mysql-data/
