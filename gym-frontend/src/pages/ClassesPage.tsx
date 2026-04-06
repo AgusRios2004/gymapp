@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, Plus, Trash2, User as UserIcon } from 'lucide-react';
 import { getProfessors } from '../services/professorService';
+import { getClasses, createClass, deleteClass } from '../services/classService';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
@@ -29,11 +30,8 @@ export default function ClassesPage() {
   const { data: classes = [] } = useQuery({
     queryKey: ['classes'],
     queryFn: async () => {
-       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/classes`, {
-         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-       });
-       const data = await response.json();
-       return data.data;
+       const data = await getClasses();
+       return Array.isArray(data) ? data : [];
     }
   });
 
@@ -43,34 +41,28 @@ export default function ClassesPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: Partial<GroupClass> & { professorId: string }) => {
-       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/classes`, {
-         method: 'POST',
-         headers: { 
-           'Authorization': `Bearer ${localStorage.getItem('token')}`,
-           'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({
-           ...data,
-           professor: { id: Number(data.professorId) }
-         })
-       });
-       return response.json();
-    },
+    mutationFn: createClass,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success("📅 Clase creada");
       setIsModalOpen(false);
+      setForm({
+         className: '',
+         professorId: '',
+         dayOfWeek: 'MONDAY',
+         startTime: '10:00',
+         endTime: '11:00',
+         capacity: '20'
+      });
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || "No se pudo crear la clase";
+      toast.error(`❌ ${message}`);
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-       await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/classes/${id}`, {
-         method: 'DELETE',
-         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-       });
-    },
+    mutationFn: deleteClass,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success("🗑️ Clase eliminada");
@@ -115,7 +107,7 @@ export default function ClassesPage() {
                             <Clock size={12} className="text-blue-500" /> {c.startTime} - {c.endTime}
                          </p>
                          <p className="text-xs text-gray-500 flex items-center gap-1">
-                            <UserIcon size={12} className="text-blue-500" /> {c.professor.name} {c.professor.lastName}
+                            <UserIcon size={12} className="text-blue-500" /> {c.professor?.name} {c.professor?.lastName}
                          </p>
                          <p className="text-[10px] uppercase font-bold text-blue-600 mt-2">Cupo: {c.capacity} alumnos</p>
                       </div>
@@ -143,17 +135,17 @@ export default function ClassesPage() {
                   <select 
                     className="w-full p-2 border rounded-lg bg-gray-50"
                     value={form.dayOfWeek}
-                    onChange={e => setForm({...form, dayOfWeek: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
                   >
                     {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
                   </select>
                </div>
-               <Input label="Capacidad" type="number" required value={form.capacity} onChange={e => setForm({...form, capacity: e.target.value})} />
+               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-               <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={e => setForm({...form, startTime: e.target.value})} />
-               <Input label="Hora Fin" type="time" required value={form.endTime} onChange={e => setForm({...form, endTime: e.target.value})} />
+               <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
+               <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
             </div>
 
             <div>
@@ -162,7 +154,7 @@ export default function ClassesPage() {
                  className="w-full p-2 border rounded-lg bg-gray-50"
                  required
                  value={form.professorId}
-                 onChange={e => setForm({...form, professorId: e.target.value})}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
                >
                  <option value="">Seleccionar profesor...</option>
                  {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
