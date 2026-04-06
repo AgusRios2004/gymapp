@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@SuppressWarnings("null")
 public class MonthlyTypeService {
 
     @Autowired
@@ -18,31 +19,31 @@ public class MonthlyTypeService {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    public List<MonthlyType> getAllMonthlyType(){
+    public List<MonthlyType> getAllMonthlyType() {
         return monthlyTypeRepository.findAll();
     }
 
-    public Optional<MonthlyType> getMonthlyTypeById(Long id){
+    public Optional<MonthlyType> getMonthlyTypeById(Long id) {
         return monthlyTypeRepository.findById(id);
     }
 
-    public MonthlyType createMonthlyType(MonthlyType monthlyType){
+    public MonthlyType createMonthlyType(MonthlyType monthlyType) {
         return monthlyTypeRepository.save(monthlyType);
     }
 
-    public Optional<MonthlyType> updateMonthlyType(Long id, MonthlyType monthlyTypeUpdate){
+    public Optional<MonthlyType> updateMonthlyType(Long id, MonthlyType monthlyTypeUpdate) {
         return monthlyTypeRepository.findById(id)
-            .map(monthlyType -> {
-               monthlyType.setType(monthlyTypeUpdate.getType());
-               monthlyType.setPrice(monthlyTypeUpdate.getPrice());
-               return monthlyTypeRepository.save(monthlyType);
-            });
+                .map(monthlyType -> {
+                    monthlyType.setType(monthlyTypeUpdate.getType());
+                    monthlyType.setPrice(monthlyTypeUpdate.getPrice());
+                    return monthlyTypeRepository.save(monthlyType);
+                });
     }
 
-    public void deleteMonthlyType(Long id){
+    public void deleteMonthlyType(Long id) {
         monthlyTypeRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("MonthlyType not found with id: "+id));
-        if(paymentRepository.existsByMonthlyTypeId(id)){
+                .orElseThrow(() -> new ResourceNotFoundException("MonthlyType not found with id: " + id));
+        if (paymentRepository.existsByMonthlyTypeId(id)) {
             throw new ResourceNotFoundException("Monthly Type have registers in Payments");
         }
         monthlyTypeRepository.deleteById(id);

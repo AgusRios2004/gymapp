@@ -1,20 +1,20 @@
 version: '3.8'
 
 services:
-  # --- EL SERVICIO 'db' LOCAL YA NO SE USA PARA EL BACKEND (USAMOS TiDB) ---
-  db:
-    image: mysql:8.0
-    container_name: gym-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: user_gym
-      MYSQL_DATABASE: gym_db
-      MYSQL_USER: user_gym
-      MYSQL_PASSWORD: user_gym
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./mysql-data:/var/lib/mysql
+  #   # --- EL SERVICIO 'db' LOCAL YA NO SE USA PARA EL BACKEND (USAMOS TiDB) ---
+  #   db:
+  #     image: mysql:8.0
+  #     container_name: gym-mysql
+  #     restart: always
+  #     environment:
+  #       MYSQL_ROOT_PASSWORD: user_gym
+  #       MYSQL_DATABASE: gym_db
+  #       MYSQL_USER: user_gym
+  #       MYSQL_PASSWORD: user_gym
+  #     ports:
+  #       - "3380:3306" # Cambiamos el puerto externo (3380 en lugar de 3306) para evitar conflictos si quieres tenerlo levantado.
+  #     volumes:
+  #       - ./mysql-data:/var/lib/mysql
 
   # --- SERVICIO 2: BACKEND (CONECTADO A TiDB CLOUD) ---
   backend:

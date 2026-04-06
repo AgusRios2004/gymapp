@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import java.util.List;
 
 @RestController
@@ -21,6 +22,12 @@ public class GroupClassController {
     public ResponseEntity<WebApiResponse> getAllClasses() {
         List<GroupClass> classes = groupClassService.getAllClasses();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Classes fetched successfully", classes));
+    }
+
+    @GetMapping("/{id}/students")
+    public ResponseEntity<WebApiResponse> getStudentsByClass(@PathVariable Long id) {
+        List<ClientResponseDTO> students = groupClassService.getStudentsByClass(id);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Students fetched successfully", students));
     }
 
     @PostMapping

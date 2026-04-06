@@ -33,6 +33,36 @@ public class ClientService {
     private PaymentProductRepository paymentProductRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private com.aplicacionGym.gymapp.repository.GroupClassRepository groupClassRepository;
+
+    public ClientResponseDTO assignClass(Long idClient, Long idClass) {
+        Objects.requireNonNull(idClient, "idClient cannot be null");
+        Objects.requireNonNull(idClass, "idClass cannot be null");
+
+        Client client = clientRepository.findById(idClient)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+
+        com.aplicacionGym.gymapp.entity.GroupClass groupClass = groupClassRepository.findById(idClass)
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + idClass));
+
+        client.setActiveClass(groupClass);
+        clientRepository.save(client);
+
+        return ClientMapper.toDTO(client);
+    }
+
+    public ClientResponseDTO unassignClass(Long idClient) {
+        Objects.requireNonNull(idClient, "idClient cannot be null");
+
+        Client client = clientRepository.findById(idClient)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+
+        client.setActiveClass(null);
+        clientRepository.save(client);
+
+        return ClientMapper.toDTO(client);
+    }
 
     public ClientResponseDTO createClient(Client client) {
         if (client.getDni() != null) {

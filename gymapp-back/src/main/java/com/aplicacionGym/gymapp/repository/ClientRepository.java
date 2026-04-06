@@ -21,4 +21,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query("SELECT COUNT(c) > 0 FROM Client c JOIN c.routines r WHERE r.id = :routineId")
     boolean existsClientWithRoutine(@Param("routineId") Long routineId);
 
+    List<Client> findByActiveClassId(Long classId);
+
 }

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@SuppressWarnings("null")
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
@@ -117,9 +118,12 @@ public class DataLoader implements CommandLineRunner {
         // 6. Seed Clients if empty
         if (clientRepository.count() == 0) {
             clientRepository.saveAll(Arrays.asList(
-                    new Client(null, null, "Carlos", "Perez", "12345678", "1166778899", true, null, new ArrayList<>()),
-                    new Client(null, null, "Ana", "Gomez", "23456789", "1133445566", true, null, new ArrayList<>()),
-                    new Client(null, null, "Lucas", "Rodriguez", "34567890", "1155443322", false, null,
+                    new Client(null, "Carlos", "Perez", "12345678", "1166778899", "carlos@gmail.com", null, true, null,
+                            new ArrayList<>()),
+                    new Client(null, "Ana", "Gomez", "23456789", "1133445566", "ana@gmail.com", null, true, null,
+                            new ArrayList<>()),
+                    new Client(null, "Lucas", "Rodriguez", "34567890", "1155443322", "lucas@gmail.com", null, false,
+                            null,
                             new ArrayList<>())));
             System.out.println("✅ Clients seeded");
         }

@@ -4,7 +4,6 @@ import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
-import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
 import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.service.ClientService;
@@ -85,6 +84,18 @@ public class ClientController {
     private ResponseEntity<WebApiResponse> setActiveRoutine(@PathVariable Long idClient, @PathVariable Long idRoutine) {
         ClientResponseDTO client = clientService.setActiveRoutine(idClient, idRoutine);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine set as active successfully!", client));
+    }
+
+    @PostMapping("/{idClient}/assign-class/{idClass}")
+    public ResponseEntity<WebApiResponse> assignClass(@PathVariable Long idClient, @PathVariable Long idClass) {
+        ClientResponseDTO client = clientService.assignClass(idClient, idClass);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Class assigned successfully", client));
+    }
+
+    @DeleteMapping("/{idClient}/unassign-class")
+    public ResponseEntity<WebApiResponse> unassignClass(@PathVariable Long idClient) {
+        ClientResponseDTO client = clientService.unassignClass(idClient);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Class unassigned successfully", client));
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientMapper {
 
-    public static ClientResponseDTO toDTO(Client client){
+    public static ClientResponseDTO toDTO(Client client) {
         ClientResponseDTO dto = new ClientResponseDTO();
         dto.setId(client.getId());
         dto.setDni(client.getDni());
@@ -16,6 +16,10 @@ public class ClientMapper {
         dto.setLastName(client.getLastName());
         dto.setActive(client.isActive());
         dto.setRoutineActive(RoutineMapper.mapRoutineSummary(client.getRoutineActive()));
+        if (client.getActiveClass() != null) {
+            dto.setActiveClassId(client.getActiveClass().getId());
+            dto.setActiveClassName(client.getActiveClass().getClassName());
+        }
         return dto;
     }
 

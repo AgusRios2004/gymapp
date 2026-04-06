@@ -17,6 +17,8 @@ public class ClientResponseDTO {
     private boolean active;
     private boolean isDebtor;
     private RoutineSummaryResponseDTO routineActive;
+    private Long activeClassId;
+    private String activeClassName;
 
     public boolean isActive() {
         return active;

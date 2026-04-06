@@ -5,6 +5,13 @@ import com.aplicacionGym.gymapp.repository.GroupClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
+import com.aplicacionGym.gymapp.mapper.ClientMapper;
+import com.aplicacionGym.gymapp.repository.ClientRepository;
+import com.aplicacionGym.gymapp.repository.PaymentRepository;
+import com.aplicacionGym.gymapp.entity.Payment;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,8 +21,34 @@ public class GroupClassService {
     @Autowired
     private GroupClassRepository groupClassRepository;
 
+    @Autowired
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     public List<GroupClass> getAllClasses() {
         return groupClassRepository.findAll();
+    }
+
+    public List<ClientResponseDTO> getStudentsByClass(Long id) {
+        return clientRepository.findByActiveClassId(id)
+                .stream()
+                .map(client -> {
+                    ClientResponseDTO dto = ClientMapper.toDTO(client);
+                    dto.setDebtor(isDebtor(client.getId()));
+                    return dto;
+                })
+                .toList();
+    }
+
+    private boolean isDebtor(Long clientId) {
+        Optional<Payment> lastPayment = paymentRepository
+                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(clientId);
+        if (lastPayment.isEmpty())
+            return true;
+        LocalDate expirationDate = lastPayment.get().getExpirationDate();
+        return expirationDate == null || expirationDate.isBefore(LocalDate.now());
     }
 
     public GroupClass createClass(GroupClass groupClass) {

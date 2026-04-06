@@ -39,6 +39,8 @@ export interface Client extends Person {
     active: boolean;
     isDebtor?: boolean;
     activeRoutineId?: number | null; 
+    activeClassId?: number | null;
+    activeClassName?: string | null;
 }
 
 export interface ClientScheduleMap {

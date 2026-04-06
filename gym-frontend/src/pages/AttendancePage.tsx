@@ -14,6 +14,8 @@ import { registerAssistance, getAssistanceByDate } from '../services/assistanceS
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import type { Client, Assistance } from '../types';
+import { AxiosError } from 'axios';
+import type { ApiResponse } from '../types/api.types';
 
 export default function AttendancePage() {
   const { user } = useAuth();
@@ -43,7 +45,7 @@ export default function AttendancePage() {
       });
       setSearchTerm('');
     },
-    onError: (error: Error | any) => {
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
         const message = error.response?.data?.message || "Error al registrar asistencia";
         toast.error(message);
     }
@@ -157,7 +159,10 @@ export default function AttendancePage() {
                                             {c.name.charAt(0)}
                                         </div>
                                         <div className="text-left">
-                                            <p className="font-bold text-gray-900">{c.name} {c.lastName}</p>
+                                            <p className={`font-bold ${c.isDebtor ? 'text-red-600' : 'text-gray-900'}`}>
+                                                {c.name} {c.lastName}
+                                                {c.isDebtor && <span className="ml-2 text-[8px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wider font-black">Deuda</span>}
+                                            </p>
                                             <p className="text-xs text-gray-500 font-medium">DNI: {c.dni}</p>
                                         </div>
                                     </div>

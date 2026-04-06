@@ -21,6 +21,7 @@ import java.util.Set;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
@@ -28,14 +29,14 @@ public class RoutineService {
     private final ClientRepository clientRepository;
 
     public RoutineService(RoutineRepository routineRepository,
-                          ExerciseRepository exerciseRepository,
-                          ClientRepository clientRepository) {
+            ExerciseRepository exerciseRepository,
+            ClientRepository clientRepository) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.clientRepository = clientRepository;
     }
 
-    public RoutineResponseDTO createRoutine(RoutineRequestDTO dto){
+    public RoutineResponseDTO createRoutine(RoutineRequestDTO dto) {
         validateUniqueDays(dto.getDays());
 
         Routine routine = new Routine();
@@ -43,14 +44,14 @@ public class RoutineService {
 
         List<RoutineDay> routineDays = mapDaysToRoutine(dto.getDays(), routine);
         routine.setDays(routineDays);
-        
+
         return RoutineMapper.toDTO(routineRepository.save(routine));
     }
 
-    public List<RoutineResponseDTO> getAllRoutines(){
+    public List<RoutineResponseDTO> getAllRoutines() {
         return routineRepository.findAll().stream()
-            .map(RoutineMapper :: toDTO)
-            .toList();
+                .map(RoutineMapper::toDTO)
+                .toList();
     }
 
     public RoutineResponseDTO getRoutineById(Long id) {
@@ -59,11 +60,11 @@ public class RoutineService {
         return RoutineMapper.toDTO(routine);
     }
 
-    public RoutineResponseDTO updateRoutine(Long id, RoutineRequestDTO routineRequestDTO){
+    public RoutineResponseDTO updateRoutine(Long id, RoutineRequestDTO routineRequestDTO) {
         validateUniqueDays(routineRequestDTO.getDays());
 
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
         updateRoutineData(routine, routineRequestDTO);
 
         routine.getDays().clear();
@@ -73,20 +74,20 @@ public class RoutineService {
         return RoutineMapper.toDTO(routineRepository.save(routine));
     }
 
-    public void deleteRoutine(Long id){
+    public void deleteRoutine(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
 
         if (clientRepository.existsClientWithRoutine(id)) {
             throw new ResourceNotFoundException("The routine is assigned to one or more clients.");
         }
 
-
         routineRepository.delete(routine);
     }
 
     private void validateUniqueDays(List<RoutineDayRequestDTO> days) {
-        if (days == null) return;
+        if (days == null)
+            return;
         Set<Integer> uniqueDays = new HashSet<>();
         for (RoutineDayRequestDTO day : days) {
             if (!uniqueDays.add(day.getDayOrder())) {
@@ -102,7 +103,8 @@ public class RoutineService {
     }
 
     private List<RoutineDay> mapDaysToRoutine(List<RoutineDayRequestDTO> daysDTO, Routine routine) {
-        if (daysDTO == null) return List.of();
+        if (daysDTO == null)
+            return List.of();
         return daysDTO.stream().map(dayDTO -> {
             RoutineDay day = new RoutineDay();
             day.setDayOrder(dayDTO.getDayOrder());
@@ -110,7 +112,8 @@ public class RoutineService {
 
             List<RoutineExercise> routineExercises = dayDTO.getExercises().stream().map(exDTO -> {
                 Exercise exercise = exerciseRepository.findById(exDTO.getIdExercise())
-                        .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: " + exDTO.getIdExercise()));
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Exercise not found with id: " + exDTO.getIdExercise()));
 
                 RoutineExercise re = new RoutineExercise();
                 re.setExercise(exercise);

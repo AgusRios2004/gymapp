@@ -182,7 +182,9 @@ export default function PaymentsPage() {
             >
               <option value="">Seleccionar cliente...</option>
               {clients.map(c => (
-                <option key={c.id} value={c.id}>{c.name} {c.lastName}</option>
+                <option key={c.id} value={c.id}>
+                    {c.name} {c.lastName} {c.isDebtor ? '⚠️ (DEUDOR)' : ''}
+                </option>
               ))}
             </select>
           </div>
