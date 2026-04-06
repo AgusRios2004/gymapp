@@ -102,12 +102,8 @@ public class ClientService {
     public List<ClientResponseDTO> getDebtorClients() {
         List<Client> activeClients = clientRepository.findByActiveTrue();
         return activeClients.stream()
-                .filter(this::isDebtor)
-                .map(c -> {
-                    ClientResponseDTO dto = ClientMapper.toDTO(c);
-                    dto.setDebtor(true);
-                    return dto;
-                })
+                .map(this::mapToDTOWithDebtorStatus)
+                .filter(ClientResponseDTO::isDebtor)
                 .toList();
     }
 
