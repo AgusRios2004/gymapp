@@ -111,19 +111,19 @@ public class ClientService {
                 .toList();
     }
 
-    private boolean isDebtor(Client c) {
-        Optional<Payment> lastPayment = paymentRepository
-                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(c.getId());
-        if (lastPayment.isEmpty())
-            return true;
-        LocalDate expirationDate = lastPayment.get().getExpirationDate();
-        return expirationDate == null || expirationDate.isBefore(LocalDate.now());
-    }
-
     private ClientResponseDTO mapToDTOWithDebtorStatus(Client c) {
         ClientResponseDTO dto = ClientMapper.toDTO(c);
         if (c.isActive()) {
-            dto.setDebtor(isDebtor(c));
+            // OPTIMIZACIÓN: Solo buscamos el pago si el cliente está activo
+            Optional<Payment> lastPayment = paymentRepository
+                    .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(c.getId());
+            
+            if (lastPayment.isEmpty()) {
+                dto.setDebtor(true);
+            } else {
+                LocalDate expirationDate = lastPayment.get().getExpirationDate();
+                dto.setDebtor(expirationDate == null || expirationDate.isBefore(LocalDate.now()));
+            }
         }
         return dto;
     }
