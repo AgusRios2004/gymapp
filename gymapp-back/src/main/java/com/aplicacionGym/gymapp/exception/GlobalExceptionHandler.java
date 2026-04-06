@@ -14,10 +14,11 @@ public class GlobalExceptionHandler {
     // Maneja la excepción de DNI duplicado (IllegalArgumentException)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ex.printStackTrace(); // Veremos el error real en los logs de Render
         Map<String, String> response = new HashMap<>();
-        response.put("error", "Conflict");
-        response.put("message", ex.getMessage()); // Aquí va tu mensaje: "Client with DNI..."
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT); // Devuelve 409
+        response.put("error", "Bad Request / Logic Error");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // Ahora devolverá 400, no 409
     }
 
     // Aprovechamos para manejar también cuando no se encuentra un cliente (ResourceNotFoundException)
