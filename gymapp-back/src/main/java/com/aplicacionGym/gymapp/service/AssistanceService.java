@@ -31,6 +31,10 @@ public class AssistanceService {
     private PaymentRepository paymentRepository;
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
+        if (dto.getIdClient() == null || dto.getIdProfessor() == null) {
+            throw new IllegalArgumentException("Client ID and Staff ID cannot be null");
+        }
+
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
 
@@ -48,8 +52,9 @@ public class AssistanceService {
                         () -> new ResourceNotFoundException("Staff member not found with id: " + dto.getIdProfessor()));
 
         Assistance assistance = AssistanceMapper.toEntity(client, staff, dto);
-        assistance = assistanceRepository.save(assistance);
-        return AssistanceMapper.toDTO(assistance);
+        @SuppressWarnings("null")
+        Assistance saved = assistanceRepository.save(assistance);
+        return AssistanceMapper.toDTO(saved);
     }
 
     public List<AssistanceResponseDTO> getAssistanceByClient(Long idClient) {

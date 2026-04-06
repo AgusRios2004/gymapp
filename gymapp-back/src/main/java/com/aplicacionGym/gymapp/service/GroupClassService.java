@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class GroupClassService {
@@ -18,10 +19,12 @@ public class GroupClassService {
     }
 
     public GroupClass createClass(GroupClass groupClass) {
+        Objects.requireNonNull(groupClass, "GroupClass cannot be null");
         return groupClassRepository.save(groupClass);
     }
 
     public void deleteClass(Long id) {
+        Objects.requireNonNull(id, "ID cannot be null");
         groupClassRepository.deleteById(id);
     }
 }

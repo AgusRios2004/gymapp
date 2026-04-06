@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AdministratorService {
@@ -27,13 +28,16 @@ public class AdministratorService {
         return AdministratorMapper.toDTO(saved);
     }
 
-    public AdministratorResponseDTO getAdministratorById(Long id){
+    public AdministratorResponseDTO getAdministratorById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         return administratorRepository.findById(id)
                 .map(AdministratorMapper::toDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
     }
 
-    public List<AdministratorResponseDTO> getAllAdministrator(){
+    public List<AdministratorResponseDTO> getAllAdministrator() {
         return administratorRepository.findAll()
                 .stream()
                 .map(AdministratorMapper::toDTO)
@@ -41,6 +45,9 @@ public class AdministratorService {
     }
 
     public AdministratorResponseDTO updateAdministrator(Long id, AdministratorRequestDTO dto) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         Administrator administrator = administratorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
 
@@ -55,11 +62,13 @@ public class AdministratorService {
         return AdministratorMapper.toDTO(updated);
     }
 
-    public void deleteAdministrator(Long id){
+    public void deleteAdministrator(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
         Administrator administrator = administratorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
         administratorRepository.delete(administrator);
     }
-
 
 }

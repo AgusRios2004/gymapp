@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class ClientService {
@@ -98,11 +99,13 @@ public class ClientService {
     }
 
     public Optional<ClientResponseDTO> getClientById(Long id) {
+        Objects.requireNonNull(id, "ID cannot be null");
         return clientRepository.findById(id)
                 .map(ClientMapper::toDTO);
     }
 
     public ClientResponseDTO updateClient(Long id, Client updatedClient) {
+        Objects.requireNonNull(id, "ID cannot be null");
         Client existingClient = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
 
@@ -118,6 +121,7 @@ public class ClientService {
     }
 
     public void deactivateClient(Long id) {
+        Objects.requireNonNull(id, "ID cannot be null");
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
 
@@ -130,6 +134,8 @@ public class ClientService {
     }
 
     public ClientResponseDTO assignRoutine(Long idClient, Long idRoutine, boolean setAsActive) {
+        Objects.requireNonNull(idClient, "idClient cannot be null");
+        Objects.requireNonNull(idRoutine, "idRoutine cannot be null");
         Client saved = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
 
@@ -151,6 +157,7 @@ public class ClientService {
     }
 
     public List<RoutineResponseDTO> getAllRoutinesByClient(Long idClient) {
+        Objects.requireNonNull(idClient, "idClient cannot be null");
         Client client = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
         return client.getRoutines().stream()
@@ -159,6 +166,8 @@ public class ClientService {
     }
 
     public ClientResponseDTO setActiveRoutine(Long idClient, Long idRoutine) {
+        Objects.requireNonNull(idClient, "idClient cannot be null");
+        Objects.requireNonNull(idRoutine, "idRoutine cannot be null");
         Client client = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
 
@@ -173,6 +182,7 @@ public class ClientService {
     }
 
     public List<ProductsPurchasedResponseDTO> getProductsPurchasedByClient(Long id) {
+        Objects.requireNonNull(id, "ID cannot be null");
         clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
         List<PaymentProduct> paymentProducts = paymentProductRepository.findByClientId(id);

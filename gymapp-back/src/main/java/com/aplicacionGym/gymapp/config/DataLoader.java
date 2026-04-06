@@ -44,22 +44,24 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // 1. Seed MonthlyTypes if empty
         if (monthlyTypeRepository.count() == 0) {
-            monthlyTypeRepository.saveAll(Arrays.asList(
+            List<MonthlyType> defaults = Arrays.asList(
                     new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30),
                     new MonthlyType(null, "Plan Full (Acceso Total)", 22000, 30),
-                    new MonthlyType(null, "Plan Estudiante", 12000, 30)));
+                    new MonthlyType(null, "Plan Estudiante", 12000, 30));
+            monthlyTypeRepository.saveAll(defaults);
             System.out.println("✅ MonthlyTypes seeded");
         }
 
         // 2. Seed Exercises if empty
         if (exerciseRepository.count() == 0) {
-            exerciseRepository.saveAll(Arrays.asList(
+            List<Exercise> defaults = Arrays.asList(
                     new Exercise(null, "Sentadilla Libre", "Cuádriceps", "Músculo principal: Cuádriceps"),
                     new Exercise(null, "Press de Banca", "Pectorales", "Músculo principal: Pectoral Mayor"),
                     new Exercise(null, "Peso Muerto", "Lower Back", "Ejercicio multiarticular"),
                     new Exercise(null, "Remo con Mancuerna", "Back", "Dorsales"),
                     new Exercise(null, "Curl de Bíceps", "Arms", "Flexión de codo"),
-                    new Exercise(null, "Press Militar", "Shoulders", "Deltoides anterior")));
+                    new Exercise(null, "Press Militar", "Shoulders", "Deltoides anterior"));
+            exerciseRepository.saveAll(defaults);
             System.out.println("✅ Exercises seeded");
         }
 
