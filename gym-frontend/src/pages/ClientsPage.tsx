@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Plus, Search } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -16,10 +17,13 @@ type ClientFormData = z.infer<typeof ClientSchema>;
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 export default function ClientsPage() {
+  const [searchParams] = useSearchParams();
+  const initialFilter = (searchParams.get('filter') as 'all' | 'active' | 'inactive' | 'debtors') || 'active';
+
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  // 1. Estado inicial: Solo 'active' para no cargar todos al principio
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'debtors'>('active');
+  // 1. Estado inicial: Solo 'active' o el extraído de la URL
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'debtors'>(initialFilter);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -129,7 +133,7 @@ export default function ClientsPage() {
     const matchesSearch = `${client.name} ${client.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
     
     // (Opcional) Doble chequeo por seguridad, aunque el back ya lo hace
-    const matchesStatus = filterStatus === 'all' ? true : (filterStatus === 'active' ? client.active : !client.active);
+    const matchesStatus = (filterStatus === 'all' || filterStatus === 'debtors') ? true : (filterStatus === 'active' ? client.active : !client.active);
 
     return matchesSearch && matchesStatus;
   });
@@ -169,7 +173,7 @@ export default function ClientsPage() {
         </div>
 
         {/* Filtros (Pills) */}
-        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start md:self-auto">
+        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${

@@ -39,31 +39,31 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
         </p>
       </div>
 
-      <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+      <div className="grid grid-cols-3 sm:flex items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0">
         <Button 
           onClick={() => navigate(`/clients/${client.id}`)} 
           variant="ghost" 
-          className="flex-1 sm:flex-none text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100"
+          className="w-full text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
         >
-          <Eye size={18} className="mr-2" />
+          <Eye size={16} className="sm:mr-2 mb-1 sm:mb-0" />
           Ver Ficha
         </Button>
 
         <Button 
           onClick={onAssignRoutine} 
           variant="ghost" 
-          className="flex-1 sm:flex-none text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-100"
+          className="w-full text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-100 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
         >
-          <Dumbbell size={18} className="mr-2" />
+          <Dumbbell size={16} className="sm:mr-2 mb-1 sm:mb-0" />
           Rutina
         </Button>
         
         <Button 
           onClick={onEdit} 
           variant="secondary"
-          className="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700"
+          className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
         >
-          <Edit size={18} className="mr-2" />
+          <Edit size={16} className="sm:mr-2 mb-1 sm:mb-0" />
           Editar
         </Button>
       </div>
