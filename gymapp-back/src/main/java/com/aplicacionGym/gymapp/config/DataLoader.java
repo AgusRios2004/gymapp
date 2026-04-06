@@ -3,6 +3,8 @@ package com.aplicacionGym.gymapp.config;
 import com.aplicacionGym.gymapp.entity.*;
 import com.aplicacionGym.gymapp.entity.enums.PaymentType;
 import com.aplicacionGym.gymapp.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,9 @@ public class DataLoader implements CommandLineRunner {
     // LUEGO VUELVE A PONERLO EN 'false'
     private static final boolean FORCE_RESEED = true; 
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired private MonthlyTypeRepository monthlyTypeRepository;
     @Autowired private ExerciseRepository exerciseRepository;
     @Autowired private ProductRepository productRepository;
@@ -40,21 +45,31 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         
         if (FORCE_RESEED) {
-            System.out.println("⚠️ FORCING RESEED: Cleaning database...");
-            assistanceRepository.deleteAll();
-            paymentProductRepository.deleteAll();
-            paymentRepository.deleteAll();
-            clientRepository.deleteAll();
-            groupClassRepository.deleteAll();
-            professorRepository.deleteAll();
-            administratorRepository.deleteAll();
-            productRepository.deleteAll();
-            exerciseRepository.deleteAll();
-            monthlyTypeRepository.deleteAll();
-            routineRepository.deleteAll();
+            System.out.println("⚠️ FORCING RESEED: Cleaning database with Native SQL...");
+            // Desactivamos checks de FK para poder borrar en cualquier orden
+            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+            
+            entityManager.createNativeQuery("DELETE FROM assistance").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM payment_product").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM payment").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM clients_routines").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM routine_exercise").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM routine_day").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM client").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM group_class").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM professor").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM administrator").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM person").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM product").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM exercise").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM routine").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM monthly_type").executeUpdate();
+            
+            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+            System.out.println("✅ Database cleaned successfully");
         }
 
-        // 1. Planes
+        // 1. Planes Mensuales
         if (monthlyTypeRepository.count() == 0) {
             monthlyTypeRepository.saveAll(Arrays.asList(
                 new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30),
