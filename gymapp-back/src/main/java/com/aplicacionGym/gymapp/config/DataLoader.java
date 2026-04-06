@@ -20,9 +20,9 @@ import java.util.List;
 @SuppressWarnings("null")
 public class DataLoader implements CommandLineRunner {
 
-    // PASO 1: Pon esto en 'true' para BORRAR las tablas corruptas.
-    // PASO 2: Cuando en los logs veas "🗑️ Dropped table", ponlo en 'false' y sube de nuevo.
-    private static final boolean FORCE_RESEED = true; 
+    // PASO 1: Pon esto en 'true' para BORRAR las tablas corruptas. (COMPLETADO)
+    // PASO 2: Ponlo en 'false' para que Hibernate cree las tablas y se carguen los datos.
+    private static final boolean FORCE_RESEED = false; 
 
     @PersistenceContext
     private EntityManager entityManager;
