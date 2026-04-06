@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,134 +18,141 @@ import java.util.List;
 @SuppressWarnings("null")
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired
-    private MonthlyTypeRepository monthlyTypeRepository;
+    // CAMBIA ESTO A 'true' para borrar la base de datos de TiDB y re-ejecutar el seed
+    // LUEGO VUELVE A PONERLO EN 'false'
+    private static final boolean FORCE_RESEED = true; 
 
-    @Autowired
-    private ExerciseRepository exerciseRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private ProfessorRepository professorRepository;
-
-    @Autowired
-    private AdministratorRepository administratorRepository;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private MonthlyTypeRepository monthlyTypeRepository;
+    @Autowired private ExerciseRepository exerciseRepository;
+    @Autowired private ProductRepository productRepository;
+    @Autowired private ClientRepository clientRepository;
+    @Autowired private ProfessorRepository professorRepository;
+    @Autowired private AdministratorRepository administratorRepository;
+    @Autowired private PaymentRepository paymentRepository;
+    @Autowired private GroupClassRepository groupClassRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private AssistanceRepository assistanceRepository;
+    @Autowired private PaymentProductRepository paymentProductRepository;
+    @Autowired private RoutineRepository routineRepository;
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        // 1. Seed MonthlyTypes if empty
+        
+        if (FORCE_RESEED) {
+            System.out.println("⚠️ FORCING RESEED: Cleaning database...");
+            assistanceRepository.deleteAll();
+            paymentProductRepository.deleteAll();
+            paymentRepository.deleteAll();
+            clientRepository.deleteAll();
+            groupClassRepository.deleteAll();
+            professorRepository.deleteAll();
+            administratorRepository.deleteAll();
+            productRepository.deleteAll();
+            exerciseRepository.deleteAll();
+            monthlyTypeRepository.deleteAll();
+            routineRepository.deleteAll();
+        }
+
+        // 1. Planes
         if (monthlyTypeRepository.count() == 0) {
-            List<MonthlyType> defaults = Arrays.asList(
-                    new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30),
-                    new MonthlyType(null, "Plan Full (Acceso Total)", 22000, 30),
-                    new MonthlyType(null, "Plan Estudiante", 12000, 30));
-            monthlyTypeRepository.saveAll(defaults);
-            System.out.println("✅ MonthlyTypes seeded");
+            monthlyTypeRepository.saveAll(Arrays.asList(
+                new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30),
+                new MonthlyType(null, "Plan Full (Acceso Total)", 22000, 30),
+                new MonthlyType(null, "Plan Estudiante", 12000, 30)
+            ));
+            System.out.println("✅ Planes Mensuales creados");
         }
 
-        // 2. Seed Exercises if empty
+        // 2. Ejercicios
         if (exerciseRepository.count() == 0) {
-            List<Exercise> defaults = Arrays.asList(
-                    new Exercise(null, "Sentadilla Libre", "Cuádriceps", "Músculo principal: Cuádriceps"),
-                    new Exercise(null, "Press de Banca", "Pectorales", "Músculo principal: Pectoral Mayor"),
-                    new Exercise(null, "Peso Muerto", "Lower Back", "Ejercicio multiarticular"),
-                    new Exercise(null, "Remo con Mancuerna", "Back", "Dorsales"),
-                    new Exercise(null, "Curl de Bíceps", "Arms", "Flexión de codo"),
-                    new Exercise(null, "Press Militar", "Shoulders", "Deltoides anterior"));
-            exerciseRepository.saveAll(defaults);
-            System.out.println("✅ Exercises seeded");
+            exerciseRepository.saveAll(Arrays.asList(
+                new Exercise(null, "Sentadilla Libre", "Piernas", "Músculo principal: Cuádriceps"),
+                new Exercise(null, "Press de Banca", "Pectorales", "Músculo principal: Pectoral Mayor"),
+                new Exercise(null, "Peso Muerto", "Espalda/Piernas", "Ejercicio completo")
+            ));
+            System.out.println("✅ Ejercicios creados");
         }
 
-        // 3. Seed Administrator if empty
+        // 3. Admin y Profesores
         if (administratorRepository.count() == 0) {
             Administrator admin = new Administrator();
-            admin.setName("Admin");
-            admin.setLastName("Gym");
-            admin.setDni("11111111");
-            admin.setEmail("admin@gymapp.com");
+            admin.setName("Admin"); admin.setLastName("Gym"); admin.setDni("11111111");
+            admin.setEmail("admin@gymapp.com"); admin.setPhone("12345678");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setPhone("12345678");
             administratorRepository.save(admin);
-            System.out.println("✅ Administrator seeded");
         }
 
-        // 4. Seed Professors if empty
+        Professor marcos = null;
         if (professorRepository.count() == 0) {
-            professorRepository.saveAll(Arrays.asList(
-                    new Professor(null, "Marcos", "Entrenador", "22222222", "11223344", "marcos@gymapp.com",
-                            passwordEncoder.encode("marcos123"), true),
-                    new Professor(null, "Sofia", "Gimnasia", "33333333", "55667788", "sofia@gymapp.com",
-                            passwordEncoder.encode("sofia123"), true)));
-            System.out.println("✅ Professors seeded");
+            marcos = new Professor(null, "Marcos", "Entrenador", "22222222", "15443322", 
+                "marcos@gymapp.com", passwordEncoder.encode("marcos123"), true);
+            marcos = professorRepository.save(marcos);
+            
+            professorRepository.save(new Professor(null, "Sofia", "Gimnasia", "33333333", "55667788", 
+                "sofia@gymapp.com", passwordEncoder.encode("sofia123"), true));
+            System.out.println("✅ Staff creado");
+        } else {
+            marcos = professorRepository.findAll().get(0);
         }
 
-        // 5. Seed Products if empty
+        // 4. Clases Grupales
+        GroupClass crossfit = null;
+        if (groupClassRepository.count() == 0) {
+            crossfit = new GroupClass();
+            crossfit.setClassName("Crossfit");
+            crossfit.setCapacity(20);
+            crossfit.setDayOfWeek("MONDAY");
+            crossfit.setStartTime("10:00");
+            crossfit.setEndTime("11:00");
+            crossfit.setProfessor(marcos);
+            crossfit = groupClassRepository.save(crossfit);
+            
+            GroupClass yoga = new GroupClass();
+            yoga.setClassName("Yoga");
+            yoga.setCapacity(15);
+            yoga.setDayOfWeek("WEDNESDAY");
+            yoga.setStartTime("18:00");
+            yoga.setEndTime("19:00");
+            yoga.setProfessor(marcos);
+            groupClassRepository.save(yoga);
+            System.out.println("✅ Clases grupales creadas");
+        } else {
+            crossfit = groupClassRepository.findAll().get(0);
+        }
+
+        // 5. Productos
         if (productRepository.count() == 0) {
-            ArrayList<Product> products = new ArrayList<>();
-
-            Product p1 = new Product();
-            p1.setProductName("Agua 500ml");
-            p1.setPrice(1200);
-            p1.setStock(50);
-            products.add(p1);
-
-            Product p2 = new Product();
-            p2.setProductName("Barra de Proteína");
-            p2.setPrice(2500);
-            p2.setStock(20);
-            products.add(p2);
-
-            Product p3 = new Product();
-            p3.setProductName("Shaker Nutrición");
-            p3.setPrice(7500);
-            p3.setStock(10);
-            products.add(p3);
-
-            productRepository.saveAll(products);
-            System.out.println("✅ Products seeded");
+            Product p1 = new Product(); p1.setProductName("Agua 500ml"); p1.setPrice(1200); p1.setStock(100);
+            productRepository.save(p1);
+            System.out.println("✅ Productos creados");
         }
 
-        // 6. Seed Clients if empty
+        // 6. Alumnos
         if (clientRepository.count() == 0) {
-            clientRepository.saveAll(Arrays.asList(
-                    new Client(null, "Carlos", "Perez", "12345678", "1166778899", "carlos@gmail.com", null, true, null,
-                            new ArrayList<>()),
-                    new Client(null, "Ana", "Gomez", "23456789", "1133445566", "ana@gmail.com", null, true, null,
-                            new ArrayList<>()),
-                    new Client(null, "Lucas", "Rodriguez", "34567890", "1155443322", "lucas@gmail.com", null, false,
-                            null,
-                            new ArrayList<>())));
-            System.out.println("✅ Clients seeded");
+            Client c1 = new Client(null, "Carlos", "Perez", "12345678", "11667788", "carlos@gmail.com", 
+                passwordEncoder.encode("alumno123"), true, crossfit, new ArrayList<>());
+            clientRepository.save(c1);
+            
+            clientRepository.save(new Client(null, "Ana", "Gomez", "23456789", "11334455", "ana@gmail.com", 
+                passwordEncoder.encode("alumno123"), true, null, new ArrayList<>()));
+            System.out.println("✅ Alumnos creados");
         }
 
-        // 7. Seed initial payments if empty
+        // 7. Pago Inicial
         if (paymentRepository.count() == 0) {
-            List<Client> clients = clientRepository.findAll();
-            List<Professor> professors = professorRepository.findAll();
-            List<MonthlyType> types = monthlyTypeRepository.findAll();
+            Client client = clientRepository.findAll().get(0);
+            MonthlyType type = monthlyTypeRepository.findAll().get(0);
 
-            if (!clients.isEmpty() && !professors.isEmpty() && !types.isEmpty()) {
-                Payment p = new Payment();
-                p.setClient(clients.get(0));
-                p.setProfessor(professors.get(0));
-                p.setMonthlyType(types.get(1)); // Full Plan
-                p.setAmount(types.get(1).getPrice());
-                p.setDate(LocalDate.now().minusDays(5)); // Recent payment
-                p.setPaymentType(PaymentType.MONTHLY);
-                paymentRepository.save(p);
-                System.out.println("✅ Initial payment seeded");
-            }
+            Payment p = new Payment();
+            p.setClient(client);
+            p.setProfessor(marcos);
+            p.setMonthlyType(type);
+            p.setAmount(type.getPrice());
+            p.setDate(LocalDate.now());
+            p.setPaymentType(PaymentType.MONTHLY);
+            paymentRepository.save(p);
+            System.out.println("✅ Pago inicial registrado");
         }
     }
 }
