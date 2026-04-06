@@ -20,8 +20,8 @@ import java.util.List;
 @SuppressWarnings("null")
 public class DataLoader implements CommandLineRunner {
 
-    // CAMBIA ESTO A 'true' para resetear el esquema y los datos (BORRADO TOTAL)
-    // LUEGO VUELVE A PONERLO EN 'false'
+    // PASO 1: Pon esto en 'true' para BORRAR las tablas corruptas.
+    // PASO 2: Cuando en los logs veas "🗑️ Dropped table", ponlo en 'false' y sube de nuevo.
     private static final boolean FORCE_RESEED = true; 
 
     @PersistenceContext
@@ -60,28 +60,30 @@ public class DataLoader implements CommandLineRunner {
                         entityManager.createNativeQuery("DROP TABLE IF EXISTS " + table).executeUpdate();
                         System.out.println("🗑️ Dropped table: " + table);
                     } catch (Exception e) {
-                        System.err.println("Could not drop table " + table + ": " + e.getMessage());
+                        System.err.println("❌ Could not drop table " + table + ": " + e.getMessage());
                     }
                 }
                 
                 entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-                System.out.println("♻️ Schema cleared successfully. Restart the app with FORCE_RESEED = false to rebuild.");
-                // No intentamos sembrar inmediatamente para dejar que Hibernate reconstruya en el proximo arranque
+                System.out.println("♻️ SCHEMA RESET COMPLETE. Now set FORCE_RESEED = false and redeploy to rebuild database.");
+                
+                // Forzamos el cierre para que Render sepa que terminamos la limpieza
+                System.exit(0);
                 return;
             }
 
+            // --- ESTO SOLO CORRE CUANDO FORCE_RESEED ES FALSE ---
             if (monthlyTypeRepository.count() == 0) {
                 executeSeed();
             }
 
         } catch (Exception ex) {
-            System.err.println("❌ ERROR during DataLoader execution: " + ex.getMessage());
-            ex.printStackTrace();
+            System.err.println("❌ Error: " + ex.getMessage());
         }
     }
 
     private void executeSeed() {
-        System.out.println("🌱 Starting Seed Process on clean schema...");
+        System.out.println("🌱 Starting Seed Process on a clean schema...");
 
         // 1. Planes Mensuales
         monthlyTypeRepository.saveAll(Arrays.asList(
@@ -94,7 +96,7 @@ public class DataLoader implements CommandLineRunner {
         exerciseRepository.save(new Exercise(null, "Sentadilla Libre", "Piernas", "Músculo principal: Cuádriceps"));
         exerciseRepository.save(new Exercise(null, "Press de Banca", "Pectoral", "Músculo principal: Pectoral Mayor"));
         
-        // 3. Admin y Profesores
+        // 3. Admin y Staff
         Administrator admin = new Administrator();
         admin.setName("Admin"); admin.setLastName("Gym"); admin.setDni("11111111");
         admin.setEmail("admin@gymapp.com"); admin.setPhone("12345678");
