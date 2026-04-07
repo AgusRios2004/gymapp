@@ -11,6 +11,7 @@ import com.aplicacionGym.gymapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,19 +31,55 @@ public class PaymentService {
     private PaymentProductRepository paymentProductRepository;
 
     public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto) {
-        Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
+        
+        MonthlyType newType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
+                .orElseThrow(() -> new ResourceNotFoundException("Monthly Type not found with id: " + dto.getIdMonthlyType()));
+
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
-        MonthlyType monthlyType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Monthly Type not found with id: " + dto.getIdMonthlyType()));
-        payment.setDate(dto.getDate());
+                .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
+
+        // Logic check: Does the client already have an active monthly payment?
+        java.util.Optional<Payment> activePaymentOpt = paymentRepository
+                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId());
+
+        double amountToPay = newType.getPrice();
+        LocalDate paymentDate = dto.getDate() != null ? dto.getDate() : LocalDate.now();
+
+        if (activePaymentOpt.isPresent()) {
+            Payment activePayment = activePaymentOpt.get();
+            LocalDate today = LocalDate.now();
+            
+            // Check if existing payment is still valid (Expiration date in the future)
+            if (activePayment.getExpirationDate() != null && activePayment.getExpirationDate().isAfter(today)) {
+                
+                // CASE 1: Same plan already paid (ERROR)
+                if (activePayment.getMonthlyType().getId().equals(newType.getId())) {
+                    throw new IllegalArgumentException("Duplicate payment: Client already has an active '" + 
+                        newType.getType() + "' plan until " + activePayment.getExpirationDate());
+                }
+
+                // CASE 2: Upgrade to a better plan (CHARGING DIFFERENCE)
+                if (newType.getPrice() > activePayment.getMonthlyType().getPrice()) {
+                    amountToPay = newType.getPrice() - activePayment.getMonthlyType().getPrice();
+                    // To maintain the billing cycle, we use the original payment date 
+                    // so the expiration remains consistent with the original month.
+                    paymentDate = activePayment.getDate();
+                    System.out.println("💳 Upgrade detected. Original plan: " + activePayment.getMonthlyType().getType() +
+                        ". Charging difference: $" + amountToPay);
+                } else {
+                    // Downgrade or same price but different plan while active - usually not allowed or just warning
+                    throw new IllegalArgumentException("Cannot change to a lower or equivalent plan while the current one is active.");
+                }
+            }
+        }
+
+        Payment payment = new Payment();
+        payment.setDate(paymentDate);
         payment.setPaymentType(PaymentType.MONTHLY);
-        payment.setMonthlyType(monthlyType);
-        payment.setAmount(monthlyType.getPrice());
+        payment.setMonthlyType(newType);
+        payment.setAmount(amountToPay);
         payment.setClient(client);
         payment.setProfessor(professor);
 
