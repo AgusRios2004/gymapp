@@ -4,21 +4,22 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllPayments, createMonthlyPayment, getMonthlyTypes } from '../services/paymentService';
 import { getClients } from '../services/clientService';
 import { getProfessors } from '../services/professorService';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
 import type { MonthlyPaymentRequest } from '../types/index';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
-
 export default function PaymentsPage() {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Data for the form
   const [selectedClient, setSelectedClient] = useState<string>('');
-  const [selectedProfessor, setSelectedProfessor] = useState<string>('');
+  const [selectedProfessor, setSelectedProfessor] = useState<string>(user?.id.toString() || '');
   const [selectedMonthlyType, setSelectedMonthlyType] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
@@ -57,7 +58,7 @@ export default function PaymentsPage() {
 
   const resetForm = () => {
     setSelectedClient('');
-    setSelectedProfessor('');
+    setSelectedProfessor(user?.id.toString() || '');
     setSelectedMonthlyType('');
     setPaymentDate(new Date().toISOString().split('T')[0]);
   };
@@ -189,19 +190,21 @@ export default function PaymentsPage() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Profesor que cobra</label>
-            <select 
-              className="w-full p-2 border rounded-lg"
-              value={selectedProfessor}
-              onChange={(e) => setSelectedProfessor(e.target.value)}
-            >
-              <option value="">Seleccionar profesor...</option>
-              {professors.map(p => (
-                <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>
-              ))}
-            </select>
-          </div>
+          {user?.role === 'ADMIN' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profesor que cobra</label>
+              <select 
+                className="w-full p-2 border rounded-lg"
+                value={selectedProfessor}
+                onChange={(e) => setSelectedProfessor(e.target.value)}
+              >
+                <option value="">Seleccionar profesor...</option>
+                {professors.map(p => (
+                  <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Cuota</label>

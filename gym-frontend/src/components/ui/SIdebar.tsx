@@ -35,21 +35,19 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
           onClick={onClose}
         />
         {user?.role === 'ADMIN' && (
-          <>
-            <SidebarItem 
-              path="/staff" 
-              label="Personal" 
-              icon={<ShieldPlus size={20} />} 
-              onClick={onClose}
-            />
-            <SidebarItem 
-              path="/plans" 
-              label="Planes" 
-              icon={<Tag size={20} />} 
-              onClick={onClose}
-            />
-          </>
+          <SidebarItem 
+            path="/staff" 
+            label="Personal" 
+            icon={<ShieldPlus size={20} />} 
+            onClick={onClose}
+          />
         )}
+        <SidebarItem 
+          path="/plans" 
+          label="Planes" 
+          icon={<Tag size={20} />} 
+          onClick={onClose}
+        />
         <SidebarItem 
           path="/payments" 
           label="Pagos" 
