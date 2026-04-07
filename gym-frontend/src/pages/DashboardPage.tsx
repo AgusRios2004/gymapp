@@ -169,27 +169,27 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-3xl text-white shadow-xl shadow-gray-200/50">
-          <h3 className="text-xl font-bold mb-4">Acciones Rápidas</h3>
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+          <h3 className="text-xl font-bold text-gray-900 border-l-4 border-purple-500 pl-3">Acciones Rápidas</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link to="/clients" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
-              <div className="p-2 bg-blue-500 rounded-xl"><Users size={20} /></div>
-              <span className="font-medium">Gestionar Alumnos</span>
+            <Link to="/clients" className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors border border-gray-100">
+              <div className="p-2 bg-blue-500 text-white rounded-xl"><Users size={20} /></div>
+              <span className="font-medium text-gray-800">Gestionar Alumnos</span>
             </Link>
-            <Link to="/payments" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
-              <div className="p-2 bg-amber-500 rounded-xl"><DollarSign size={20} /></div>
-              <span className="font-medium">Registrar Pago</span>
+            <Link to="/payments" className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors border border-gray-100">
+              <div className="p-2 bg-amber-500 text-white rounded-xl"><DollarSign size={20} /></div>
+              <span className="font-medium text-gray-800">Registrar Pago</span>
             </Link>
-            <Link to="/routines" className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors">
-              <div className="p-2 bg-purple-500 rounded-xl"><Dumbbell size={20} /></div>
-              <span className="font-medium">Nueva Rutina</span>
+            <Link to="/routines" className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors border border-gray-100">
+              <div className="p-2 bg-purple-500 text-white rounded-xl"><Dumbbell size={20} /></div>
+              <span className="font-medium text-gray-800">Nueva Rutina</span>
             </Link>
             <button 
               onClick={handleDownloadReport}
-              className="flex items-center gap-4 p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-colors border-0"
+              className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors border border-gray-100 text-left w-full"
             >
-              <div className="p-2 bg-pink-500 rounded-xl"><TrendingUp size={20} /></div>
-              <span className="font-medium">Reportes PDF</span>
+              <div className="p-2 bg-pink-500 text-white rounded-xl"><TrendingUp size={20} /></div>
+              <span className="font-medium text-gray-800">Reportes PDF</span>
             </button>
           </div>
         </div>
