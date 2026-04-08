@@ -4,6 +4,7 @@ import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.ProductsPurchasedResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.entity.Client;
+import com.aplicacionGym.gymapp.entity.GroupClass;
 import com.aplicacionGym.gymapp.entity.PaymentProduct;
 import com.aplicacionGym.gymapp.entity.Routine;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
@@ -43,7 +44,7 @@ public class ClientService {
         Client client = clientRepository.findById(idClient)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
 
-        com.aplicacionGym.gymapp.entity.GroupClass groupClass = groupClassRepository.findById(idClass)
+        GroupClass groupClass = groupClassRepository.findById(idClass)
                 .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + idClass));
 
         client.setActiveClass(groupClass);
