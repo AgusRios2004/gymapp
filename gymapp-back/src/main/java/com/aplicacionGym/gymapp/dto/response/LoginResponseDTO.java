@@ -9,4 +9,5 @@ public class LoginResponseDTO {
     private String lastName;
     private String email;
     private String role; // "ADMIN" or "PROFESSOR"
+    private String token;
 }

@@ -7,6 +7,7 @@ import com.aplicacionGym.gymapp.entity.Person;
 import com.aplicacionGym.gymapp.entity.Professor;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.repository.PersonRepository;
+import com.aplicacionGym.gymapp.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         Person person = personRepository.findByEmail(loginRequestDTO.getEmail())
@@ -44,6 +48,10 @@ public class AuthService {
         } else {
             response.setRole("USER");
         }
+
+        // Generate JWT token with 30-day expiration
+        String token = jwtUtil.generateToken(person.getEmail());
+        response.setToken(token);
 
         return response;
     }
