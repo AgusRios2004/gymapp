@@ -4,7 +4,7 @@ import { useForm, useFieldArray, type Control, type UseFormRegister, type UseFor
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { X, Plus, Trash2, Dumbbell } from 'lucide-react';
+import { X, Plus, Trash2, Dumbbell, ChevronUp, ChevronDown } from 'lucide-react';
 
 import { RoutineSchema } from '../../types/schema.type';
 import { updateRoutine, getRoutineById, deleteRoutine } from '../../services/routineService';
@@ -63,7 +63,9 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
   const createExerciseMutation = useMutation({
     mutationFn: createExercise,
     onSuccess: (newExercise) => {
+      queryClient.setQueryData(['exercises'], (old: Exercise[] | undefined) => old ? [...old, newExercise] : [newExercise]);
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      
       if (exerciseModalTarget) {
         setValue(`days.${exerciseModalTarget.nestIndex}.routineExercises.${exerciseModalTarget.k}.exerciseId` as any, newExercise.id);
       }
@@ -324,7 +326,7 @@ useEffect(() => {
 
 // Subcomponente para manejar la lista anidada de ejercicios
 const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, onOpenExerciseModal }: { nestIndex: number, control: Control<RoutineFormData>, register: UseFormRegister<RoutineFormData>, exercisesList: Exercise[], getValues: UseFormGetValues<RoutineFormData>, onOpenExerciseModal: (k: number) => void }) => {
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, swap } = useFieldArray({
     control,
     name: `days.${nestIndex}.routineExercises`,
   });
@@ -377,7 +379,29 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Reps</label>
               <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
             </div>
-            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500"><Trash2 size={18} /></button>
+            
+            <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
+              <button 
+                type="button" 
+                onClick={() => swap(k, k - 1)} 
+                disabled={k === 0} 
+                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                title="Subir"
+              >
+                <ChevronUp size={16} />
+              </button>
+              <button 
+                type="button" 
+                onClick={() => swap(k, k + 1)} 
+                disabled={k === fields.length - 1} 
+                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                title="Bajar"
+              >
+                <ChevronDown size={16} />
+              </button>
+            </div>
+
+            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
           </div>
           );
         })}
