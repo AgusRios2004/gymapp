@@ -28,4 +28,8 @@ public class GroupClass {
     private String startTime; // e.g. "10:00"
     private String endTime; // e.g. "11:00"
     private int capacity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "routine_id", nullable = true)
+    private Routine routine;
 }

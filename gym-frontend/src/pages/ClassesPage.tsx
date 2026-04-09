@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, Plus, Trash2, User as UserIcon, Users, UserMinus, UserPlus, CalendarDays, UserCheck } from 'lucide-react';
 import { getProfessors } from '../services/professorService';
 import { getClasses, createClass, deleteClass, getStudentsByClass, unassignClass, assignClass } from '../services/classService';
+import { getRoutines } from '../services/routineService';
 import { createClient, getClients } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
 import { useAuth } from '../context/AuthContext';
@@ -33,6 +34,7 @@ export default function ClassesPage() {
   const [form, setForm] = useState({
     className: '',
     professorId: '',
+    routineId: '',
     dayOfWeek: 'MONDAY',
     startTime: '10:00',
     endTime: '11:00',
@@ -54,6 +56,11 @@ export default function ClassesPage() {
        const data = await getClasses();
        return Array.isArray(data) ? data : [];
     }
+  });
+
+  const { data: routines = [] } = useQuery({
+    queryKey: ['routines'],
+    queryFn: getRoutines
   });
 
   const { data: professors = [] } = useQuery({
@@ -86,6 +93,7 @@ export default function ClassesPage() {
       setForm({
          className: '',
          professorId: '',
+         routineId: '',
          dayOfWeek: 'MONDAY',
          startTime: '10:00',
          endTime: '11:00',
@@ -217,6 +225,15 @@ export default function ClassesPage() {
                             <Trash2 size={18} />
                           </button>
                        </div>
+
+                       {c.routine && (
+                         <div className="mb-4">
+                           <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Rutina Asignada</span>
+                           <div className="bg-purple-50 text-purple-700 px-3 py-2 rounded-xl text-sm font-medium inline-block border border-purple-100">
+                              🏋️‍♀️ {c.routine.name}
+                           </div>
+                         </div>
+                       )}
 
                        <div className="space-y-3 mb-6">
                           <div className="flex items-center gap-3 text-gray-600">
@@ -434,6 +451,18 @@ export default function ClassesPage() {
                >
                  <option value="">Seleccionar profesor...</option>
                  {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
+               </select>
+            </div>
+
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
+               <select 
+                 className="w-full p-2 border rounded-lg bg-gray-50"
+                 value={form.routineId}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
+               >
+                 <option value="">Sin rutina asignada</option>
+                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
                </select>
             </div>
 
