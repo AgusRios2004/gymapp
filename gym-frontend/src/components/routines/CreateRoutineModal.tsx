@@ -7,7 +7,9 @@ import { TextArea } from '../ui/TextArea';
 import { RoutineSchema } from '../../types/schema.type';
 import type { Routine, RoutineDay, RoutineExercise } from '../../types/index';
 import { createRoutine } from '../../services/routineService';
-import { getExercises, type Exercise } from '../../services/exerciseService'; 
+import { getExercises, createExercise, type Exercise } from '../../services/exerciseService'; 
+import CreateExerciseModal from '../exercises/CreateExerciseModal';
+import { toast } from 'react-toastify';
 
 interface CreateRoutineModalProps {
   isOpen: boolean;
@@ -20,6 +22,23 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
   const [goal, setGoal] = useState('');
   const [days, setDays] = useState<RoutineDay[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [exerciseModalTarget, setExerciseModalTarget] = useState<{ dayIndex: number, exIndex: number } | null>(null);
+
+  // Mutación para crear nuevo ejercicio al vuelo
+  const createExerciseMutation = useMutation({
+    mutationFn: createExercise,
+    onSuccess: (newExercise) => {
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      if (exerciseModalTarget) {
+        updateExercise(exerciseModalTarget.dayIndex, exerciseModalTarget.exIndex, 'exerciseId', newExercise.id);
+      }
+      setExerciseModalTarget(null);
+      toast.success("Ejercicio creado y asignado con éxito");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al crear el ejercicio');
+    }
+  });
 
   // Cargar ejercicios para el select
   const { data: exercises = [] } = useQuery({
@@ -173,16 +192,26 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                     <div key={exIndex} className="flex gap-3 items-end bg-white p-3 rounded-lg shadow-sm border border-gray-100">
                       <div className="flex-1">
                         <label className="text-xs font-medium text-gray-500 mb-1 block">Ejercicio</label>
-                        <select
-                          className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                          value={ex.exerciseId || ''}
-                          onChange={(e) => updateExercise(dayIndex, exIndex, 'exerciseId', Number(e.target.value))}
-                        >
-                          <option value="">Seleccionar...</option>
-                          {exercises.map((e: Exercise) => (
-                            <option key={e.id} value={e.id}>{e.name}</option>
-                          ))}
-                        </select>
+                        <div className="flex gap-2">
+                          <select
+                            className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            value={ex.exerciseId || ''}
+                            onChange={(e) => updateExercise(dayIndex, exIndex, 'exerciseId', Number(e.target.value))}
+                          >
+                            <option value="">Seleccionar...</option>
+                            {exercises.map((e: Exercise) => (
+                              <option key={e.id} value={e.id}>{e.name}</option>
+                            ))}
+                          </select>
+                          <button 
+                            type="button"
+                            onClick={() => setExerciseModalTarget({ dayIndex, exIndex })}
+                            className="px-3 py-1 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
+                            title="Crear nuevo ejercicio"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                       <div className="w-20">
                         <Input label="Series" type="number" value={ex.sets} 
@@ -222,6 +251,13 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
           </Button>
         </div>
       </div>
+
+      <CreateExerciseModal 
+        isOpen={!!exerciseModalTarget} 
+        onClose={() => setExerciseModalTarget(null)} 
+        onSave={(data) => createExerciseMutation.mutate(data)}
+        isLoading={createExerciseMutation.isPending}
+      />
     </div>,
     document.body
   );
