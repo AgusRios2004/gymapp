@@ -144,6 +144,7 @@ export interface User {
     lastName: string;
     email: string;
     role: 'ADMIN' | 'PROFESSOR';
+    token: string;
 }
 
 export interface GroupClass {
