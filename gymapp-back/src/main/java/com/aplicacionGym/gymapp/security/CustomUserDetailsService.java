@@ -1,7 +1,7 @@
 package com.aplicacionGym.gymapp.security;
 
-import com.aplicacionGym.gymapp.entity.Administrator;
-import com.aplicacionGym.gymapp.repository.AdministratorRepository;
+import com.aplicacionGym.gymapp.entity.Person;
+import com.aplicacionGym.gymapp.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,13 +15,13 @@ import java.util.ArrayList;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private AdministratorRepository administratorRepository;
+    private PersonRepository personRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Administrator admin = administratorRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Administrator not found with email: " + email));
+        Person person = personRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return new User(admin.getEmail(), admin.getPassword(), new ArrayList<>());
+        return new User(person.getEmail(), person.getPassword(), new ArrayList<>());
     }
 }
