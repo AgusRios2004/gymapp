@@ -48,4 +48,11 @@ public class RoutineController {
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine deleted successfully", null));
     }
 
+    @PostMapping("/assign")
+    public ResponseEntity<WebApiResponse> assignRoutine(@RequestBody com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO request){
+        routineService.assignRoutineToClientComplex(request);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine assigned with schedule successfully", null));
+    }
+
+
 }

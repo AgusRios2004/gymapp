@@ -14,6 +14,15 @@ import com.aplicacionGym.gymapp.repository.ExerciseRepository;
 import com.aplicacionGym.gymapp.repository.RoutineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.util.stream.Collectors;
+import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
+import com.aplicacionGym.gymapp.entity.Client;
+import com.aplicacionGym.gymapp.entity.ClientRoutine;
+import com.aplicacionGym.gymapp.entity.ClientSchedule;
+import com.aplicacionGym.gymapp.repository.ClientRoutineRepository;
+import com.aplicacionGym.gymapp.repository.ClientScheduleRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,13 +36,19 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
     private final ExerciseRepository exerciseRepository;
     private final ClientRepository clientRepository;
+    private final ClientRoutineRepository clientRoutineRepository;
+    private final ClientScheduleRepository clientScheduleRepository;
 
     public RoutineService(RoutineRepository routineRepository,
             ExerciseRepository exerciseRepository,
-            ClientRepository clientRepository) {
+            ClientRepository clientRepository,
+            ClientRoutineRepository clientRoutineRepository,
+            ClientScheduleRepository clientScheduleRepository) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.clientRepository = clientRepository;
+        this.clientRoutineRepository = clientRoutineRepository;
+        this.clientScheduleRepository = clientScheduleRepository;
     }
 
     public RoutineResponseDTO createRoutine(RoutineRequestDTO dto) {
@@ -125,6 +140,42 @@ public class RoutineService {
             day.setExercises(routineExercises);
             return day;
         }).toList();
+    }
+
+    public void assignRoutineToClientComplex(AssignRoutineRequestDTO request) {
+        Client client = clientRepository.findById(request.getClientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + request.getClientId()));
+
+        Routine routine = routineRepository.findById(request.getRoutineTemplateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + request.getRoutineTemplateId()));
+
+        // Inactivamos rutinas previas si las hay (opcional, dependiendo de la regla de negocio)
+        // Por ahora mantenemos la lógica de crear una nueva ClientRoutine activa
+        
+        ClientRoutine clientRoutine = new ClientRoutine();
+        clientRoutine.setClient(client);
+        clientRoutine.setRoutine(routine);
+        clientRoutine.setActive(true);
+        clientRoutine.setStartDate(request.getStartDate() != null ? LocalDate.parse(request.getStartDate()) : LocalDate.now());
+        
+        final ClientRoutine savedCR = clientRoutineRepository.save(clientRoutine);
+
+        if (request.getSchedule() != null) {
+            List<ClientSchedule> schedules = request.getSchedule().stream().map(sDTO -> {
+                ClientSchedule schedule = new ClientSchedule();
+                schedule.setClientRoutine(savedCR);
+                schedule.setDayOrder(sDTO.getDayOrder());
+                schedule.setAssignedDay(DayOfWeek.valueOf(sDTO.getAssignedDay().toUpperCase()));
+                return schedule;
+            }).collect(Collectors.toList());
+            
+            clientScheduleRepository.saveAll(schedules);
+            savedCR.setSchedule(schedules);
+        }
+
+        // También actualizamos la referencia en el Client si es necesario (legacy support)
+        client.setRoutineActive(routine);
+        clientRepository.save(client);
     }
 
 }
