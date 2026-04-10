@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Clock, Plus, Trash2, User as UserIcon, Users, UserMinus, UserPlus, CalendarDays, UserCheck } from 'lucide-react';
+import { Clock, Plus, Trash2, Edit, User as UserIcon, Users, UserMinus, UserPlus, CalendarDays, UserCheck } from 'lucide-react';
 import { getProfessors } from '../services/professorService';
-import { getClasses, createClass, deleteClass, getStudentsByClass, unassignClass, assignClass } from '../services/classService';
+import { getClasses, createClass, deleteClass, updateClass, getStudentsByClass, unassignClass, assignClass } from '../services/classService';
+import { getRoutines } from '../services/routineService';
 import { createClient, getClients } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
 import { useAuth } from '../context/AuthContext';
@@ -25,6 +26,8 @@ export default function ClassesPage() {
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split('T')[0];
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingClassId, setEditingClassId] = useState<number | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [selectedClassForAssign, setSelectedClassForAssign] = useState<number | null>(null);
   const [selectedClientToAssign, setSelectedClientToAssign] = useState<string>('');
@@ -33,6 +36,7 @@ export default function ClassesPage() {
   const [form, setForm] = useState({
     className: '',
     professorId: '',
+    routineId: '',
     dayOfWeek: 'MONDAY',
     startTime: '10:00',
     endTime: '11:00',
@@ -54,6 +58,11 @@ export default function ClassesPage() {
        const data = await getClasses();
        return Array.isArray(data) ? data : [];
     }
+  });
+
+  const { data: routines = [] } = useQuery({
+    queryKey: ['routines'],
+    queryFn: getRoutines
   });
 
   const { data: professors = [] } = useQuery({
@@ -86,6 +95,7 @@ export default function ClassesPage() {
       setForm({
          className: '',
          professorId: '',
+         routineId: '',
          dayOfWeek: 'MONDAY',
          startTime: '10:00',
          endTime: '11:00',
@@ -104,6 +114,26 @@ export default function ClassesPage() {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success("🗑️ Clase eliminada");
     }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: number, form: any }) => updateClass(data.id, data.form),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      toast.success("📝 Clase actualizada");
+      setIsEditModalOpen(false);
+      setEditingClassId(null);
+      setForm({
+         className: '',
+         professorId: '',
+         routineId: '',
+         dayOfWeek: 'MONDAY',
+         startTime: '10:00',
+         endTime: '11:00',
+         capacity: '20'
+      });
+    },
+    onError: () => toast.error("❌ Error al actualizar la clase")
   });
 
   const assignMutation = useMutation({
@@ -200,7 +230,10 @@ export default function ClassesPage() {
                     <p className="text-sm italic">Sin clases programadas</p>
                  </div>
                ) : (
-                 classes.filter((c: GroupClass) => c.dayOfWeek === day).map((c: GroupClass) => (
+                 classes.filter((c: GroupClass) => c.dayOfWeek === day).map((c: GroupClass) => {
+                    const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
+                    const isFull = assignedStudentsCount >= c.capacity;
+                    return (
                     <div key={c.id} className="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                        <div className="flex justify-between items-start mb-4">
                           <div className="space-y-1">
@@ -210,13 +243,42 @@ export default function ClassesPage() {
                                <span className="text-sm">{c.startTime} - {c.endTime}</span>
                             </div>
                           </div>
-                          <button 
-                            onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }} 
-                            className="p-2 text-gray-300 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                          <div className="flex gap-1">
+                             <button 
+                               onClick={() => {
+                                  setForm({
+                                      className: c.className,
+                                      professorId: String(c.professor?.id || ''),
+                                      routineId: String(c.routine?.id || ''),
+                                      dayOfWeek: c.dayOfWeek,
+                                      startTime: c.startTime,
+                                      endTime: c.endTime,
+                                      capacity: String(c.capacity)
+                                  });
+                                  setEditingClassId(c.id);
+                                  setIsEditModalOpen(true);
+                               }} 
+                               className="p-2 text-gray-300 hover:text-blue-500 transition-colors"
+                             >
+                               <Edit size={18} />
+                             </button>
+                             <button 
+                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }} 
+                               className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                             >
+                               <Trash2 size={18} />
+                             </button>
+                          </div>
                        </div>
+
+                       {c.routine && (
+                         <div className="mb-4">
+                           <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Rutina Asignada</span>
+                           <div className="bg-purple-50 text-purple-700 px-3 py-2 rounded-xl text-sm font-medium inline-block border border-purple-100">
+                              🏋️‍♀️ {c.routine.name}
+                           </div>
+                         </div>
+                       )}
 
                        <div className="space-y-3 mb-6">
                           <div className="flex items-center gap-3 text-gray-600">
@@ -229,12 +291,12 @@ export default function ClassesPage() {
                              </div>
                           </div>
                           
-                          <div className="flex items-center justify-between bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100/50">
-                             <div className="flex items-center gap-2 text-emerald-700">
+                          <div className={`flex items-center justify-between p-3 rounded-2xl border ${isFull ? 'bg-red-50/50 border-red-100/50 text-red-700' : 'bg-emerald-50/50 border-emerald-100/50 text-emerald-700'}`}>
+                             <div className="flex items-center gap-2">
                                 <Users size={18} />
-                                <span className="text-sm font-black uppercase">Capacidad</span>
+                                <span className="text-sm font-black uppercase">Cupo</span>
                              </div>
-                             <span className="text-lg font-black text-emerald-600">{c.capacity}</span>
+                             <span className="text-lg font-black">{assignedStudentsCount} / {c.capacity}</span>
                           </div>
                        </div>
 
@@ -257,7 +319,8 @@ export default function ClassesPage() {
                           </Button>
                        </div>
                     </div>
-                  ))
+                  );
+                 })
                 )}
             </div>
           </div>
@@ -437,9 +500,87 @@ export default function ClassesPage() {
                </select>
             </div>
 
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
+               <select 
+                 className="w-full p-2 border rounded-lg bg-gray-50"
+                 value={form.routineId}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
+               >
+                 <option value="">Sin rutina asignada</option>
+                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+               </select>
+            </div>
+
             <div className="flex gap-3 pt-6">
                <Button variant="outline" type="button" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
                <Button type="submit" className="flex-1" isLoading={createMutation.isPending}>Crear Clase</Button>
+            </div>
+         </form>
+      </Modal>
+
+      <Modal isOpen={isEditModalOpen} onClose={() => { setIsEditModalOpen(false); setEditingClassId(null); }} title="Editar Clase">
+         <form onSubmit={(e) => { 
+           e.preventDefault(); 
+           if(editingClassId) {
+             updateMutation.mutate({
+               id: editingClassId,
+               form: {
+                 ...form,
+                 capacity: Number(form.capacity)
+               }
+             }); 
+           }
+         }} className="space-y-4">
+            <Input label="Nombre de la Clase" required value={form.className} onChange={e => setForm({...form, className: e.target.value})} />
+            
+            <div className="grid grid-cols-2 gap-4">
+               <div>
+                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Día</label>
+                  <select 
+                    className="w-full p-2 border rounded-lg bg-gray-50"
+                    value={form.dayOfWeek}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
+                  >
+                    {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
+                  </select>
+               </div>
+               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+               <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
+               <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
+            </div>
+
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
+               <select 
+                 className="w-full p-2 border rounded-lg bg-gray-50"
+                 required
+                 value={form.professorId}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
+               >
+                 <option value="">Seleccionar profesor...</option>
+                 {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
+               </select>
+            </div>
+
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
+               <select 
+                 className="w-full p-2 border rounded-lg bg-gray-50"
+                 value={form.routineId}
+                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
+               >
+                 <option value="">Sin rutina asignada</option>
+                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+               </select>
+            </div>
+
+            <div className="flex gap-3 pt-6">
+               <Button variant="outline" type="button" className="flex-1" onClick={() => { setIsEditModalOpen(false); setEditingClassId(null); }}>Cancelar</Button>
+               <Button type="submit" className="flex-1" isLoading={updateMutation.isPending}>Guardar Cambios</Button>
             </div>
          </form>
       </Modal>

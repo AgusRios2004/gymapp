@@ -155,4 +155,5 @@ export interface GroupClass {
     startTime: string;
     endTime: string;
     capacity: number;
+    routine?: Routine;
 }

@@ -9,14 +9,27 @@ export const getClasses = async (): Promise<GroupClass[]> => {
     return response.data.data;
 };
 
-export const createClass = async (data: Partial<GroupClass> & { professorId: string }): Promise<GroupClass> => {
+export const createClass = async (data: Partial<GroupClass> & { professorId: string, routineId?: string }): Promise<GroupClass> => {
     // We clean the data to match what the backend expects
-    const { professorId, ...rest } = data;
+    const { professorId, routineId, ...rest } = data;
     const payload = {
         ...rest,
-        professor: { id: Number(professorId) }
+        professor: { id: Number(professorId) },
+        ...(routineId ? { routine: { id: Number(routineId) } } : { routine: null })
     };
     const response = await api.post<ApiResponse<GroupClass>>(path, payload);
+    return response.data.data;
+};
+
+export const updateClass = async (id: number, data: Partial<GroupClass> & { professorId: string, routineId?: string }): Promise<GroupClass> => {
+    const { professorId, routineId, ...rest } = data;
+    const payload = {
+        ...rest,
+        id,
+        professor: { id: Number(professorId) },
+        ...(routineId ? { routine: { id: Number(routineId) } } : { routine: null })
+    };
+    const response = await api.put<ApiResponse<GroupClass>>(`${path}/${id}`, payload);
     return response.data.data;
 };
 

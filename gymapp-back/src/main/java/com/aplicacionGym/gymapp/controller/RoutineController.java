@@ -1,5 +1,6 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
@@ -17,6 +18,12 @@ public class RoutineController {
 
     @Autowired
     private RoutineService routineService;
+
+    @PostMapping("/assign")
+    public ResponseEntity<WebApiResponse> assignComplexRoutine(@RequestBody AssignRoutineRequestDTO request) {
+        routineService.assignComplexRoutine(request);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine assigned successfully with schedule", null));
+    }
 
     @PostMapping
     private ResponseEntity<WebApiResponse> createRoutine(@RequestBody RoutineRequestDTO routineRequestDTO){

@@ -60,4 +60,17 @@ public class GroupClassService {
         Objects.requireNonNull(id, "ID cannot be null");
         groupClassRepository.deleteById(id);
     }
+
+    public GroupClass updateClass(Long id, GroupClass updatedClass) {
+        GroupClass existingClass = groupClassRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Class not found"));
+        existingClass.setClassName(updatedClass.getClassName());
+        existingClass.setProfessor(updatedClass.getProfessor());
+        existingClass.setDayOfWeek(updatedClass.getDayOfWeek());
+        existingClass.setStartTime(updatedClass.getStartTime());
+        existingClass.setEndTime(updatedClass.getEndTime());
+        existingClass.setCapacity(updatedClass.getCapacity());
+        existingClass.setRoutine(updatedClass.getRoutine());
+        return groupClassRepository.save(existingClass);
+    }
 }

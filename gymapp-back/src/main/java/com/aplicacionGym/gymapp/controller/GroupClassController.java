@@ -41,4 +41,10 @@ public class GroupClassController {
         groupClassService.deleteClass(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Class deleted successfully", null));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WebApiResponse> updateClass(@PathVariable Long id, @RequestBody GroupClass groupClass) {
+        GroupClass updated = groupClassService.updateClass(id, groupClass);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Class updated successfully", updated));
+    }
 }

@@ -4,11 +4,12 @@ import { useForm, useFieldArray, type Control, type UseFormRegister, type UseFor
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { X, Plus, Trash2, Dumbbell } from 'lucide-react';
+import { X, Plus, Trash2, Dumbbell, ChevronUp, ChevronDown } from 'lucide-react';
 
 import { RoutineSchema } from '../../types/schema.type';
 import { updateRoutine, getRoutineById, deleteRoutine } from '../../services/routineService';
-import { getExercises, type Exercise } from '../../services/exerciseService';
+import { getExercises, createExercise, type Exercise } from '../../services/exerciseService';
+import CreateExerciseModal from '../exercises/CreateExerciseModal';
 import type { Routine } from '../../types/index';
 import type { z } from 'zod';
 import Button from '../ui/Button';
@@ -45,6 +46,7 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
     handleSubmit,
     reset,
     getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RoutineFormData>({
     resolver: zodResolver(RoutineSchema) as Resolver<RoutineFormData>,
@@ -54,6 +56,25 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
       active: true,
       days: [],
     },
+  });
+
+  const [exerciseModalTarget, setExerciseModalTarget] = React.useState<{ nestIndex: number, k: number } | null>(null);
+
+  const createExerciseMutation = useMutation({
+    mutationFn: createExercise,
+    onSuccess: (newExercise) => {
+      queryClient.setQueryData(['exercises'], (old: Exercise[] | undefined) => old ? [...old, newExercise] : [newExercise]);
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      
+      if (exerciseModalTarget) {
+        setValue(`days.${exerciseModalTarget.nestIndex}.routineExercises.${exerciseModalTarget.k}.exerciseId` as any, newExercise.id);
+      }
+      setExerciseModalTarget(null);
+      toast.success("Ejercicio creado y asignado con éxito");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Error al crear el ejercicio');
+    }
   });
 
   // Array de Días
@@ -251,13 +272,13 @@ useEffect(() => {
                       </button>
                     </div>
 
-                    {/* Subcomponente para ejercicios */}
                     <DayExercises 
                       nestIndex={index} 
                       control={control} 
                       register={register} 
                       exercisesList={exercisesList}
                       getValues={getValues}
+                      onOpenExerciseModal={(k) => setExerciseModalTarget({ nestIndex: index, k })}
                     />
                   </div>
                   );
@@ -292,14 +313,20 @@ useEffect(() => {
           </div>
         </form>
       </div>
+      <CreateExerciseModal 
+        isOpen={!!exerciseModalTarget} 
+        onClose={() => setExerciseModalTarget(null)} 
+        onSave={(data) => createExerciseMutation.mutate(data)}
+        isLoading={createExerciseMutation.isPending}
+      />
     </div>,
     document.body
   );
 };
 
 // Subcomponente para manejar la lista anidada de ejercicios
-const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }: { nestIndex: number, control: Control<RoutineFormData>, register: UseFormRegister<RoutineFormData>, exercisesList: Exercise[], getValues: UseFormGetValues<RoutineFormData> }) => {
-  const { fields, append, remove } = useFieldArray({
+const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, onOpenExerciseModal }: { nestIndex: number, control: Control<RoutineFormData>, register: UseFormRegister<RoutineFormData>, exercisesList: Exercise[], getValues: UseFormGetValues<RoutineFormData>, onOpenExerciseModal: (k: number) => void }) => {
+  const { fields, append, remove, swap } = useFieldArray({
     control,
     name: `days.${nestIndex}.routineExercises`,
   });
@@ -324,15 +351,25 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }
             {exerciseId && <input type="hidden" {...register(`days.${nestIndex}.routineExercises.${k}.id`, { valueAsNumber: true })} />}
             <div className="flex-1 min-w-[180px]">
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Ejercicio</label>
-              <select
-                {...register(`days.${nestIndex}.routineExercises.${k}.exerciseId`, { valueAsNumber: true })}
-                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="">Seleccionar...</option>
-                {exercisesList.map((ex) => (
-                  <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscleGroup})</option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  {...register(`days.${nestIndex}.routineExercises.${k}.exerciseId`, { valueAsNumber: true })}
+                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="">Seleccionar...</option>
+                  {exercisesList.map((ex) => (
+                    <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscleGroup})</option>
+                  ))}
+                </select>
+                <button 
+                  type="button"
+                  onClick={() => onOpenExerciseModal(k)}
+                  className="px-3 py-1 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
+                  title="Crear nuevo ejercicio"
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="w-20">
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Series</label>
@@ -342,7 +379,29 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues }
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Reps</label>
               <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
             </div>
-            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500"><Trash2 size={18} /></button>
+            
+            <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
+              <button 
+                type="button" 
+                onClick={() => swap(k, k - 1)} 
+                disabled={k === 0} 
+                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                title="Subir"
+              >
+                <ChevronUp size={16} />
+              </button>
+              <button 
+                type="button" 
+                onClick={() => swap(k, k + 1)} 
+                disabled={k === fields.length - 1} 
+                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                title="Bajar"
+              >
+                <ChevronDown size={16} />
+              </button>
+            </div>
+
+            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
           </div>
           );
         })}
