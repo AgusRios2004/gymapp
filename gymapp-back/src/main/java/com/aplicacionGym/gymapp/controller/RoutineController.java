@@ -19,31 +19,31 @@ public class RoutineController {
     private RoutineService routineService;
 
     @PostMapping
-    private ResponseEntity<WebApiResponse> createRoutine(@RequestBody RoutineRequestDTO routineRequestDTO){
+    public ResponseEntity<WebApiResponse> createRoutine(@RequestBody RoutineRequestDTO routineRequestDTO){
         RoutineResponseDTO routine = routineService.createRoutine(routineRequestDTO);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine created successfully", routine));
     }
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getALLRoutines(){
+    public ResponseEntity<WebApiResponse> getALLRoutines(){
         List<RoutineResponseDTO> routines = routineService.getAllRoutines();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routines founds successfully", routines));
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<WebApiResponse> getRoutineById(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> getRoutineById(@PathVariable Long id){
         RoutineResponseDTO routine = routineService.getRoutineById(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine found successfully", routine));
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<WebApiResponse> updateRoutine(@PathVariable Long id, @RequestBody RoutineRequestDTO routineRequestDTO){
+    public ResponseEntity<WebApiResponse> updateRoutine(@PathVariable Long id, @RequestBody RoutineRequestDTO routineRequestDTO){
         RoutineResponseDTO routineUpdated = routineService.updateRoutine(id, routineRequestDTO);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine updated successfully", routineUpdated));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<WebApiResponse> deleteRoutine(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> deleteRoutine(@PathVariable Long id){
         routineService.deleteRoutine(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine deleted successfully", null));
     }
