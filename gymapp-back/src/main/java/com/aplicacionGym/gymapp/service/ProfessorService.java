@@ -63,7 +63,7 @@ public class ProfessorService {
     public void deleteProfessor(Long id) {
         Professor professor = professorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: " + id));
-        professor.setActive(false);
+        professor.setActive(!professor.isActive());
         professorRepository.save(professor);
 
     }
