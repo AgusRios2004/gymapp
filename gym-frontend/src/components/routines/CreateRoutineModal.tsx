@@ -10,6 +10,7 @@ import { createRoutine } from '../../services/routineService';
 import { getExercises, createExercise, type Exercise } from '../../services/exerciseService'; 
 import CreateExerciseModal from '../exercises/CreateExerciseModal';
 import { toast } from 'react-toastify';
+import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 
 interface CreateRoutineModalProps {
   isOpen: boolean;
@@ -28,7 +29,10 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
   const createExerciseMutation = useMutation({
     mutationFn: createExercise,
     onSuccess: (newExercise) => {
+      // Actualizar la cache instantáneamente para que el <select> tenga la opción
+      queryClient.setQueryData(['exercises'], (old: Exercise[] | undefined) => old ? [...old, newExercise] : [newExercise]);
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      
       if (exerciseModalTarget) {
         updateExercise(exerciseModalTarget.dayIndex, exerciseModalTarget.exIndex, 'exerciseId', newExercise.id);
       }
@@ -93,6 +97,21 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
   const removeExercise = (dayIndex: number, exIndex: number) => {
     const newDays = [...days];
     newDays[dayIndex].routineExercises.splice(exIndex, 1);
+    setDays(newDays);
+  };
+
+  const moveExercise = (dayIndex: number, exIndex: number, direction: 'up' | 'down') => {
+    const newDays = [...days];
+    const exercises = newDays[dayIndex].routineExercises;
+    if (direction === 'up' && exIndex > 0) {
+      const temp = exercises[exIndex - 1];
+      exercises[exIndex - 1] = exercises[exIndex];
+      exercises[exIndex] = temp;
+    } else if (direction === 'down' && exIndex < exercises.length - 1) {
+      const temp = exercises[exIndex + 1];
+      exercises[exIndex + 1] = exercises[exIndex];
+      exercises[exIndex] = temp;
+    }
     setDays(newDays);
   };
 
@@ -221,11 +240,30 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                         <Input label="Reps" type="number" value={ex.repetitions} 
                           onChange={(e) => updateExercise(dayIndex, exIndex, 'repetitions', Number(e.target.value))} />
                       </div>
+                      <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
+                        <button 
+                          type="button"
+                          onClick={() => moveExercise(dayIndex, exIndex, 'up')}
+                          disabled={exIndex === 0}
+                          className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                        >
+                          <ChevronUp size={16} />
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => moveExercise(dayIndex, exIndex, 'down')}
+                          disabled={exIndex === day.routineExercises.length - 1}
+                          className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                        >
+                          <ChevronDown size={16} />
+                        </button>
+                      </div>
                       <button 
+                        type="button"
                         onClick={() => removeExercise(dayIndex, exIndex)}
-                        className="mb-2 text-gray-400 hover:text-red-500"
+                        className="mb-2 text-gray-400 hover:text-red-500 transition-colors"
                       >
-                        🗑️
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   ))}

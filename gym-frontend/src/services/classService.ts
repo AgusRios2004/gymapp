@@ -15,9 +15,21 @@ export const createClass = async (data: Partial<GroupClass> & { professorId: str
     const payload = {
         ...rest,
         professor: { id: Number(professorId) },
-        ...(routineId ? { routine: { id: Number(routineId) } } : {})
+        ...(routineId ? { routine: { id: Number(routineId) } } : { routine: null })
     };
     const response = await api.post<ApiResponse<GroupClass>>(path, payload);
+    return response.data.data;
+};
+
+export const updateClass = async (id: number, data: Partial<GroupClass> & { professorId: string, routineId?: string }): Promise<GroupClass> => {
+    const { professorId, routineId, ...rest } = data;
+    const payload = {
+        ...rest,
+        id,
+        professor: { id: Number(professorId) },
+        ...(routineId ? { routine: { id: Number(routineId) } } : { routine: null })
+    };
+    const response = await api.put<ApiResponse<GroupClass>>(`${path}/${id}`, payload);
     return response.data.data;
 };
 
