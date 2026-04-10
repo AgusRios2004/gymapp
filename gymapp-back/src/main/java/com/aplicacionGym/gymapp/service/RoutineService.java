@@ -143,6 +143,13 @@ public class RoutineService {
         Routine routine = routineRepository.findById(request.getRoutineTemplateId())
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found: " + request.getRoutineTemplateId()));
 
+        // Retro-compatibilidad para que aparezca en el frontend en la vista antigua
+        if (!client.getRoutines().contains(routine)) {
+            client.getRoutines().add(routine);
+        }
+        client.setRoutineActive(routine);
+        clientRepository.save(client);
+
         ClientRoutine clientRoutine = new ClientRoutine();
         clientRoutine.setClient(client);
         clientRoutine.setRoutine(routine);
