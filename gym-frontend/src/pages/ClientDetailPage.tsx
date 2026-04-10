@@ -37,6 +37,7 @@ import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
+import AssignRoutineModal from '../components/routines/AssignRoutineModal';
 
 type TabType = 'general' | 'payments' | 'routines' | 'assistance' | 'products' | 'progress';
 
@@ -52,6 +53,7 @@ export default function ClientDetailPage() {
     fatPercentage: '',
     notes: ''
   });
+  const [isAssignRoutineModalOpen, setIsAssignRoutineModalOpen] = useState(false);
 
   const clientId = Number(id);
 
@@ -141,6 +143,15 @@ export default function ClientDetailPage() {
               <span className="text-gray-400 text-sm">• DNI: {client.dni}</span>
             </div>
           </div>
+        </div>
+        <div className="flex gap-2">
+           <Button 
+             variant="primary" 
+             onClick={() => setIsAssignRoutineModalOpen(true)}
+             className="gap-2 rounded-2xl shadow-lg shadow-blue-500/20"
+           >
+             <Dumbbell size={18} /> Asignar Rutina
+           </Button>
         </div>
       </div>
 
@@ -255,7 +266,12 @@ export default function ClientDetailPage() {
 
         {activeTab === 'routines' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900">Planes de Entrenamiento</h3>
+            <div className="flex items-center justify-between">
+               <h3 className="text-xl font-bold text-gray-900">Planes de Entrenamiento</h3>
+               <Button variant="outline" size="sm" onClick={() => setIsAssignRoutineModalOpen(true)} className="gap-2">
+                 <Plus size={16} /> Nueva Asignación
+               </Button>
+            </div>
             <div className="grid grid-cols-1 gap-4">
               {routines.length === 0 ? (
                 <p className="text-center py-8 text-gray-400">No hay rutinas asignadas</p>
@@ -432,6 +448,12 @@ export default function ClientDetailPage() {
             </div>
          </form>
       </Modal>
+
+      <AssignRoutineModal 
+        isOpen={isAssignRoutineModalOpen}
+        onClose={() => setIsAssignRoutineModalOpen(false)}
+        client={client}
+      />
     </div>
   );
 }
