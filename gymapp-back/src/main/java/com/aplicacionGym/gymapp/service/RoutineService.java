@@ -18,6 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.time.DayOfWeek;
+import com.aplicacionGym.gymapp.entity.Client;
+import com.aplicacionGym.gymapp.entity.ClientRoutine;
+import com.aplicacionGym.gymapp.entity.ClientSchedule;
+import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
+import com.aplicacionGym.gymapp.repository.ClientRoutineRepository;
 
 @Service
 @Transactional
@@ -27,13 +33,16 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
     private final ExerciseRepository exerciseRepository;
     private final ClientRepository clientRepository;
+    private final ClientRoutineRepository clientRoutineRepository;
 
     public RoutineService(RoutineRepository routineRepository,
             ExerciseRepository exerciseRepository,
-            ClientRepository clientRepository) {
+            ClientRepository clientRepository,
+            ClientRoutineRepository clientRoutineRepository) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.clientRepository = clientRepository;
+        this.clientRoutineRepository = clientRoutineRepository;
     }
 
     public RoutineResponseDTO createRoutine(RoutineRequestDTO dto) {
@@ -125,6 +134,34 @@ public class RoutineService {
             day.setExercises(routineExercises);
             return day;
         }).toList();
+    }
+
+    public void assignComplexRoutine(AssignRoutineRequestDTO request) {
+        Client client = clientRepository.findById(request.getClientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found: " + request.getClientId()));
+
+        Routine routine = routineRepository.findById(request.getRoutineTemplateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Routine not found: " + request.getRoutineTemplateId()));
+
+        ClientRoutine clientRoutine = new ClientRoutine();
+        clientRoutine.setClient(client);
+        clientRoutine.setRoutine(routine);
+        clientRoutine.setActive(true);
+        clientRoutine.setStartDate(request.getStartDate());
+
+        if (request.getSchedule() != null) {
+            List<ClientSchedule> schedules = request.getSchedule().stream().map(sch -> {
+                ClientSchedule clientSchedule = new ClientSchedule();
+                clientSchedule.setClientRoutine(clientRoutine);
+                clientSchedule.setDayOrder(sch.getDayOrder());
+                clientSchedule.setAssignedDay(DayOfWeek.valueOf(sch.getAssignedDay().toUpperCase()));
+                return clientSchedule;
+            }).toList();
+
+            clientRoutine.setSchedule(schedules);
+        }
+
+        clientRoutineRepository.save(clientRoutine);
     }
 
 }
