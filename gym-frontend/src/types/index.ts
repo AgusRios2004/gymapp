@@ -157,3 +157,17 @@ export interface GroupClass {
     capacity: number;
     routine?: Routine;
 }
+
+export interface ExerciseLog {
+    id?: number;
+    client?: Client;
+    clientId?: number;
+    exercise?: { id: number; name: string };
+    exerciseId?: number;
+    date?: string;
+    weight?: number;
+    repsAchieved?: number;
+    setsAchieved?: number;
+    timeInSeconds?: number;
+    notes?: string;
+}
