@@ -230,7 +230,10 @@ export default function ClassesPage() {
                     <p className="text-sm italic">Sin clases programadas</p>
                  </div>
                ) : (
-                 classes.filter((c: GroupClass) => c.dayOfWeek === day).map((c: GroupClass) => (
+                 classes.filter((c: GroupClass) => c.dayOfWeek === day).map((c: GroupClass) => {
+                    const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
+                    const isFull = assignedStudentsCount >= c.capacity;
+                    return (
                     <div key={c.id} className="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                        <div className="flex justify-between items-start mb-4">
                           <div className="space-y-1">
@@ -288,12 +291,12 @@ export default function ClassesPage() {
                              </div>
                           </div>
                           
-                          <div className="flex items-center justify-between bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100/50">
-                             <div className="flex items-center gap-2 text-emerald-700">
+                          <div className={`flex items-center justify-between p-3 rounded-2xl border ${isFull ? 'bg-red-50/50 border-red-100/50 text-red-700' : 'bg-emerald-50/50 border-emerald-100/50 text-emerald-700'}`}>
+                             <div className="flex items-center gap-2">
                                 <Users size={18} />
-                                <span className="text-sm font-black uppercase">Capacidad</span>
+                                <span className="text-sm font-black uppercase">Cupo</span>
                              </div>
-                             <span className="text-lg font-black text-emerald-600">{c.capacity}</span>
+                             <span className="text-lg font-black">{assignedStudentsCount} / {c.capacity}</span>
                           </div>
                        </div>
 
@@ -316,7 +319,8 @@ export default function ClassesPage() {
                           </Button>
                        </div>
                     </div>
-                  ))
+                  );
+                 })
                 )}
             </div>
           </div>
