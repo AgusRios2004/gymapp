@@ -31,6 +31,8 @@ export interface Routine {
     name: string;
     goal: string;
     active: boolean;
+    version?: number;
+    parentId?: number;
     isTemplate?: boolean;
     days?: RoutineDay[];
 }

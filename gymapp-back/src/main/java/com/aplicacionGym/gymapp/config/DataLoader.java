@@ -168,8 +168,8 @@ public class DataLoader implements CommandLineRunner {
 
         // 6. Pagos para que se vean en el historial
         LocalDate today = LocalDate.now();
-        paymentRepository.save(new Payment(null, c1, marcos, full, full.getPrice(), today.minusDays(5), PaymentType.MONTHLY));
-        paymentRepository.save(new Payment(null, c2, sofia, student, student.getPrice(), today.minusDays(10), PaymentType.MONTHLY));
+        paymentRepository.save(new Payment(null, today.minusDays(5), full.getPrice(), PaymentType.MONTHLY, c1, marcos, full, new ArrayList<>()));
+        paymentRepository.save(new Payment(null, today.minusDays(10), student.getPrice(), PaymentType.MONTHLY, c2, sofia, student, new ArrayList<>()));
         
         // 7. Rutina Global
         Routine fatLoss = new Routine();

@@ -89,8 +89,15 @@ const RoutinesPage: React.FC = () => {
               className="group bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex justify-between items-start mb-4">
-                <div className="bg-blue-50 p-3 rounded-2xl group-hover:bg-blue-100 transition-colors">
-                  <span className="text-2xl">📝</span>
+                <div className="flex items-center gap-2">
+                  <div className="bg-blue-50 p-3 rounded-2xl group-hover:bg-blue-100 transition-colors">
+                    <span className="text-2xl">📝</span>
+                  </div>
+                  {routine.version && (
+                    <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-100">
+                      v{routine.version}
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-1">
                   <button 

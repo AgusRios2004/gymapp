@@ -24,6 +24,10 @@ public class Routine {
 
     private boolean active;
 
+    private Integer version = 1;
+
+    private Long parentId;
+
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days;
 

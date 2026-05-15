@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-@Transactional
 @SuppressWarnings("null")
 public class RoutineService {
 
@@ -26,17 +26,27 @@ public class RoutineService {
     private final ExerciseRepository exerciseRepository;
     private final ClientRepository clientRepository;
     private final ClientRoutineRepository clientRoutineRepository;
+    private final ClientScheduleRepository clientScheduleRepository;
+    private final VersioningService versioningService;
+    private final TransactionRunner transactionRunner;
 
     public RoutineService(RoutineRepository routineRepository,
             ExerciseRepository exerciseRepository,
             ClientRepository clientRepository,
-            ClientRoutineRepository clientRoutineRepository) {
+            ClientRoutineRepository clientRoutineRepository,
+            ClientScheduleRepository clientScheduleRepository,
+            VersioningService versioningService,
+            TransactionRunner transactionRunner) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.clientRepository = clientRepository;
         this.clientRoutineRepository = clientRoutineRepository;
+        this.clientScheduleRepository = clientScheduleRepository;
+        this.versioningService = versioningService;
+        this.transactionRunner = transactionRunner;
     }
 
+    @Transactional
     public RoutineResponseDTO createRoutine(RoutineRequestDTO dto) {
         validateUniqueDays(dto.getDays());
 
@@ -49,32 +59,43 @@ public class RoutineService {
         return RoutineMapper.toDTO(routineRepository.save(routine));
     }
 
+    @Transactional
     public List<RoutineResponseDTO> getAllRoutines() {
         return routineRepository.findAll().stream()
                 .map(RoutineMapper::toDTO)
                 .toList();
     }
 
+    @Transactional
     public RoutineResponseDTO getRoutineById(Long id) {
         Routine routine = routineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
         return RoutineMapper.toDTO(routine);
     }
 
+    @Transactional
     public RoutineResponseDTO updateRoutine(Long id, RoutineRequestDTO routineRequestDTO) {
         validateUniqueDays(routineRequestDTO.getDays());
 
-        Routine routine = routineRepository.findById(id)
+        Routine oldRoutine = routineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
-        updateRoutineData(routine, routineRequestDTO);
+        
+        // Deactivate old version
+        oldRoutine.setActive(false);
+        routineRepository.save(oldRoutine);
 
-        routine.getDays().clear();
-        List<RoutineDay> routineDays = mapDaysToRoutine(routineRequestDTO.getDays(), routine);
+        // Create new version
+        Routine newRoutine = versioningService.cloneForNewVersion(oldRoutine);
+        updateRoutineData(newRoutine, routineRequestDTO);
 
-        routine.getDays().addAll(routineDays);
-        return RoutineMapper.toDTO(routineRepository.save(routine));
+        newRoutine.getDays().clear();
+        List<RoutineDay> routineDays = mapDaysToRoutine(routineRequestDTO.getDays(), newRoutine);
+        newRoutine.getDays().addAll(routineDays);
+
+        return RoutineMapper.toDTO(routineRepository.save(newRoutine));
     }
 
+    @Transactional
     public void deleteRoutine(Long id) {
         Routine routine = routineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
@@ -129,37 +150,41 @@ public class RoutineService {
     }
 
     public void assignComplexRoutine(AssignRoutineRequestDTO request) {
-        Client client = clientRepository.findById(request.getClientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found: " + request.getClientId()));
+        transactionRunner.run(() -> {
+            Client client = clientRepository.findById(request.getClientId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Client not found: " + request.getClientId()));
 
-        Routine routine = routineRepository.findById(request.getRoutineTemplateId())
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found: " + request.getRoutineTemplateId()));
+            Routine routine = routineRepository.findById(request.getRoutineTemplateId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Routine not found: " + request.getRoutineTemplateId()));
 
-        if (!client.getRoutines().contains(routine)) {
-            client.getRoutines().add(routine);
-        }
-        client.setRoutineActive(routine);
-        clientRepository.save(client);
+            ClientRoutine clientRoutine = new ClientRoutine();
+            clientRoutine.setClient(client);
+            clientRoutine.setRoutine(routine);
+            clientRoutine.setActive(true);
+            clientRoutine.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
 
-        ClientRoutine clientRoutine = new ClientRoutine();
-        clientRoutine.setClient(client);
-        clientRoutine.setRoutine(routine);
-        clientRoutine.setActive(true);
-        clientRoutine.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
+            final ClientRoutine savedCR = clientRoutineRepository.save(clientRoutine);
 
-        if (request.getSchedule() != null) {
-            List<ClientSchedule> schedules = request.getSchedule().stream().map(sch -> {
-                ClientSchedule clientSchedule = new ClientSchedule();
-                clientSchedule.setClientRoutine(clientRoutine);
-                clientSchedule.setDayOrder(sch.getDayOrder());
-                clientSchedule.setAssignedDay(DayOfWeek.valueOf(sch.getAssignedDay().toUpperCase()));
-                return clientSchedule;
-            }).toList();
+            if (request.getSchedule() != null) {
+                List<ClientSchedule> schedules = request.getSchedule().stream().map(sch -> {
+                    ClientSchedule clientSchedule = new ClientSchedule();
+                    clientSchedule.setClientRoutine(savedCR);
+                    clientSchedule.setDayOrder(sch.getDayOrder());
+                    clientSchedule.setAssignedDay(DayOfWeek.valueOf(sch.getAssignedDay().toUpperCase()));
+                    return clientSchedule;
+                }).toList();
 
-            clientRoutine.setSchedule(schedules);
-        }
+                clientScheduleRepository.saveAll(schedules);
+                savedCR.setSchedule(new ArrayList<>(schedules));
+            }
 
-        clientRoutineRepository.save(clientRoutine);
+            if (!client.getRoutines().contains(routine)) {
+                client.getRoutines().add(routine);
+            }
+            client.setRoutineActive(routine);
+            clientRepository.save(client);
+        });
     }
 
     public void assignRoutineToClientComplex(AssignRoutineRequestDTO request) {
