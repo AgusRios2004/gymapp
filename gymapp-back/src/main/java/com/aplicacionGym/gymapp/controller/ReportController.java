@@ -29,4 +29,14 @@ public class ReportController {
 
         reportService.generateMonthlyReport(response);
     }
+
+    @GetMapping("/monthly-async")
+    public java.util.concurrent.CompletableFuture<org.springframework.http.ResponseEntity<byte[]>> generateMonthlyReportAsync() {
+        String fileName = "Reporte_GYM_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmm")) + ".pdf";
+        return reportService.generateMonthlyReportAsync()
+                .thenApply(bytes -> org.springframework.http.ResponseEntity.ok()
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                        .body(bytes));
+    }
 }

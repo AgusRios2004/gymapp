@@ -47,23 +47,50 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
+    private static final long ACCESS_EXPIRATION_TIME = 1000L * 60 * 15; // 15 mins
+    private static final long REFRESH_EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7; // 7 days
+
     public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        return generateAccessToken(username);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String generateAccessToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "access");
+        return createToken(claims, username, ACCESS_EXPIRATION_TIME);
+    }
+
+    public String generateRefreshToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        return createToken(claims, username, REFRESH_EXPIRATION_TIME);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject, long expirationTime) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SECRET_KEY)
                 .compact();
     }
 
+    public boolean isRefreshToken(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return "refresh".equals(claims.get("type"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

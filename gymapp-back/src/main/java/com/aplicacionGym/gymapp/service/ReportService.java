@@ -107,4 +107,77 @@ public class ReportService {
                 spacer.setFixedHeight(10);
                 table.addCell(spacer);
         }
+
+        @org.springframework.scheduling.annotation.Async
+        public java.util.concurrent.CompletableFuture<byte[]> generateMonthlyReportAsync() {
+                try {
+                        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                        DashboardStatsDTO stats = dashboardService.getDashboardStats();
+
+                        Document document = new Document(PageSize.A4);
+                        PdfWriter.getInstance(document, baos);
+
+                        document.open();
+
+                        // Fuentes
+                        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, Color.BLACK);
+                        Font subTitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Color.GRAY);
+                        Font metricValueFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, new Color(59, 130, 246));
+
+                        // Título principal
+                        Paragraph title = new Paragraph("Reporte de Cierre de Mes - GYM APP (Async)", titleFont);
+                        title.setAlignment(Paragraph.ALIGN_CENTER);
+                        title.setSpacingAfter(10);
+                        document.add(title);
+
+                        // Fecha de emisión
+                        Paragraph date = new Paragraph(
+                                        "Emitido el: " + LocalDateTime.now()
+                                                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + " hs",
+                                        subTitleFont);
+                        date.setAlignment(Paragraph.ALIGN_CENTER);
+                        date.setSpacingAfter(30);
+                        document.add(date);
+
+                        // Resumen Ejecutivo
+                        Paragraph sectionHeader = new Paragraph("Resumen Ejecutivo", subTitleFont);
+                        sectionHeader.setSpacingAfter(15);
+                        document.add(sectionHeader);
+
+                        // Tabla de Métricas
+                        PdfPTable table = new PdfPTable(2);
+                        table.setWidthPercentage(100f);
+                        table.setSpacingBefore(10);
+
+                        addMetricCell(table, "Total Alumnos", String.valueOf(stats.getTotalClients()), metricValueFont);
+                        addMetricCell(table, "Alumnos Activos", String.valueOf(stats.getActiveClients()), metricValueFont);
+                        addMetricCell(table, "Total Profesores", String.valueOf(stats.getTotalProfessors()), metricValueFont);
+                        addMetricCell(table, "Rutinas Creadas", String.valueOf(stats.getTotalRoutines()), metricValueFont);
+                        addMetricCell(table, "Ingresos Mensuales", "$" + String.format("%.2f", stats.getMonthlyRevenue()),
+                                        metricValueFont);
+                        addMetricCell(table, "Promedio por Cliente",
+                                        "$" + String.format("%.2f",
+                                                        stats.getMonthlyRevenue() / (stats.getActiveClients() > 0
+                                                                        ? stats.getActiveClients()
+                                                                        : 1)),
+                                        metricValueFont);
+
+                        document.add(table);
+
+                        // Pie de página
+                        Paragraph footer = new Paragraph(
+                                        "\n\nEste reporte es generado de forma automática por el sistema de gestión del gimnasio.",
+                                        FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10, Color.GRAY));
+                        footer.setAlignment(Paragraph.ALIGN_CENTER);
+                        document.add(footer);
+
+                        document.close();
+
+                        return java.util.concurrent.CompletableFuture.completedFuture(baos.toByteArray());
+                } catch (Exception e) {
+                        java.util.concurrent.CompletableFuture<byte[]> failed = new java.util.concurrent.CompletableFuture<>();
+                        failed.completeExceptionally(e);
+                        return failed;
+                }
+        }
 }

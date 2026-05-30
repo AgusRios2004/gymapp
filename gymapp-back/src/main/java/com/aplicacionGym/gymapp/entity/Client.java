@@ -8,17 +8,24 @@ import lombok.Setter;
 
 import java.util.List;
 
+import org.hibernate.envers.Audited;
+
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.envers.NotAudited;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Audited
 public class Client extends Person {
 
     private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "active_class_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private GroupClass activeClass;
 
     @ManyToOne
@@ -27,6 +34,7 @@ public class Client extends Person {
 
     @ManyToMany
     @JoinTable(name = "clients_routines", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "routine_id"))
+    @NotAudited
     private List<Routine> routines;
 
     public Client(Long id, String name, String lastName, String dni, String phone, String email, String password,

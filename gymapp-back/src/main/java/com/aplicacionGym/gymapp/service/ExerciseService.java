@@ -7,6 +7,9 @@ import com.aplicacionGym.gymapp.repository.RoutineExerciseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,18 +23,22 @@ public class ExerciseService {
     @Autowired
     RoutineExerciseRepository routineExerciseRepository;
 
+    @Cacheable(value = "exercises")
     public List<Exercise> getAllExercises() {
         return exerciseRepository.findAll();
     }
 
+    @Cacheable(value = "exercise", key = "#id")
     public Optional<Exercise> getExerciseById(Long id) {
         return exerciseRepository.findById(java.util.Objects.requireNonNull(id));
     }
 
+    @CacheEvict(value = {"exercises", "exercise"}, allEntries = true)
     public Exercise createExercise(Exercise exercise) {
         return exerciseRepository.save(java.util.Objects.requireNonNull(exercise));
     }
 
+    @CacheEvict(value = {"exercises", "exercise"}, allEntries = true)
     public Optional<Exercise> updateExercise(Long id, Exercise exercise) {
         return exerciseRepository.findById(java.util.Objects.requireNonNull(id))
                 .map(exerciseCreated -> {
@@ -42,6 +49,7 @@ public class ExerciseService {
                 });
     }
 
+    @CacheEvict(value = {"exercises", "exercise"}, allEntries = true)
     public void deleteExercise(Long id) {
         java.util.Objects.requireNonNull(id);
         if (isExerciseInUse(id)) {

@@ -8,8 +8,11 @@ import { ClientItem } from '../components/clients/ClientItem';
 import ClientModal from '../components/clients/ClientModal';
 import AssignRoutineModal from '../components/routines/AssignRoutineModal';
 import { getClients, createClient, updateClient, assignRoutine } from '../services/clientService';
+import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
+import { useAuth } from '../context/AuthContext';
 import { ClientSchema, AssignRoutineSchema } from '../types/schema.type'; 
 import Button from '../components/ui/Button';
+import type { Assistance } from '../types/index';
 
 import { toast } from 'react-toastify';
 
@@ -29,6 +32,55 @@ export default function ClientsPage() {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientFormData | null>(null);
   const [selectedClientForRoutine, setSelectedClientForRoutine] = useState<Client | null>(null);
+
+  const { user } = useAuth();
+  const today = new Date().toISOString().split('T')[0];
+
+  const { data: assistanceToday = [] } = useQuery<Assistance[]>({
+    queryKey: ['assistance', today],
+    queryFn: () => getAssistanceByDate(today)
+  });
+
+  const assistanceMutation = useMutation({
+    mutationFn: (clientId: number) => {
+        const now = new Date();
+        const inputHour = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        return registerAssistance({
+            idClient: clientId,
+            idProfessor: user?.id || 0,
+            date: today,
+            inputHour: inputHour
+        });
+    },
+    onMutate: async (clientId: number) => {
+        await queryClient.cancelQueries({ queryKey: ['assistance', today] });
+        const previousAssistance = queryClient.getQueryData<Assistance[]>(['assistance', today]) || [];
+        const mockAssistance: Assistance = {
+            idClient: clientId,
+            clientName: '',
+            idProfessor: user?.id || 0,
+            professorName: '',
+            date: today,
+            inputHour: '00:00'
+        };
+        queryClient.setQueryData(['assistance', today], [...previousAssistance, mockAssistance]);
+        return { previousAssistance };
+    },
+    onError: (error: any, _, context) => {
+        if (context?.previousAssistance) {
+            queryClient.setQueryData(['assistance', today], context.previousAssistance);
+        }
+        const message = error.response?.data?.message || "Error al registrar asistencia";
+        toast.error(message);
+    },
+    onSuccess: () => {
+        toast.success("✅ Asistencia registrada");
+    },
+    onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ['assistance', today] });
+    }
+  });
 
   // 2. La query ahora depende del filtro y pasa el parámetro al backend
   const { data: clients = [], isLoading, isError } = useQuery({
@@ -144,8 +196,8 @@ export default function ClientsPage() {
       {/* HEADER + BOTÓN ACCIÓN */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Mis Alumnos</h1>
-          <p className="text-gray-500 text-sm">Listado general de socios</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Mis Alumnos</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Listado general de socios</p>
         </div>
         
         <Button 
@@ -168,16 +220,16 @@ export default function ClientsPage() {
             placeholder="Buscar alumno..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all"
+            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all dark:text-white dark:placeholder-gray-500"
           />
         </div>
 
         {/* Filtros (Pills) */}
-        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
+        <div className="flex p-1 bg-gray-100 dark:bg-slate-800 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              filterStatus === 'all' ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-gray-500 dark:text-gray-450 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             Todos
@@ -185,7 +237,7 @@ export default function ClientsPage() {
           <button
             onClick={() => setFilterStatus('active')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'active' ? 'bg-white text-green-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              filterStatus === 'active' ? 'bg-white dark:bg-slate-700 text-green-600 dark:text-green-400 shadow-sm' : 'text-gray-500 dark:text-gray-450 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             Activos
@@ -193,7 +245,7 @@ export default function ClientsPage() {
           <button
             onClick={() => setFilterStatus('inactive')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'inactive' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              filterStatus === 'inactive' ? 'bg-white dark:bg-slate-700 text-red-500 dark:text-red-400 shadow-sm' : 'text-gray-500 dark:text-gray-450 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             Inactivos
@@ -201,7 +253,7 @@ export default function ClientsPage() {
           <button
             onClick={() => setFilterStatus('debtors')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'debtors' ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              filterStatus === 'debtors' ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-sm' : 'text-gray-500 dark:text-gray-450 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             Deudores
@@ -217,14 +269,19 @@ export default function ClientsPage() {
       {!isLoading && !isError && (
         <div className="grid gap-3">
           {filteredClients.length > 0 ? (
-            filteredClients.map((cliente: Client) => (
-              <ClientItem 
-                key={cliente.id} 
-                client={cliente} 
-                onEdit={() => handleEditClient(cliente)}
-                onAssignRoutine={() => handleOpenAssignModal(cliente)}
-              />
-            ))
+            filteredClients.map((cliente: Client) => {
+              const isMarked = assistanceToday.some((a: Assistance) => a.idClient === cliente.id);
+              return (
+                <ClientItem 
+                  key={cliente.id} 
+                  client={cliente} 
+                  onEdit={() => handleEditClient(cliente)}
+                  onAssignRoutine={() => handleOpenAssignModal(cliente)}
+                  onMarkAttendance={() => assistanceMutation.mutate(cliente.id)}
+                  isMarkedToday={isMarked}
+                />
+              );
+            })
           ) : (
             <p className="text-center text-gray-500 py-8">No se encontraron alumnos.</p>
           )}

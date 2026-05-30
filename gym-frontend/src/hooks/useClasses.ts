@@ -126,13 +126,32 @@ export function useClasses() {
             inputHour: inputHour
         });
     },
+    onMutate: async (clientId: number) => {
+        await queryClient.cancelQueries({ queryKey: ['assistance', today] });
+        const previousAssistance = queryClient.getQueryData<Assistance[]>(['assistance', today]) || [];
+        const mockAssistance: Assistance = {
+            idClient: clientId,
+            clientName: '',
+            idProfessor: user?.id || 0,
+            professorName: '',
+            date: today,
+            inputHour: '00:00'
+        };
+        queryClient.setQueryData(['assistance', today], [...previousAssistance, mockAssistance]);
+        return { previousAssistance };
+    },
+    onError: (error: AxiosError<ApiResponse<unknown>>, _, context) => {
+        if (context?.previousAssistance) {
+            queryClient.setQueryData(['assistance', today], context.previousAssistance);
+        }
+        const message = (error.response?.data?.message as string) || "Error al registrar asistencia";
+        toast.error(message);
+    },
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['assistance', today] });
         toast.success("✅ Asistencia registrada");
     },
-    onError: (error: AxiosError<ApiResponse<unknown>>) => {
-      const message = (error.response?.data?.message as string) || "Error al registrar asistencia";
-      toast.error(message);
+    onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ['assistance', today] });
     }
   });
 

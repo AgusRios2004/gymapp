@@ -49,10 +49,23 @@ public class AuthService {
             response.setRole("USER");
         }
 
-        // Generate JWT token with 30-day expiration
-        String token = jwtUtil.generateToken(person.getEmail());
+        // Generate JWT token with 15-minute expiration
+        String token = jwtUtil.generateAccessToken(person.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(person.getEmail());
         response.setToken(token);
+        response.setRefreshToken(refreshToken);
 
         return response;
+    }
+
+    public String refresh(String refreshToken) {
+        if (jwtUtil.isRefreshToken(refreshToken)) {
+            String email = jwtUtil.extractUsername(refreshToken);
+            Person person = personRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+            return jwtUtil.generateAccessToken(person.getEmail());
+        } else {
+            throw new RuntimeException("Invalid refresh token!");
+        }
     }
 }

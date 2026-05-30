@@ -89,8 +89,8 @@ export default function PaymentsPage() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Pagos y Suscripciones</h1>
-          <p className="text-gray-500 text-sm">Historial de transacciones y cuotas mensuales</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Pagos y Suscripciones</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Historial de transacciones y cuotas mensuales</p>
         </div>
         
         <Button onClick={() => setIsModalOpen(true)} className="gap-2">
@@ -106,14 +106,15 @@ export default function PaymentsPage() {
           placeholder="Buscar por cliente o profesor..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+          className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm dark:text-white dark:placeholder-gray-500"
         />
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      {/* Grid: Table for desktop, Cards for mobile */}
+      <div className="hidden md:block bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-sm uppercase font-semibold">
+            <thead className="bg-gray-50 dark:bg-slate-900/60 text-gray-500 dark:text-gray-400 text-sm uppercase font-semibold">
               <tr>
                 <th className="px-6 py-4">Fecha</th>
                 <th className="px-6 py-4">Cliente</th>
@@ -123,7 +124,7 @@ export default function PaymentsPage() {
                 <th className="px-6 py-4">Tipo</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
               {isLoadingPayments ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-10 text-center text-gray-400">Cargando pagos...</td>
@@ -134,25 +135,25 @@ export default function PaymentsPage() {
                 </tr>
               ) : (
                 filteredPayments.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <tr key={payment.id} className="hover:bg-gray-50 dark:hover:bg-slate-750 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-350">
                       {new Date(payment.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
                           {payment.clientName?.charAt(0)}
                         </div>
-                        <span className="font-medium text-gray-800">{payment.clientName}</span>
+                        <span className="font-medium text-gray-800 dark:text-white">{payment.clientName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-350">
                       {payment.monthlyTypeName || '-'}
                     </td>
-                    <td className="px-6 py-4 font-bold text-gray-900">
+                    <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
                       ${payment.amount.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-350">
                       {payment.professorName}
                     </td>
                     <td className="px-6 py-4">
@@ -166,6 +167,39 @@ export default function PaymentsPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Cards layout for mobile view */}
+      <div className="md:hidden space-y-4">
+        {isLoadingPayments ? (
+          <p className="text-center py-6 text-gray-500">Cargando pagos...</p>
+        ) : filteredPayments.length === 0 ? (
+          <p className="text-center py-6 text-gray-500">No hay pagos registrados</p>
+        ) : (
+          filteredPayments.map((payment) => (
+            <div key={payment.id} className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm space-y-3">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
+                    {payment.clientName?.charAt(0)}
+                  </div>
+                  <span className="font-bold text-gray-950 dark:text-white text-sm">{payment.clientName}</span>
+                </div>
+                <Badge variant={payment.paymentType === 'MONTHLY' ? 'success' : 'neutral'}>
+                  {payment.paymentType === 'MONTHLY' ? 'Mensual' : 'Producto'}
+                </Badge>
+              </div>
+              <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                <span>{new Date(payment.date).toLocaleDateString()}</span>
+                <span>{payment.monthlyTypeName || '-'}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-slate-700">
+                <span className="text-xs text-gray-400 dark:text-gray-500">Cobró: {payment.professorName}</span>
+                <span className="text-lg font-black text-gray-950 dark:text-white">${payment.amount.toLocaleString()}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <Modal 

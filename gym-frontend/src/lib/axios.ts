@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
@@ -23,17 +24,17 @@ api.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       if (status >= 500) {
-        alert("Ups! Ocurrió un error en el servidor. Intenta más tarde.");
+        toast.error("Ups! Ocurrió un error en el servidor. Intenta más tarde.");
       }
       if (status === 401) {
-        alert("Tu sesión ha expirado. Por favor inicia sesión de nuevo.");
+        toast.error("Tu sesión ha expirado. Por favor inicia sesión de nuevo.");
       }
       
       if (status === 404 && !error.response.data.message) {
          console.error("Endpoint no encontrado");
       }
     } else if (error.request) {
-      alert("No se pudo conectar con el servidor. Revisa tu conexión.");
+      toast.error("No se pudo conectar con el servidor. Revisa tu conexión.");
     }
 
     return Promise.reject(error);

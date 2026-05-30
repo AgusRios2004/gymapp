@@ -6,16 +6,27 @@ import lombok.Setter;
 
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 @Setter
 @Getter
 @Entity
+@SQLDelete(sql = "UPDATE routine SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
+@Audited
 public class Routine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private boolean deleted = false;
+
     @ManyToMany(mappedBy = "routines")
+    @NotAudited
     private List<Client> clients;
 
     private String name;
@@ -29,6 +40,7 @@ public class Routine {
     private Long parentId;
 
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
     private List<RoutineDay> days;
 
     public Routine() {

@@ -1,4 +1,5 @@
-import { Users, CreditCard, LayoutDashboard, Dumbbell, PersonStanding, UserCheck, Tag, LogOut, ShieldPlus } from 'lucide-react';
+import { useState } from 'react';
+import { Users, CreditCard, LayoutDashboard, Dumbbell, PersonStanding, UserCheck, Tag, LogOut, ShieldPlus, Sun, Moon } from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
 import logo from '../../assets/funcional kids.jpeg';
 import { useAuth } from '../../context/AuthContext';
@@ -9,13 +10,27 @@ interface SidebarProps {
 
 export const Sidebar = ({ onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+  const toggleDarkMode = () => {
+    const isCurrentlyDark = document.documentElement.classList.contains('dark');
+    if (isCurrentlyDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setIsDark(true);
+    }
+  };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-full flex flex-col z-10 font-sans shadow-2xl lg:shadow-none">
+    <aside className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 h-full flex flex-col z-10 font-sans shadow-2xl lg:shadow-none transition-colors duration-300">
         
-        <div className="flex flex-col items-center justify-center h-22 border-b border-gray-200 p-4">
-            <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">Functional</span>
-            <span className="text-sm font-bold text-blue-600 tracking-widest uppercase">Kids</span>
+        <div className="flex flex-col items-center justify-center h-22 border-b border-gray-200 dark:border-slate-700 p-4">
+            <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight leading-none">Functional</span>
+            <span className="text-sm font-bold text-blue-600 dark:text-blue-400 tracking-widest uppercase">Kids</span>
             <img src={logo} alt="Functional Kids Logo" className="w-12 h-12 mt-2 rounded-full object-cover" />
         </div>
 
@@ -88,17 +103,25 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
       </nav>
       
       {/* Footer del sidebar */}
-      <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+      <div className="p-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-200">
             {user?.name.charAt(0)}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-bold text-gray-900 truncate">{user?.name} {user?.lastName}</p>
-            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{user?.role}</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user?.name} {user?.lastName}</p>
+            <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider">{user?.role}</p>
           </div>
         </div>
         
+        <button 
+          onClick={toggleDarkMode}
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-500 hover:bg-gray-100 rounded-2xl transition-all mb-2"
+        >
+          {isDark ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-slate-600" />}
+          {isDark ? 'Modo Claro' : 'Modo Oscuro'}
+        </button>
+
         <button 
           onClick={logout}
           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group"

@@ -4,16 +4,28 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
+
+import org.hibernate.envers.RelationTargetAuditMode;
+
 @Setter
 @Getter
 @Entity
+@SQLDelete(sql = "UPDATE product SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
+@Audited
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private boolean deleted = false;
+
     @ManyToOne
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Administrator administrator;
 
     @Column(name = "product_name")

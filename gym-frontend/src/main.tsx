@@ -6,6 +6,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.remove('dark');
+}
+
 // 2. Crear una instancia del cliente (fuera del componente)
 const queryClient = new QueryClient()
 

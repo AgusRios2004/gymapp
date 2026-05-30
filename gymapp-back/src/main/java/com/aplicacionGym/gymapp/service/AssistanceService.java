@@ -30,6 +30,8 @@ public class AssistanceService {
     private PersonRepository personRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private BusinessRuleValidationService businessRuleValidationService;
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
         if (dto.getIdClient() == null || dto.getIdProfessor() == null) {
@@ -39,14 +41,8 @@ public class AssistanceService {
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
 
-        // CHECK: Latest monthly payment
-        Payment latestPayment = paymentRepository
-                .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId())
-                .orElseThrow(() -> new RuntimeException("El alumno no tiene una membresía registrada."));
-
-        if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
-        }
+        // Check business rules
+        businessRuleValidationService.validateClientAccess(client);
 
         Person staff = personRepository.findById(dto.getIdProfessor())
                 .orElseThrow(

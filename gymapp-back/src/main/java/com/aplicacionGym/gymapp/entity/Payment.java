@@ -10,17 +10,29 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
+
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.envers.NotAudited;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@SQLDelete(sql = "UPDATE payment SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
+@Audited
 public class Payment {
 
     // Getters y setters...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private boolean deleted = false;
 
     private LocalDate date;
     private double amount;
@@ -34,14 +46,17 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Professor professor;
 
     @ManyToOne
     @JoinColumn(name = "monthly_type_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private MonthlyType monthlyType;
 
     // CAMBIO PRINCIPAL: @OneToMany en lugar de @ManyToMany
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotAudited
     private List<PaymentProduct> paymentProducts;
 
     public LocalDate getExpirationDate() {

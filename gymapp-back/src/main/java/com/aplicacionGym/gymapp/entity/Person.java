@@ -1,14 +1,22 @@
 package com.aplicacionGym.gymapp.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@SQLDelete(sql = "UPDATE person SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
+@Audited
 public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private boolean deleted = false;
 
     private String name;
 
@@ -90,5 +98,13 @@ public class Person {
 
     public void setPassword(String passowrd) {
         this.password = passowrd;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

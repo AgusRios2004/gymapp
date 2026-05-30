@@ -4,7 +4,7 @@ import { useForm, useFieldArray, type Control, type UseFormRegister, type UseFor
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { X, Plus, Trash2, Dumbbell, ChevronUp, ChevronDown } from 'lucide-react';
+import { X, Plus, Trash2, Dumbbell, GripVertical } from 'lucide-react';
 
 import { RoutineSchema } from '../../types/schema.type';
 import { updateRoutine, getRoutineById, deleteRoutine } from '../../services/routineService';
@@ -331,30 +331,62 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
     name: `days.${nestIndex}.routineExercises`,
   });
 
+  const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex !== null && draggedIndex !== index) {
+      swap(draggedIndex, index);
+    }
+    setDraggedIndex(null);
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-        <span className="text-xs font-bold text-gray-500 uppercase">Ejercicios</span>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+      <div className="px-4 py-2 bg-gray-50 dark:bg-slate-900/60 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center">
+        <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Ejercicios (Arrastra para reordenar)</span>
         <button
           type="button"
           onClick={() => append({ exerciseId: 0, sets: 3, repetitions: 10, weight: 0 })}
-          className="text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1"
+          className="text-blue-600 dark:text-blue-450 hover:text-blue-750 text-xs font-bold flex items-center gap-1"
         >
           <Plus size={14} /> AGREGAR
         </button>
       </div>
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-slate-700">
         {fields.map((item, k) => {
           const exerciseId = getValues(`days.${nestIndex}.routineExercises.${k}.id`);
           return (
-          <div key={item.id} className="p-3 flex flex-wrap gap-3 items-end">
+          <div 
+            key={item.id} 
+            draggable
+            onDragStart={() => handleDragStart(k)}
+            onDragOver={handleDragOver}
+            onDrop={() => handleDrop(k)}
+            className={`p-3 flex flex-wrap gap-3 items-end transition-all select-none ${
+              draggedIndex === k ? 'opacity-40 bg-blue-50/50 dark:bg-blue-900/20' : 'hover:bg-gray-50/50 dark:hover:bg-slate-750'
+            }`}
+          >
             {exerciseId && <input type="hidden" {...register(`days.${nestIndex}.routineExercises.${k}.id`, { valueAsNumber: true })} />}
+            
+            {/* Grab handle indicator */}
+            <div className="cursor-grab active:cursor-grabbing p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 flex items-center justify-center">
+              <GripVertical size={18} />
+            </div>
+
             <div className="flex-1 min-w-[180px]">
-              <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Ejercicio</label>
+              <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1 block">Ejercicio</label>
               <div className="flex gap-2">
                 <select
                   {...register(`days.${nestIndex}.routineExercises.${k}.exerciseId`, { valueAsNumber: true })}
-                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Seleccionar...</option>
                   {exercisesList.map((ex) => (
@@ -364,7 +396,7 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
                 <button 
                   type="button"
                   onClick={() => onOpenExerciseModal(k)}
-                  className="px-3 py-1 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
+                  className="px-3 py-1 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-blue-200 dark:border-blue-900/50 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
                   title="Crear nuevo ejercicio"
                 >
                   +
@@ -372,36 +404,15 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
               </div>
             </div>
             <div className="w-20">
-              <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Series</label>
-              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.sets`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
+              <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1 block">Series</label>
+              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.sets`, { valueAsNumber: true })} className="w-full px-2 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-center dark:text-white" />
             </div>
             <div className="w-20">
-              <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Reps</label>
-              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
+              <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase mb-1 block">Reps</label>
+              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full px-2 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-center dark:text-white" />
             </div>
             
-            <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
-              <button 
-                type="button" 
-                onClick={() => swap(k, k - 1)} 
-                disabled={k === 0} 
-                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
-                title="Subir"
-              >
-                <ChevronUp size={16} />
-              </button>
-              <button 
-                type="button" 
-                onClick={() => swap(k, k + 1)} 
-                disabled={k === fields.length - 1} 
-                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
-                title="Bajar"
-              >
-                <ChevronDown size={16} />
-              </button>
-            </div>
-
-            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
+            <button type="button" onClick={() => remove(k)} className="mb-2 p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
           </div>
           );
         })}

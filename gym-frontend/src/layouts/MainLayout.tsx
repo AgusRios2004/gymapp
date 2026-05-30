@@ -1,17 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../components/ui/SIdebar';
+import { CommandPalette } from '../components/ui/CommandPalette';
 import { Menu, X } from 'lucide-react';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       {/* Botón de Hamburguesa para Móvil */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-2xl shadow-xl border border-gray-100 text-blue-600 active:scale-95 transition-all"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 text-blue-600 dark:text-blue-400 active:scale-95 transition-all"
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -36,6 +49,9 @@ const MainLayout = () => {
       <main className="flex-1 p-4 sm:p-8 transition-all duration-300 w-full overflow-x-hidden">
         <Outlet />
       </main>
+
+      {/* Global Command Palette (Ctrl+K) */}
+      <CommandPalette isOpen={isPaletteOpen} onClose={() => setIsPaletteOpen(false)} />
     </div>
   );
 };
