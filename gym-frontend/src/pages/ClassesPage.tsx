@@ -1,19 +1,12 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Clock, Plus, Trash2, Edit, User as UserIcon, Users, UserMinus, UserPlus, CalendarDays, UserCheck } from 'lucide-react';
-import { getProfessors } from '../services/professorService';
-import { getClasses, createClass, deleteClass, updateClass, getStudentsByClass, unassignClass, assignClass } from '../services/classService';
-import { getRoutines } from '../services/routineService';
-import { createClient, getClients } from '../services/clientService';
-import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
-import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
-import type { GroupClass, Professor, Client, Assistance } from '../types';
-import { AxiosError } from 'axios';
-import type { ApiResponse } from '../types/api.types';
+import { Clock, Plus, Trash2, Edit, User as UserIcon, Users, UserPlus, CalendarDays } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import Modal from '../components/ui/Modal';
+import { useClasses } from '../hooks/useClasses';
+import { ClassStudentsModal } from '../components/classes/ClassStudentsModal';
+import { QuickAddStudentModal } from '../components/classes/QuickAddStudentModal';
+import { AssignStudentModal } from '../components/classes/AssignStudentModal';
+import { ClassFormModal } from '../components/classes/ClassFormModal';
+import type { GroupClass, Client } from '../types';
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 const TRANSLATIONS: Record<string, string> = {
@@ -22,185 +15,49 @@ const TRANSLATIONS: Record<string, string> = {
 };
 
 export default function ClassesPage() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const today = new Date().toISOString().split('T')[0];
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingClassId, setEditingClassId] = useState<number | null>(null);
+  const {
+    classes,
+    routines,
+    professors,
+    clients,
+    assistanceToday,
+    createClass,
+    deleteClass,
+    updateClass,
+    assignStudent,
+    unassignStudent,
+    quickAddStudent,
+    registerStudentAssistance,
+  } = useClasses();
+
+  // Modal & Selection States
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingClass, setEditingClass] = useState<GroupClass | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [selectedClassForAssign, setSelectedClassForAssign] = useState<number | null>(null);
-  const [selectedClientToAssign, setSelectedClientToAssign] = useState<string>('');
-  const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [selectedClassForStudents, setSelectedClassForStudents] = useState<number | null>(null);
-  const [form, setForm] = useState({
-    className: '',
-    professorId: '',
-    routineId: '',
-    dayOfWeek: 'MONDAY',
-    startTime: '10:00',
-    endTime: '11:00',
-    capacity: '20'
-  });
 
-  const [clientForm, setClientForm] = useState({
-    name: '',
-    lastName: '',
-    dni: '',
-    phone: '',
-    email: '',
-    activeClassId: ''
-  });
+  const handleEditClick = (c: GroupClass) => {
+    setEditingClass(c);
+    setIsFormModalOpen(true);
+  };
 
-  const { data: classes = [] } = useQuery<GroupClass[]>({
-    queryKey: ['classes'],
-    queryFn: async () => {
-       const data = await getClasses();
-       return Array.isArray(data) ? data : [];
+  const handleCreateClick = () => {
+    setEditingClass(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleSaveClass = async (data: any) => {
+    if (editingClass) {
+      await updateClass({ id: editingClass.id, form: data });
+    } else {
+      await createClass(data);
     }
-  });
-
-  const { data: routines = [] } = useQuery({
-    queryKey: ['routines'],
-    queryFn: getRoutines
-  });
-
-  const { data: professors = [] } = useQuery({
-    queryKey: ['professors', 'active'],
-    queryFn: () => getProfessors(true)
-  });
-
-  const { data: clients = [] } = useQuery<Client[]>({
-    queryKey: ['clients', 'active'],
-    queryFn: () => getClients(true)
-  });
-
-  const { data: studentsInClass = [], isLoading: isLoadingStudents } = useQuery<Client[]>({
-    queryKey: ['class-students', selectedClassForStudents],
-    queryFn: () => selectedClassForStudents ? getStudentsByClass(selectedClassForStudents) : Promise.resolve([]),
-    enabled: !!selectedClassForStudents
-  });
-
-  const { data: assistanceToday = [] } = useQuery<Assistance[]>({
-    queryKey: ['assistance', today],
-    queryFn: () => getAssistanceByDate(today)
-  });
-
-  const createMutation = useMutation({
-    mutationFn: createClass,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      toast.success("📅 Clase creada");
-      setIsModalOpen(false);
-      setForm({
-         className: '',
-         professorId: '',
-         routineId: '',
-         dayOfWeek: 'MONDAY',
-         startTime: '10:00',
-         endTime: '11:00',
-         capacity: '20'
-      });
-    },
-    onError: (error: AxiosError<ApiResponse<unknown>>) => {
-      const message = error.response?.data?.message || "No se pudo crear la clase";
-      toast.error(`❌ ${message}`);
-    }
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteClass,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      toast.success("🗑️ Clase eliminada");
-    }
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: { id: number, form: any }) => updateClass(data.id, data.form),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      toast.success("📝 Clase actualizada");
-      setIsEditModalOpen(false);
-      setEditingClassId(null);
-      setForm({
-         className: '',
-         professorId: '',
-         routineId: '',
-         dayOfWeek: 'MONDAY',
-         startTime: '10:00',
-         endTime: '11:00',
-         capacity: '20'
-      });
-    },
-    onError: () => toast.error("❌ Error al actualizar la clase")
-  });
-
-  const assignMutation = useMutation({
-    mutationFn: (data: { clientId: number, classId: number }) => assignClass(data.clientId, data.classId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] });
-      queryClient.invalidateQueries({ queryKey: ['class-students'] });
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success("✅ Alumno inscrito correctamente");
-      setSelectedClassForAssign(null);
-      setSelectedClientToAssign('');
-    },
-    onError: () => toast.error("❌ Error al inscribir alumno")
-  });
-
-  const unassignMutation = useMutation({
-    mutationFn: unassignClass,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['class-students', selectedClassForStudents] });
-      toast.success("👤 Alumno quitado de la clase");
-    },
-    onError: () => toast.error("❌ Error al quitar alumno")
-  });
-
-  const createClientMutation = useMutation({
-    mutationFn: async (data: typeof clientForm) => {
-        const { activeClassId, ...clientData } = data;
-        const newClient = await createClient({...clientData, active: true});
-        if (activeClassId) {
-            await assignClass(newClient.id, Number(activeClassId));
-        }
-        return newClient;
-    },
-    onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['classes'] });
-        queryClient.invalidateQueries({ queryKey: ['clients'] });
-        toast.success("👤 Alumno creado e inscrito");
-        setIsClientModalOpen(false);
-        setClientForm({ name: '', lastName: '', dni: '', phone: '', email: '', activeClassId: '' });
-    },
-    onError: () => toast.error("❌ Error al crear alumno")
-  });
-
-  const assistanceMutation = useMutation({
-    mutationFn: (clientId: number) => {
-        const now = new Date();
-        const inputHour = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        
-        return registerAssistance({
-            idClient: clientId,
-            idProfessor: user?.id || 0,
-            date: today,
-            inputHour: inputHour
-        });
-    },
-    onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['assistance', today] });
-        toast.success("✅ Asistencia registrada");
-    },
-    onError: (error: AxiosError<ApiResponse<unknown>>) => {
-      const message = (error.response?.data?.message as string) || "Error al registrar asistencia";
-      toast.error(message);
-    }
-  });
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Calendario de Clases</h1>
@@ -210,12 +67,13 @@ export default function ClassesPage() {
           <Button variant="outline" onClick={() => setIsClientModalOpen(true)} className="flex-1 sm:flex-none gap-2 rounded-2xl">
             <UserPlus size={20} /> Nuevo Alumno
           </Button>
-          <Button onClick={() => setIsModalOpen(true)} className="flex-1 sm:flex-none gap-2 rounded-2xl">
+          <Button onClick={handleCreateClick} className="flex-1 sm:flex-none gap-2 rounded-2xl">
             <Plus size={20} /> Nueva Clase
           </Button>
         </div>
       </div>
 
+      {/* Grid of Days */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {DAYS.map(day => (
           <div key={day} className="flex flex-col h-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -237,33 +95,21 @@ export default function ClassesPage() {
                     <div key={c.id} className="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                        <div className="flex justify-between items-start mb-4">
                           <div className="space-y-1">
-                            <h4 className="text-xl font-black text-gray-900 leading-tight">{c.className}</h4>
-                            <div className="flex items-center gap-2 text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-full w-fit">
-                               <Clock size={16} />
-                               <span className="text-sm">{c.startTime} - {c.endTime}</span>
-                            </div>
+                             <h4 className="text-xl font-black text-gray-900 leading-tight">{c.className}</h4>
+                             <div className="flex items-center gap-2 text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-full w-fit">
+                                <Clock size={16} />
+                                <span className="text-sm">{c.startTime} - {c.endTime}</span>
+                             </div>
                           </div>
                           <div className="flex gap-1">
                              <button 
-                               onClick={() => {
-                                  setForm({
-                                      className: c.className,
-                                      professorId: String(c.professor?.id || ''),
-                                      routineId: String(c.routine?.id || ''),
-                                      dayOfWeek: c.dayOfWeek,
-                                      startTime: c.startTime,
-                                      endTime: c.endTime,
-                                      capacity: String(c.capacity)
-                                  });
-                                  setEditingClassId(c.id);
-                                  setIsEditModalOpen(true);
-                               }} 
+                               onClick={() => handleEditClick(c)} 
                                className="p-2 text-gray-300 hover:text-blue-500 transition-colors"
                              >
                                <Edit size={18} />
                              </button>
                              <button 
-                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }} 
+                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteClass(c.id); }} 
                                className="p-2 text-gray-300 hover:text-red-500 transition-colors"
                              >
                                <Trash2 size={18} />
@@ -327,263 +173,46 @@ export default function ClassesPage() {
         ))}
       </div>
 
-      <Modal 
-        isOpen={!!selectedClassForStudents} 
-        onClose={() => setSelectedClassForStudents(null)} 
-        title={`Alumnos Inscritos`}
-      >
-        <div className="space-y-4">
-          {isLoadingStudents ? (
-            <p className="text-center py-4">Cargando...</p>
-          ) : studentsInClass.length === 0 ? (
-            <p className="text-center py-4 text-gray-500 italic">No hay alumnos inscritos</p>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {studentsInClass.map((student: Client) => (
-                <div key={student.id} className="flex justify-between items-center py-3">
-                  <div>
-                    <p className={`font-medium ${student.isDebtor ? 'text-red-500' : 'text-gray-900'}`}>
-                      {student.name} {student.lastName}
-                      {student.isDebtor && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full uppercase">Deuda</span>}
-                    </p>
-                    <p className="text-xs text-gray-500">{student.dni}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => assistanceMutation.mutate(student.id)}
-                      disabled={assistanceToday.some(a => a.idClient === student.id)}
-                      className={`p-2 transition-colors ${assistanceToday.some(a => a.idClient === student.id) 
-                        ? 'text-green-600 bg-green-100 rounded-full' 
-                        : 'text-green-500 hover:scale-110'}`}
-                      title={assistanceToday.some(a => a.idClient === student.id) ? "Asistencia tomada" : "Marcar asistencia"}
-                    >
-                      <UserCheck size={22} strokeWidth={2.5} />
-                    </button>
-                    <button 
-                      onClick={() => { if(confirm("¿Quitar alumno de la clase?")) unassignMutation.mutate(student.id) }}
-                      className="p-2 text-red-500 hover:text-red-700 hover:scale-110 transition-all font-bold"
-                      title="Quitar de la clase"
-                    >
-                      <UserMinus size={22} strokeWidth={2.5} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <Button variant="outline" className="w-full mt-4" onClick={() => setSelectedClassForStudents(null)}>Cerrar</Button>
-        </div>
-      </Modal>
+      {/* Modals */}
+      <ClassStudentsModal
+        isOpen={!!selectedClassForStudents}
+        onClose={() => setSelectedClassForStudents(null)}
+        classId={selectedClassForStudents}
+        assistanceToday={assistanceToday}
+        onTakeAssistance={registerStudentAssistance}
+        onRemoveStudent={unassignStudent}
+      />
 
-      <Modal isOpen={isClientModalOpen} onClose={() => setIsClientModalOpen(false)} title="Registro Rápido de Alumno">
-          <form onSubmit={(e) => {
-              e.preventDefault();
-              createClientMutation.mutate(clientForm);
-          }} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                  <Input label="Nombre" required value={clientForm.name} onChange={e => setClientForm({...clientForm, name: e.target.value})} />
-                  <Input label="Apellido" required value={clientForm.lastName} onChange={e => setClientForm({...clientForm, lastName: e.target.value})} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                  <Input label="DNI" required value={clientForm.dni} onChange={e => setClientForm({...clientForm, dni: e.target.value})} />
-                  <Input label="Teléfono" required value={clientForm.phone} onChange={e => setClientForm({...clientForm, phone: e.target.value})} />
-              </div>
-              <Input label="Email" type="email" value={clientForm.email} onChange={e => setClientForm({...clientForm, email: e.target.value})} />
-              
-              <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Inscribir en Clase</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={clientForm.activeClassId}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setClientForm({...clientForm, activeClassId: e.target.value})}
-                  >
-                    <option value="">No inscribir a ninguna clase...</option>
-                    {classes.map((c: GroupClass) => <option key={c.id} value={c.id}>{c.className} ({TRANSLATIONS[c.dayOfWeek]} {c.startTime})</option>)}
-                  </select>
-              </div>
+      <QuickAddStudentModal
+        isOpen={isClientModalOpen}
+        onClose={() => setIsClientModalOpen(false)}
+        classes={classes}
+        onSave={quickAddStudent}
+        translations={TRANSLATIONS}
+      />
 
-              <div className="flex gap-3 pt-6">
-                  <Button variant="outline" type="button" className="flex-1" onClick={() => setIsClientModalOpen(false)}>Cancelar</Button>
-                  <Button type="submit" className="flex-1" isLoading={createClientMutation.isPending}>Registrar Alumno</Button>
-              </div>
-          </form>
-      </Modal>
+      <AssignStudentModal
+        isOpen={!!selectedClassForAssign}
+        onClose={() => setSelectedClassForAssign(null)}
+        classId={selectedClassForAssign}
+        clients={clients}
+        onAssign={assignStudent}
+        isLoading={false}
+      />
 
-      <Modal 
-        isOpen={!!selectedClassForAssign} 
-        onClose={() => { setSelectedClassForAssign(null); setSelectedClientToAssign(''); }} 
-        title="Inscribir Alumno Existente"
-      >
-        <div className="space-y-4">
-          <Input 
-            label="Buscar por Nombre o DNI" 
-            placeholder="Ej: Juan Perez..." 
-            value={clientSearchTerm} 
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setClientSearchTerm(e.target.value)} 
-          />
-          
-          <div className="max-h-60 overflow-y-auto border rounded-xl divide-y">
-            {clients
-              .filter((c: Client) => 
-                c.activeClassId !== selectedClassForAssign && 
-                `${c.name} ${c.lastName} ${c.dni}`.toLowerCase().includes(clientSearchTerm.toLowerCase())
-              )
-              .slice(0, 10) // Limit to 10 for performance
-              .map((c: Client) => (
-                <div 
-                  key={c.id} 
-                  className={`p-3 cursor-pointer transition-colors flex justify-between items-center ${selectedClientToAssign === String(c.id) ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-50'}`}
-                  onClick={() => setSelectedClientToAssign(String(c.id))}
-                >
-                  <div>
-                    <p className="font-medium text-sm text-gray-900">{c.name} {c.lastName}</p>
-                    <p className="text-xs text-gray-500">{c.dni}</p>
-                  </div>
-                  {selectedClientToAssign === String(c.id) && <div className="w-2 h-2 bg-blue-600 rounded-full" />}
-                </div>
-              ))}
-          </div>
-
-          <div className="flex gap-3 pt-4">
-             <Button variant="outline" className="flex-1" onClick={() => setSelectedClassForAssign(null)}>Cancelar</Button>
-             <Button 
-               className="flex-1" 
-               disabled={!selectedClientToAssign} 
-               onClick={() => assignMutation.mutate({ clientId: Number(selectedClientToAssign), classId: selectedClassForAssign! })}
-               isLoading={assignMutation.isPending}
-             >
-               Confirmar Inscripción
-             </Button>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Programar Nueva Clase">
-         <form onSubmit={(e) => { 
-           e.preventDefault(); 
-           createMutation.mutate({
-             ...form,
-             capacity: Number(form.capacity)
-           }); 
-         }} className="space-y-4">
-            <Input label="Nombre de la Clase" required value={form.className} onChange={e => setForm({...form, className: e.target.value})} />
-            
-            <div className="grid grid-cols-2 gap-4">
-               <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Día</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={form.dayOfWeek}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
-                  >
-                    {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
-                  </select>
-               </div>
-               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-               <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
-               <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
-            </div>
-
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select 
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 required
-                 value={form.professorId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
-               >
-                 <option value="">Seleccionar profesor...</option>
-                 {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
-               </select>
-            </div>
-
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
-               <select 
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 value={form.routineId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
-               >
-                 <option value="">Sin rutina asignada</option>
-                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
-               </select>
-            </div>
-
-            <div className="flex gap-3 pt-6">
-               <Button variant="outline" type="button" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-               <Button type="submit" className="flex-1" isLoading={createMutation.isPending}>Crear Clase</Button>
-            </div>
-         </form>
-      </Modal>
-
-      <Modal isOpen={isEditModalOpen} onClose={() => { setIsEditModalOpen(false); setEditingClassId(null); }} title="Editar Clase">
-         <form onSubmit={(e) => { 
-           e.preventDefault(); 
-           if(editingClassId) {
-             updateMutation.mutate({
-               id: editingClassId,
-               form: {
-                 ...form,
-                 capacity: Number(form.capacity)
-               }
-             }); 
-           }
-         }} className="space-y-4">
-            <Input label="Nombre de la Clase" required value={form.className} onChange={e => setForm({...form, className: e.target.value})} />
-            
-            <div className="grid grid-cols-2 gap-4">
-               <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Día</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={form.dayOfWeek}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
-                  >
-                    {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
-                  </select>
-               </div>
-               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-               <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
-               <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
-            </div>
-
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select 
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 required
-                 value={form.professorId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
-               >
-                 <option value="">Seleccionar profesor...</option>
-                 {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
-               </select>
-            </div>
-
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
-               <select 
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 value={form.routineId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
-               >
-                 <option value="">Sin rutina asignada</option>
-                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
-               </select>
-            </div>
-
-            <div className="flex gap-3 pt-6">
-               <Button variant="outline" type="button" className="flex-1" onClick={() => { setIsEditModalOpen(false); setEditingClassId(null); }}>Cancelar</Button>
-               <Button type="submit" className="flex-1" isLoading={updateMutation.isPending}>Guardar Cambios</Button>
-            </div>
-         </form>
-      </Modal>
+      <ClassFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setEditingClass(null);
+        }}
+        classData={editingClass}
+        professors={professors}
+        routines={routines}
+        onSave={handleSaveClass}
+        days={DAYS}
+        translations={TRANSLATIONS}
+      />
     </div>
   );
 }

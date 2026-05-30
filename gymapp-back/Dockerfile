@@ -22,11 +22,17 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-#5. El truco: Copiamos el .jar desde la etapa "builder"
+RUN apk add --no-cache netcat-openbsd
+
+#5. Copiamos el .jar desde la etapa "builder"
 COPY --from=builder /app/target/*.jar /app/app.jar
+
+# Copiamos el script que espera a la BDD
+COPY wait-for.sh /app/wait-for.sh
+RUN chmod +x /app/wait-for.sh
 
 # 6. Le decimos qué puerto va a "escuchar" el contenedor (Informativo)
 EXPOSE 8080
 
-# 7. El comando que arranca tu aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# 7. Usamos el script como entrypoint para esperar a la BDD antes de arrancar
+ENTRYPOINT ["/app/wait-for.sh"]

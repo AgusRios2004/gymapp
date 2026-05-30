@@ -1,13 +1,16 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
 import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
+import com.aplicacionGym.gymapp.mapper.ClientMapper;
 import com.aplicacionGym.gymapp.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +18,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clients")
+@RequiredArgsConstructor
 public class ClientController {
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService clientService;
+    private final ClientMapper clientMapper;
 
     @PostMapping
-    public ResponseEntity<WebApiResponse> createClient(@RequestBody Client client) {
+    public ResponseEntity<WebApiResponse> createClient(@Valid @RequestBody ClientRequestDTO clientDTO) {
+        Client client = clientMapper.toEntity(clientDTO);
         ClientResponseDTO created = clientService.createClient(client);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Client created successfully", created));
     }
@@ -35,15 +40,14 @@ public class ClientController {
 
         if (Boolean.TRUE.equals(debtors)) {
             dto = clientService.getDebtorClients();
+        } else if (active != null) {
+            if (active) {
+                dto = clientService.getActiveClients();
+            } else {
+                dto = clientService.getInactiveClients();
+            }
         } else {
             dto = clientService.getAllClients();
-        }
-
-        // Filtramos la lista en el controlador si se pide por estado activo
-        if (active != null) {
-            dto = dto.stream()
-                    .filter(c -> active.equals(c.isActive()))
-                    .toList();
         }
         return ResponseEntity.ok(WebApiResponseBuilder.success("Clients found successfully", dto));
     }
@@ -56,7 +60,8 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WebApiResponse> updateClient(@PathVariable Long id, @RequestBody Client updatedClient) {
+    public ResponseEntity<WebApiResponse> updateClient(@PathVariable Long id, @Valid @RequestBody ClientRequestDTO clientDTO) {
+        Client updatedClient = clientMapper.toEntity(clientDTO);
         ClientResponseDTO client = clientService.updateClient(id, updatedClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Client updated successfully", client));
     }

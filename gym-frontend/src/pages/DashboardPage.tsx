@@ -44,10 +44,14 @@ export default function DashboardPage() {
   const handleDownloadReport = async () => {
     try {
       const token = localStorage.getItem('token');
+      const headers: Record<string, string> = {};
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/reports/monthly`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers
       });
       
       if (response.ok) {

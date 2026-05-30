@@ -4,7 +4,7 @@ import com.aplicacionGym.gymapp.dto.response.*;
 import com.aplicacionGym.gymapp.service.AssistanceService;
 import com.aplicacionGym.gymapp.service.ClientService;
 import com.aplicacionGym.gymapp.service.PaymentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,14 +15,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clients-info-controller")
+@RequiredArgsConstructor
 public class ClientInfoController {
 
-    @Autowired
-    private ClientService clientService;
-    @Autowired
-    private PaymentService paymentService;
-    @Autowired
-    private AssistanceService assistanceService;
+    private final ClientService clientService;
+    private final PaymentService paymentService;
+    private final AssistanceService assistanceService;
 
     @GetMapping("/{idClient}/assistance")
     private ResponseEntity<WebApiResponse> getAssistance(@PathVariable Long idClient){

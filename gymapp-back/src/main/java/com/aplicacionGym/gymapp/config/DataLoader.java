@@ -74,9 +74,12 @@ public class DataLoader implements CommandLineRunner {
             }
 
             // --- ESTO SOLO CORRE CUANDO FORCE_RESEED ES FALSE ---
+            // DISABLED: Flyway now handles migrations and initial seed
+            /*
             if (monthlyTypeRepository.count() == 0) {
                 executeSeed();
             }
+            */
 
             // Mock de métricas físicas si no existen
             if (physicalRecordRepository.count() == 0) {

@@ -23,4 +23,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     Optional<Payment> findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(Long clientId);
 
+    @Query("SELECT p FROM Payment p JOIN FETCH p.monthlyType JOIN FETCH p.client WHERE p.client.id IN :clientIds AND p.monthlyType IS NOT NULL AND p.date = (SELECT MAX(p2.date) FROM Payment p2 WHERE p2.client = p.client AND p2.monthlyType IS NOT NULL)")
+    List<Payment> findLatestMonthlyPaymentsByClientIds(@Param("clientIds") List<Long> clientIds);
+
 }

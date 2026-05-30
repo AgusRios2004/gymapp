@@ -50,3 +50,17 @@ export const AssignRoutineSchema = z.object({
         assignedDay: z.string().min(1, "Debes asignar un día de la semana"),
     })).min(1, "La rutina debe tener días asignados")
 });
+
+export const GroupClassSchema = z.object({
+    className: z.string().min(1, "El nombre de la clase es requerido"),
+    dayOfWeek: z.string().min(1, "El día de la semana es requerido"),
+    capacity: z.coerce.number().min(1, "La capacidad debe ser de al menos 1 alumno"),
+    startTime: z.string().min(1, "La hora de inicio es requerida"),
+    endTime: z.string().min(1, "La hora de fin es requerida"),
+    professorId: z.string().min(1, "El profesor es requerido"),
+    routineId: z.string().optional().or(z.literal('')),
+});
+
+export const ClientQuickRegistrationSchema = ClientSchema.extend({
+    activeClassId: z.string().optional(),
+});

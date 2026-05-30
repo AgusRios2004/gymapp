@@ -40,6 +40,8 @@ class AssignmentTransactionTest {
         client.setName("Test");
         client.setLastName("Client");
         client.setDni("12345678");
+        client.setEmail("test@client.com");
+        client.setPassword("password");
         client = clientRepository.save(client);
 
         Routine routine = new Routine();

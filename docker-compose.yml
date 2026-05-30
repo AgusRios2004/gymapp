@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  # --- SERVICIO 1: BASE DE DATOS LOCAL (MySQL) ---
+  # --- Servicio de base de datos local para desarrollo ---
   db:
     image: mysql:8.0
     container_name: gym-mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: user_gym
-      MYSQL_DATABASE: gym_db
+      MYSQL_DATABASE: back_solutions
       MYSQL_USER: user_gym
       MYSQL_PASSWORD: user_gym
     ports:
-      - "3380:3306"
+      - "3380:3306" # Puerto externo 3380 para evitar conflictos locales
     volumes:
       - ./mysql-data:/var/lib/mysql
 
@@ -27,12 +27,14 @@ services:
       - ./gymapp-back/.env
     environment:
       # Usamos las variables que definiste en tu .env para conectar a la nube
-      # Nota: Usamos el puerto 4000 de TiDB
-      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_HOST}:${DB_PORT}/back_solutions?useSSL=true&verifyServerCertificate=true&ssl-mode=REQUIRED
+      # Local MySQL: no SSL for development
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_HOST}:${DB_PORT}/back_solutions?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
 
   # --- SERVICIO 3: FRONTEND (React + Nginx) ---
   frontend:

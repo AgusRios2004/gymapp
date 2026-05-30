@@ -8,27 +8,24 @@ import com.aplicacionGym.gymapp.entity.enums.PaymentType;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.PaymentMapper;
 import com.aplicacionGym.gymapp.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
-    private ProfessorRepository professorRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private MonthlyTypeRepository monthlyTypeRepository;
-    @Autowired
-    private PaymentProductRepository paymentProductRepository;
+    private final PaymentRepository paymentRepository;
+    private final ClientRepository clientRepository;
+    private final ProfessorRepository professorRepository;
+    private final ProductRepository productRepository;
+    private final MonthlyTypeRepository monthlyTypeRepository;
+    private final PaymentProductRepository paymentProductRepository;
 
     public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto) {
         Client client = clientRepository.findById(dto.getIdClient())
@@ -66,8 +63,8 @@ public class PaymentService {
                     // To maintain the billing cycle, we use the original payment date 
                     // so the expiration remains consistent with the original month.
                     paymentDate = activePayment.getDate();
-                    System.out.println("💳 Upgrade detected. Original plan: " + activePayment.getMonthlyType().getType() +
-                        ". Charging difference: $" + amountToPay);
+                    log.info("💳 Upgrade detected. Original plan: {}. Charging difference: ${}", 
+                        activePayment.getMonthlyType().getType(), amountToPay);
                 } else {
                     // Downgrade or same price but different plan while active - usually not allowed or just warning
                     throw new IllegalArgumentException("Cannot change to a lower or equivalent plan while the current one is active.");
