@@ -1,5 +1,6 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
@@ -17,6 +18,12 @@ public class RoutineController {
 
     @Autowired
     private RoutineService routineService;
+
+    @PostMapping("/assign")
+    public ResponseEntity<WebApiResponse> assignComplexRoutine(@RequestBody AssignRoutineRequestDTO request) {
+        routineService.assignComplexRoutine(request);
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine assigned successfully with schedule", null));
+    }
 
     @PostMapping
     public ResponseEntity<WebApiResponse> createRoutine(@RequestBody RoutineRequestDTO routineRequestDTO){
@@ -47,12 +54,5 @@ public class RoutineController {
         routineService.deleteRoutine(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routine deleted successfully", null));
     }
-
-    @PostMapping("/assign")
-    public ResponseEntity<WebApiResponse> assignRoutine(@RequestBody com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO request){
-        routineService.assignRoutineToClientComplex(request);
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Routine assigned with schedule successfully", null));
-    }
-
-
 }
+

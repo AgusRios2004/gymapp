@@ -9,7 +9,7 @@ import {
   Lock
 } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { Link } from 'react-router-dom';
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -88,9 +88,7 @@ export default function LoginPage() {
             Iniciar Sesión
           </Button>
 
-          <p className="text-center text-sm text-gray-400">
-            ¿Eres nuevo profesor? <Link to="/register" className="text-blue-500 font-bold hover:underline">Registrate aquí</Link>
-          </p>
+
         </form>
       </div>
     </div>

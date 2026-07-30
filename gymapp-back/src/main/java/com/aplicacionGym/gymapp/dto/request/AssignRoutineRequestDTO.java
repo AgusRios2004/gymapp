@@ -1,13 +1,15 @@
 package com.aplicacionGym.gymapp.dto.request;
 
 import lombok.Data;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class AssignRoutineRequestDTO {
     private Long clientId;
     private Long routineTemplateId;
-    private String startDate;
+    private LocalDate startDate;
     private String notes;
-    private List<ClientScheduleMapDTO> schedule;
+    private List<ScheduleRequestDTO> schedule;
 }
+
