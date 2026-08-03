@@ -142,23 +142,23 @@ export default function ClientDetailPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header con navegación hacia atrás */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-zinc-900/80 border border-zinc-800/90 rounded-3xl p-6 shadow-industrial">
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={() => navigate('/clients')}
-            className="rounded-full w-10 h-10 p-0 flex items-center justify-center"
+            className="rounded-xl w-10 h-10 p-0 flex items-center justify-center text-amber-400 border-zinc-700 hover:bg-zinc-800"
           >
             <ArrowLeft size={20} />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{client.name} {client.lastName}</h1>
+            <h1 className="text-3xl font-black font-display uppercase tracking-tight text-white">{client.name} {client.lastName}</h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant={client.active ? 'success' : 'danger'}>
                 {client.active ? 'Socio Activo' : 'Socio Inactivo'}
               </Badge>
-              <span className="text-gray-400 text-sm">• DNI: {client.dni}</span>
+              <span className="text-zinc-400 text-xs font-semibold">• DNI: {client.dni}</span>
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function ClientDetailPage() {
            <Button 
              variant="primary" 
              onClick={() => setIsAssignRoutineModalOpen(true)}
-             className="gap-2 rounded-2xl shadow-lg shadow-blue-500/20"
+             className="gap-2 rounded-xl shadow-glow-amber bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black"
            >
              <Dumbbell size={18} /> Asignar Rutina
            </Button>
@@ -174,15 +174,15 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex p-1 bg-gray-100 rounded-2xl overflow-x-auto no-scrollbar">
+      <div className="flex p-1.5 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-x-auto no-scrollbar">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
               activeTab === tab.id 
-                ? 'bg-white text-blue-600 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-amber-500 text-zinc-950 shadow-glow-amber' 
+                : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             {tab.icon}
@@ -201,27 +201,27 @@ export default function ClientDetailPage() {
               latestFat={physicalRecords.length > 0 ? physicalRecords[0].fatPercentage : undefined}
               latestMuscle={physicalRecords.length > 0 ? physicalRecords[0].muscleMass : undefined}
             />
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-900 border-l-4 border-blue-500 pl-3">Datos Personales</h3>
-                <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-2xl">
+                <h3 className="text-xl font-black font-display uppercase tracking-tight text-white border-l-4 border-amber-500 pl-3">Datos Personales</h3>
+                <div className="grid grid-cols-2 gap-6 bg-zinc-950/60 border border-zinc-800/60 p-6 rounded-2xl">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Nombre Completo</p>
-                    <p className="text-gray-900 font-medium">{client.name} {client.lastName}</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1">Nombre Completo</p>
+                    <p className="text-zinc-100 font-semibold">{client.name} {client.lastName}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">DNI / ID</p>
-                    <p className="text-gray-900 font-medium">{client.dni}</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1">DNI / ID</p>
+                    <p className="text-zinc-100 font-semibold">{client.dni}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Teléfono</p>
-                    <p className="text-gray-900 font-medium">{client.phone || '-'}</p>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1">Teléfono</p>
+                    <p className="text-zinc-100 font-semibold">{client.phone || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Estado Cuenta</p>
-                    <div className="flex items-center gap-1">
-                      {client.active ? <CheckCircle2 size={16} className="text-green-500" /> : <XCircle size={16} className="text-red-500" />}
-                      <span className={client.active ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider mb-1">Estado Cuenta</p>
+                    <div className="flex items-center gap-1.5">
+                      {client.active ? <CheckCircle2 size={16} className="text-emerald-400" /> : <XCircle size={16} className="text-rose-400" />}
+                      <span className={client.active ? "text-emerald-400 font-bold text-xs" : "text-rose-400 font-bold text-xs"}>
                         {client.active ? "Al día" : "Inactivo"}
                       </span>
                     </div>
@@ -230,23 +230,23 @@ export default function ClientDetailPage() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-900 border-l-4 border-amber-500 pl-3">Resumen Reciente</h3>
+                <h3 className="text-xl font-black font-display uppercase tracking-tight text-white border-l-4 border-orange-500 pl-3">Resumen Reciente</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                  <div className="flex items-center justify-between p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-2xl">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-100 text-blue-600 rounded-xl"><CreditCard size={18} /></div>
-                      <span className="text-sm font-medium text-gray-700">Último Pago</span>
+                      <div className="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20"><CreditCard size={18} /></div>
+                      <span className="text-xs font-semibold text-zinc-300">Último Pago</span>
                     </div>
-                    <span className="text-sm font-bold text-gray-900">
+                    <span className="text-base font-black text-amber-400 font-mono">
                       {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                  <div className="flex items-center justify-between p-4 bg-zinc-950/60 border border-zinc-800/60 rounded-2xl">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-100 text-purple-600 rounded-xl"><Dumbbell size={18} /></div>
-                      <span className="text-sm font-medium text-gray-700">Rutina Activa</span>
+                      <div className="p-2.5 bg-orange-500/10 text-orange-400 rounded-xl border border-orange-500/20"><Dumbbell size={18} /></div>
+                      <span className="text-xs font-semibold text-zinc-300">Rutina Activa</span>
                     </div>
-                    <span className="text-sm font-bold text-gray-900">
+                    <span className="text-xs font-bold text-zinc-100">
                       {routines.find(r => r.active)?.name || 'Ninguna'}
                     </span>
                   </div>
@@ -257,30 +257,30 @@ export default function ClientDetailPage() {
         )}
 
         {activeTab === 'payments' && (
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
+          <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-8 space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-900">Historial de Pagos</h3>
+              <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Historial de Pagos</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="text-xs text-gray-400 uppercase font-bold">
-                  <tr className="border-b border-gray-100">
+                <thead className="text-xs text-zinc-500 uppercase font-bold tracking-wider">
+                  <tr className="border-b border-zinc-800">
                     <th className="pb-4 px-2">Fecha</th>
                     <th className="pb-4">Concepto</th>
                     <th className="pb-4">Monto</th>
                     <th className="pb-4">Cobrado por</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-zinc-800/60">
                   {payments.length === 0 ? (
-                    <tr><td colSpan={4} className="py-8 text-center text-gray-400">No hay pagos registrados</td></tr>
+                    <tr><td colSpan={4} className="py-8 text-center text-zinc-500">No hay pagos registrados</td></tr>
                   ) : (
                     payments.map((p) => (
-                      <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="py-4 px-2 text-sm text-gray-600">{new Date(p.date).toLocaleDateString()}</td>
-                        <td className="py-4 font-medium text-gray-900">{p.monthlyTypeName || 'Producto'}</td>
-                        <td className="py-4 text-gray-900 font-bold">${p.amount.toLocaleString()}</td>
-                        <td className="py-4 text-sm text-gray-500">{p.professorName}</td>
+                      <tr key={p.id} className="hover:bg-zinc-800/40 transition-colors">
+                        <td className="py-4 px-2 text-xs text-zinc-400 font-medium">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="py-4 font-semibold text-zinc-200 text-xs">{p.monthlyTypeName || 'Producto'}</td>
+                        <td className="py-4 text-amber-400 font-mono font-black text-sm">${p.amount.toLocaleString()}</td>
+                        <td className="py-4 text-xs text-zinc-400">{p.professorName}</td>
                       </tr>
                     ))
                   )}
@@ -293,26 +293,26 @@ export default function ClientDetailPage() {
         {activeTab === 'routines' && (
           <div className="space-y-6">
             <TrainingSchemeWidget />
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
+            <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-8 space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Planes de Entrenamiento Asignados</h3>
-                <Button variant="outline" size="sm" onClick={() => setIsAssignRoutineModalOpen(true)} className="gap-2">
+                <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Planes de Entrenamiento Asignados</h3>
+                <Button variant="outline" size="sm" onClick={() => setIsAssignRoutineModalOpen(true)} className="gap-2 text-amber-400 border-amber-500/40">
                   <Plus size={16} /> Nueva Asignación
                 </Button>
               </div>
               <div className="grid grid-cols-1 gap-4">
                 {routines.length === 0 ? (
-                  <p className="text-center py-8 text-gray-400">No hay rutinas asignadas</p>
+                  <p className="text-center py-8 text-zinc-500">No hay rutinas asignadas</p>
                 ) : (
                   routines.map((r) => (
-                    <div key={r.id} className={`p-6 rounded-2xl border ${r.active ? 'border-blue-200 bg-blue-50/30' : 'border-gray-100 bg-gray-50/30'}`}>
+                    <div key={r.id} className={`p-6 rounded-2xl border ${r.active ? 'border-amber-500/40 bg-amber-500/5' : 'border-zinc-800 bg-zinc-950/40'}`}>
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-bold text-gray-900">{r.name}</h4>
-                        {r.active && <Badge variant="success">ACTIVA</Badge>}
+                        <h4 className="font-bold text-white text-base">{r.name}</h4>
+                        {r.active && <Badge variant="energy">ACTIVA</Badge>}
                       </div>
-                      <p className="text-sm text-gray-500 mb-4">{r.goal}</p>
+                      <p className="text-xs text-zinc-400 mb-4">{r.goal}</p>
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" className="text-blue-600">Ver Ejercicios</Button>
+                        <Button variant="ghost" size="sm" className="text-amber-400 hover:text-amber-300">Ver Ejercicios</Button>
                       </div>
                     </div>
                   ))
@@ -330,85 +330,84 @@ export default function ClientDetailPage() {
               latestFat={physicalRecords.length > 0 ? physicalRecords[0].fatPercentage : undefined}
               latestMuscle={physicalRecords.length > 0 ? physicalRecords[0].muscleMass : undefined}
             />
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-8">
+            <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-8 space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Evolución Física</h3>
+                <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Evolución Física</h3>
                 <Button onClick={() => setIsRecordModalOpen(true)} className="gap-2">
                   <Plus size={18} /> Nuevo Registro
                 </Button>
               </div>
 
-            </div>
-
-            {physicalRecords.length > 1 ? (
-              <div className="h-80 w-full bg-gray-50 p-4 rounded-3xl border border-gray-100">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={[...physicalRecords].reverse()}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(str) => new Date(str).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} 
-                      tick={{fontSize: 12, fill: '#999'}}
-                    />
-                    <YAxis tick={{fontSize: 12, fill: '#999'}} />
-                    <Tooltip 
-                      contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6, fill: '#3b82f6' }} activeDot={{ r: 8 }} />
-                    <Line type="monotone" dataKey="muscleMass" name="Masa Muscular (%)" stroke="#10b981" strokeWidth={3} dot={{ r: 6, fill: '#10b981' }} />
-                    <Line type="monotone" dataKey="fatPercentage" name="Grasa (%)" stroke="#f59e0b" strokeWidth={3} dot={{ r: 6, fill: '#f59e0b' }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            ) : physicalRecords.length === 1 ? (
-              <div className="p-8 bg-blue-50 rounded-3xl text-center">
-                 <p className="text-blue-600 font-medium">Registra al menos 2 medidas para ver el gráfico de evolución.</p>
-              </div>
-            ) : null}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-              {physicalRecords.length === 0 ? (
-                <div className="col-span-full py-12 text-center text-gray-400 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">
-                   <TrendingUp size={48} className="mx-auto mb-4 opacity-20" />
-                   <p>No hay registros físicos aún</p>
+              {physicalRecords.length > 1 ? (
+                <div className="h-80 w-full bg-zinc-950/60 p-4 rounded-3xl border border-zinc-800/60">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[...physicalRecords].reverse()}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a" />
+                      <XAxis 
+                        dataKey="date" 
+                        tickFormatter={(str) => new Date(str).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} 
+                        tick={{fontSize: 12, fill: '#71717a'}}
+                      />
+                      <YAxis tick={{fontSize: 12, fill: '#71717a'}} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#18181b', borderRadius: '16px', border: '1 border #27272a', color: '#fff' }}
+                      />
+                      <Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#f59e0b" strokeWidth={3} dot={{ r: 5, fill: '#f59e0b' }} activeDot={{ r: 7 }} />
+                      <Line type="monotone" dataKey="muscleMass" name="Masa Muscular (%)" stroke="#10b981" strokeWidth={3} dot={{ r: 5, fill: '#10b981' }} />
+                      <Line type="monotone" dataKey="fatPercentage" name="Grasa (%)" stroke="#f43f5e" strokeWidth={3} dot={{ r: 5, fill: '#f43f5e' }} />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
-              ) : (
-                physicalRecords.map((record) => (
-                  <div key={record.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4 hover:shadow-md transition-shadow group relative">
-                    <button 
-                      onClick={() => {
-                        if(confirm('¿Estás seguro de eliminar este registro?')) {
-                          deleteRecordMutation.mutate(record.id);
-                        }
-                      }}
-                      className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                    <div className="flex items-center justify-between border-b border-gray-50 pb-3">
-                       <span className="text-sm font-bold text-gray-900">{new Date(record.date).toLocaleDateString()}</span>
-                       <Badge variant="neutral">Medición</Badge>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                       <div className="text-center">
-                          <p className="text-[10px] uppercase font-bold text-gray-400">Peso</p>
-                          <p className="text-lg font-black text-blue-600">{record.weight}kg</p>
-                       </div>
-                       <div className="text-center">
-                          <p className="text-[10px] uppercase font-bold text-gray-400">Músculo</p>
-                          <p className="text-lg font-black text-green-600">{record.muscleMass}%</p>
-                       </div>
-                       <div className="text-center">
-                          <p className="text-[10px] uppercase font-bold text-gray-400">Grasa</p>
-                          <p className="text-lg font-black text-amber-600">{record.fatPercentage}%</p>
-                       </div>
-                    </div>
-                    {record.notes && (
-                      <p className="text-xs text-gray-500 italic border-t border-gray-50 pt-3">{record.notes}</p>
-                    )}
+              ) : physicalRecords.length === 1 ? (
+                <div className="p-8 bg-amber-500/10 border border-amber-500/20 rounded-3xl text-center">
+                  <p className="text-amber-400 font-semibold text-xs">Registra al menos 2 medidas para ver el gráfico de evolución.</p>
+                </div>
+              ) : null}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                {physicalRecords.length === 0 ? (
+                  <div className="col-span-full py-12 text-center text-zinc-500 bg-zinc-950/40 rounded-3xl border-2 border-dashed border-zinc-800">
+                    <TrendingUp size={48} className="mx-auto mb-4 opacity-20 text-amber-500" />
+                    <p className="text-xs">No hay registros físicos aún</p>
                   </div>
-                ))
-              )}
+                ) : (
+                  physicalRecords.map((record) => (
+                    <div key={record.id} className="bg-zinc-950/60 p-5 rounded-2xl border border-zinc-800/80 shadow-industrial space-y-3 hover:border-zinc-700 transition-all group relative">
+                      <button 
+                        onClick={() => {
+                          if(confirm('¿Estás seguro de eliminar este registro?')) {
+                            deleteRecordMutation.mutate(record.id);
+                          }
+                        }}
+                        className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+                        <span className="text-xs font-bold text-white">{new Date(record.date).toLocaleDateString()}</span>
+                        <Badge variant="neutral">Medición</Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="text-center">
+                          <p className="text-[10px] uppercase font-bold text-zinc-500">Peso</p>
+                          <p className="text-base font-black text-amber-400 font-mono">{record.weight}kg</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[10px] uppercase font-bold text-zinc-500">Músculo</p>
+                          <p className="text-base font-black text-emerald-400 font-mono">{record.muscleMass}%</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[10px] uppercase font-bold text-zinc-500">Grasa</p>
+                          <p className="text-base font-black text-rose-400 font-mono">{record.fatPercentage}%</p>
+                        </div>
+                      </div>
+                      {record.notes && (
+                        <p className="text-[11px] text-zinc-400 italic border-t border-zinc-800/60 pt-2.5">{record.notes}</p>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -425,21 +424,21 @@ export default function ClientDetailPage() {
 
         {activeTab === 'assistance' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900">Historial de Asistencia</h3>
+            <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Historial de Asistencia</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {assistance.length === 0 ? (
-                <p className="col-span-full text-center py-8 text-gray-400">No hay registros de asistencia</p>
+                <p className="col-span-full text-center py-8 text-zinc-500">No hay registros de asistencia</p>
               ) : (
                 assistance.map((a, idx) => (
-                  <div key={idx} className="bg-gray-50 p-4 rounded-2xl flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-bold text-blue-500 uppercase">{new Date(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
-                      <span className="text-lg font-bold text-gray-900">{new Date(a.date).getDate()}</span>
+                  <div key={idx} className="bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center gap-4 shadow-industrial">
+                    <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center justify-center">
+                      <span className="text-[10px] font-extrabold text-amber-400 uppercase">{new Date(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
+                      <span className="text-lg font-black text-white">{new Date(a.date).getDate()}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{new Date(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Clock size={12} /> {a.inputHour} hs
+                      <p className="text-sm font-bold text-white capitalize">{new Date(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
+                      <p className="text-xs text-zinc-400 flex items-center gap-1">
+                        <Clock size={12} className="text-amber-400" /> {a.inputHour} hs
                       </p>
                     </div>
                   </div>
@@ -451,11 +450,11 @@ export default function ClientDetailPage() {
 
         {activeTab === 'products' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900">Compras en el Gimnasio</h3>
-            <div className="overflow-x-auto">
+            <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Compras en el Gimnasio</h3>
+            <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-6 overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="text-xs text-gray-400 uppercase font-bold">
-                  <tr className="border-b border-gray-100">
+                <thead className="text-xs text-zinc-500 uppercase font-bold tracking-wider">
+                  <tr className="border-b border-zinc-800">
                     <th className="pb-4 px-2">Producto</th>
                     <th className="pb-4">Fecha</th>
                     <th className="pb-4">Cant.</th>
@@ -463,17 +462,17 @@ export default function ClientDetailPage() {
                     <th className="pb-4">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-zinc-800/60">
                   {products.length === 0 ? (
-                    <tr><td colSpan={5} className="py-8 text-center text-gray-400">No ha realizado compras</td></tr>
+                    <tr><td colSpan={5} className="py-8 text-center text-zinc-500">No ha realizado compras</td></tr>
                   ) : (
                     products.map((p, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="py-4 px-2 font-medium text-gray-900">{p.nameProduct}</td>
-                        <td className="py-4 text-sm text-gray-600">{new Date(p.date).toLocaleDateString()}</td>
-                        <td className="py-4 text-sm text-gray-900">{p.quantity}</td>
-                        <td className="py-4 text-sm text-gray-900">${p.price.toLocaleString()}</td>
-                        <td className="py-4 font-bold text-gray-900">${(p.price * p.quantity).toLocaleString()}</td>
+                      <tr key={idx} className="hover:bg-zinc-800/40 transition-colors">
+                        <td className="py-4 px-2 font-semibold text-zinc-100 text-xs">{p.nameProduct}</td>
+                        <td className="py-4 text-xs text-zinc-400">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="py-4 text-xs text-zinc-200">{p.quantity}</td>
+                        <td className="py-4 text-xs text-zinc-300 font-mono">${p.price.toLocaleString()}</td>
+                        <td className="py-4 font-black text-amber-400 font-mono text-sm">${(p.price * p.quantity).toLocaleString()}</td>
                       </tr>
                     ))
                   )}
