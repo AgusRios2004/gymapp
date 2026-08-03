@@ -7,33 +7,36 @@ const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Botón de Hamburguesa para Móvil */}
-      <button 
+    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
+      {/* Mobile Hamburger Toggle */}
+      <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-2xl shadow-xl border border-gray-100 text-blue-600 active:scale-95 transition-all"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-zinc-900/90 backdrop-blur-md rounded-xl shadow-industrial border border-zinc-800 text-amber-400 active:scale-95 transition-all"
+        aria-label="Abrir menú"
       >
-        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {/* Sidebar Overlay (Móvil) */}
+      {/* Sidebar Overlay (Mobile) */}
       {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
+        <div
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-40 lg:hidden animate-in fade-in duration-200"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <div className={`
+      {/* Sidebar Drawer */}
+      <div
+        className={`
         fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      `}
+      >
         <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      {/* Contenido Principal */}
-      <main className="flex-1 p-4 sm:p-8 transition-all duration-300 w-full overflow-x-hidden">
+      {/* Main Content Pane */}
+      <main className="flex-1 p-4 sm:p-8 transition-all duration-300 w-full overflow-x-hidden min-h-screen">
         <Outlet />
       </main>
     </div>

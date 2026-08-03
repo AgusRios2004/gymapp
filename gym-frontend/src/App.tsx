@@ -14,6 +14,7 @@ import RegisterPage from './pages/RegisterPage';
 import StaffPage from './pages/StaffPage';
 import ProductsPage from './pages/ProductsPage';
 import ClassesPage from './pages/ClassesPage';
+import DesignSystemShowcasePage from './pages/DesignSystemShowcasePage';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="staff" element={<StaffPage />} />
               <Route path="products" element={<ProductsPage />} />
               <Route path="classes" element={<ClassesPage />} />
+              <Route path="design-system" element={<DesignSystemShowcasePage />} />
             </Route>
           </Route>
 

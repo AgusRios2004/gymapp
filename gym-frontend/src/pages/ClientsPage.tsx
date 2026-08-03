@@ -139,22 +139,22 @@ export default function ClientsPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-20"> {/* pb-20 para dar espacio en móvil si hay nav abajo */}
+    <div className="max-w-6xl mx-auto space-y-6 pb-20"> 
       
       {/* HEADER + BOTÓN ACCIÓN */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/80 border border-zinc-800/90 rounded-3xl p-6 shadow-xl backdrop-blur-md">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Mis Alumnos</h1>
-          <p className="text-gray-500 text-sm">Listado general de socios</p>
+          <h1 className="text-3xl font-black font-display uppercase tracking-tight text-gradient-amber">Directorio de Alumnos</h1>
+          <p className="text-zinc-400 text-sm mt-1">Gestión integral de socios, estado de cuenta y rutinas</p>
         </div>
         
         <Button 
           onClick={handleNewClient}
-          size="lg" // Usamos el tamaño grande (h-12) para mejor tacto en móvil
-          className="w-full sm:w-auto rounded-2xl shadow-lg shadow-blue-600/30 active:scale-95 gap-2"
+          size="lg" 
+          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black rounded-2xl shadow-glow-amber active:scale-95 gap-2"
         >
           <Plus size={20} />
-          <span className="font-medium">Nuevo Alumno</span>
+          <span>Nuevo Alumno</span>
         </Button>
       </div>
 
@@ -162,46 +162,46 @@ export default function ClientsPage() {
       <div className="flex flex-col md:flex-row gap-4">
         {/* Barra de Búsqueda */}
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
           <input 
             type="text" 
-            placeholder="Buscar alumno..." 
+            placeholder="Buscar alumno por nombre, apellido o DNI..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all"
+            className="w-full pl-12 pr-4 py-3.5 bg-zinc-900/80 border border-zinc-800 rounded-2xl text-slate-100 placeholder-zinc-500 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 shadow-inner transition-all text-sm"
           />
         </div>
 
         {/* Filtros (Pills) */}
-        <div className="flex p-1 bg-gray-100 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
+        <div className="flex p-1.5 bg-zinc-900 border border-zinc-800 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap">
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              filterStatus === 'all' ? 'bg-amber-500 text-zinc-950 shadow-glow-amber' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             Todos
           </button>
           <button
             onClick={() => setFilterStatus('active')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'active' ? 'bg-white text-green-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              filterStatus === 'active' ? 'bg-emerald-500 text-zinc-950 shadow-glow-emerald' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             Activos
           </button>
           <button
             onClick={() => setFilterStatus('inactive')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'inactive' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              filterStatus === 'inactive' ? 'bg-rose-500 text-zinc-950 shadow-glow-rose' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             Inactivos
           </button>
           <button
             onClick={() => setFilterStatus('debtors')}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filterStatus === 'debtors' ? 'bg-white text-amber-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              filterStatus === 'debtors' ? 'bg-orange-500 text-zinc-950 shadow-glow-orange' : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             Deudores

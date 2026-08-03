@@ -1,4 +1,15 @@
-import { Users, CreditCard, LayoutDashboard, Dumbbell, PersonStanding, UserCheck, Tag, LogOut, ShieldPlus } from 'lucide-react';
+import {
+  Users,
+  CreditCard,
+  LayoutDashboard,
+  Dumbbell,
+  PersonStanding,
+  UserCheck,
+  Tag,
+  LogOut,
+  ShieldPlus,
+  Palette,
+} from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
 import logo from '../../assets/funcional kids.jpeg';
 import { useAuth } from '../../context/AuthContext';
@@ -11,104 +22,125 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-full flex flex-col z-10 font-sans shadow-2xl lg:shadow-none">
-        
-        <div className="flex flex-col items-center justify-center h-22 border-b border-gray-200 p-4">
-            <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">Functional</span>
-            <span className="text-sm font-bold text-blue-600 tracking-widest uppercase">Kids</span>
-            <img src={logo} alt="Functional Kids Logo" className="w-12 h-12 mt-2 rounded-full object-cover" />
+    <aside className="w-64 bg-zinc-950 border-r border-zinc-800/80 h-full flex flex-col z-10 font-sans shadow-industrial">
+      {/* Header / Logo */}
+      <div className="flex flex-col items-center justify-center p-5 border-b border-zinc-800/80 bg-zinc-900/40">
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-black font-display text-white tracking-tight uppercase">
+            GYM<span className="text-amber-500">APP</span>
+          </span>
         </div>
+        <span className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase mt-0.5">
+          Functional Performance
+        </span>
+        <img
+          src={logo}
+          alt="Gym Logo"
+          className="w-12 h-12 mt-3 rounded-xl object-cover ring-2 ring-amber-500/30 shadow-glow-amber"
+        />
+      </div>
 
-      {/* Menú */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <SidebarItem 
-          path="/" 
-          label="Dashboard" 
-          icon={<LayoutDashboard size={20} />} 
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        <SidebarItem
+          path="/"
+          label="Dashboard"
+          icon={<LayoutDashboard size={18} />}
           end
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/clients" 
-          label="Alumnos" 
-          icon={<Users size={20} />} 
+        <SidebarItem
+          path="/clients"
+          label="Alumnos"
+          icon={<Users size={18} />}
           onClick={onClose}
         />
         {user?.role === 'ADMIN' && (
-          <SidebarItem 
-            path="/staff" 
-            label="Personal" 
-            icon={<ShieldPlus size={20} />} 
+          <SidebarItem
+            path="/staff"
+            label="Personal"
+            icon={<ShieldPlus size={18} />}
             onClick={onClose}
           />
         )}
-        <SidebarItem 
-          path="/plans" 
-          label="Planes" 
-          icon={<Tag size={20} />} 
+        <SidebarItem
+          path="/plans"
+          label="Planes"
+          icon={<Tag size={18} />}
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/payments" 
-          label="Pagos" 
-          icon={<CreditCard size={20} />} 
+        <SidebarItem
+          path="/payments"
+          label="Pagos"
+          icon={<CreditCard size={18} />}
           onClick={onClose}
         />
-
-        <SidebarItem 
-          path="/exercises" 
-          label="Ejercicios" 
-          icon={<Dumbbell size={20} />} 
+        <SidebarItem
+          path="/exercises"
+          label="Ejercicios"
+          icon={<Dumbbell size={18} />}
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/routines" 
-          label="Rutinas" 
-          icon={<PersonStanding size={20} />} 
+        <SidebarItem
+          path="/routines"
+          label="Rutinas"
+          icon={<PersonStanding size={18} />}
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/attendance" 
-          label="Asistencia" 
-          icon={<UserCheck size={20} />} 
+        <SidebarItem
+          path="/attendance"
+          label="Asistencia"
+          icon={<UserCheck size={18} />}
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/products" 
-          label="Tienda y Stock" 
-          icon={<Tag size={20} />} 
+        <SidebarItem
+          path="/products"
+          label="Tienda y Stock"
+          icon={<Tag size={18} />}
           onClick={onClose}
         />
-        <SidebarItem 
-          path="/classes" 
-          label="Clases" 
-          icon={<LayoutDashboard size={20} />} 
+        <SidebarItem
+          path="/classes"
+          label="Clases"
+          icon={<LayoutDashboard size={18} />}
+          onClick={onClose}
+        />
+        <SidebarItem
+          path="/design-system"
+          label="Design System"
+          icon={<Palette size={18} />}
           onClick={onClose}
         />
       </nav>
-      
-      {/* Footer del sidebar */}
-      <div className="p-4 border-t border-gray-100 bg-gray-50/50">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-200">
-            {user?.name.charAt(0)}
+
+      {/* User & Logout Footer */}
+      <div className="p-4 border-t border-zinc-800/80 bg-zinc-900/60">
+        <div className="flex items-center gap-3 mb-3 p-2 rounded-xl bg-zinc-800/50 border border-zinc-700/40">
+          <div className="w-9 h-9 rounded-lg bg-amber-500 text-zinc-950 flex items-center justify-center font-extrabold text-sm shadow-glow-amber">
+            {user?.name ? user.name.charAt(0) : 'U'}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-bold text-gray-900 truncate">{user?.name} {user?.lastName}</p>
-            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{user?.role}</p>
+            <p className="text-xs font-bold text-white truncate">
+              {user?.name} {user?.lastName}
+            </p>
+            <p className="text-[10px] text-amber-400 font-extrabold uppercase tracking-wider">
+              {user?.role || 'CLIENT'}
+            </p>
           </div>
         </div>
-        
-        <button 
+
+        <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-rose-400 hover:text-rose-300 bg-rose-950/40 hover:bg-rose-950/80 border border-rose-900/50 rounded-xl transition-all group"
         >
-          <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <LogOut size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           Cerrar Sesión
         </button>
-        
-        <div className="mt-4 pt-4 border-t border-gray-100/50">
-           <p className="text-[10px] text-gray-300 text-center font-medium">Functional Kids v1.0.0</p>
+
+        <div className="mt-3 pt-3 border-t border-zinc-800/50">
+          <p className="text-[10px] text-zinc-500 text-center font-semibold tracking-wide">
+            GYMAPP v1.0.0 • INDUSTRIAL UI
+          </p>
         </div>
       </div>
     </aside>
