@@ -1,70 +1,103 @@
-# Contexto del Proyecto: Gymania OS (GymApp)
+# 🎯 PROMPT MAESTRO: Refactorización Total GymApp / Gymania OS
 
-Gymania OS es un sistema integral de gestión de gimnasios y seguimiento de alumnos.
-
-## Stack Tecnológico & Design System
-- **Backend**: Java 21, Spring Boot 3.5.0, Spring Data JPA, Spring Security (JWT), MySQL / TiDB.
-- **Frontend**: React 19, TypeScript 5.9, Vite 7, TailwindCSS 3, React Hook Form + Zod, TanStack Query, Recharts.
-- **Design System**: GymApp Industrial Dark (`gym-theme-guardian`) - Slate-950, Zinc-900, Amber-500, Rose-500, Emerald-500.
-
----
-
-## 🎨 Skills de Auditoría UX/UI, Accesibilidad (A11y) & Visual Guarding
-
-### 1. `ux-visual-auditor` (Jerarquía Visual & Ritmo)
-- **Titulares Impactantes**: Títulos principales con `font-display uppercase tracking-tight text-gradient-amber` y tarjetas `glass-panel` (`bg-zinc-900/80 border border-zinc-800/90`).
-- **Ritmo & Espaciado**: Uso de la grilla de 8pt (`p-6`, `p-8` en contenedores, `gap-4` en grillas).
-- **Densidad de Información**: Badges e indicadores visuales para tendencias, calorías y progreso (`rose-400`, `emerald-400`, `amber-400`).
-
-### 2. `audit-a11y` (Accesibilidad WCAG 2.1 AA)
-- **Navegación por Teclado**: Anillos de foco visibles inconfundibles (`focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-950`).
-- **Etiquetas ARIA**: `aria-label` obligatorio en botones de sólo iconos y `aria-hidden="true"` en iconos decorativos.
-- **Marcado Semántico**: Uso estricto de elementos HTML5 nativos (`<button>`, `<main>`, `<nav>`, `<header>`, `<section>`).
-- **Contraste de Color**: Ratio mínimo 4.5:1 para legibilidad nocturna sobre `slate-950`.
-
-### 3. `gym-theme-guardian` (Reglas de Marca)
-- ❌ **Prohibido**: Uso de fondos claros/blancos (`bg-white`), grises planos (`bg-gray-100`) o azul Bootstrap (`bg-blue-600`).
-- ✅ **Obligatorio**: Paleta Industrial Dark con acentos energéticos de Amber (`bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black`).
+> [!IMPORTANT]
+> **REGLAS INFLEXIBLES Y DIRECTIVAS SUPREMAS:**
+> 1. ☀️ **PROHIBIDO EL MODO OSCURO (ZERO DARK MODE)**:  
+>    **NADA DE FONDOS NEGROS O GRISES OSCUROS (`slate-950`, `zinc-900`, `bg-black`, `bg-slate-900`)**. El diseño DEBE ser 100% MODO CLARO (`bg-slate-50` / `bg-white`), limpio, luminoso, con tipografía `text-slate-900` de alto contraste y acentos energéticos **Verde Esmeralda (`emerald-600`)**, **Teal (`teal-600`)** y **Amber (`amber-500`)**.
+> 2. ⚡ **REGLA DE LOS 3 CLICS MAXIMO**:  
+>    Cualquier flujo principal (crear rutina, asignarla, ver ficha, registrar pago, marcar asistencia) DEBE requerir máximo 3 clics desde cualquier punto de la aplicación.
+> 3. 📄 **PAGINACIÓN BACKEND OBLIGATORIA EN TODOS LOS GETS**:  
+>    **TODOS** los endpoints de listados en el Backend (`gymapp-back`) deben retornar `Page<T>` usando `Pageable` (`page`, `size`, `sort`). El Frontend debe consumir paginación limpia con controles (`< Anterior`, `Página X de Y`, `Siguiente >`), eliminando el scroll infinito y la carga pesada de 150+ registros en memoria.
+> 4. 🏋️ **MÓDULO DE RUTINAS Y EJERCICIOS FLUIDO**:  
+>    - Creador visual de rutinas sin recargar pantalla.
+>    - Acceso directo al banco de ejercicios e inserción de ejercicios nuevos *inline* o modal rápido.
+>    - Asignación directa a alumnos en 1 clic.
+>    - **Resumen de Rutina**: Mostrar dónde está siendo usada (lista de alumnos activos asignados, cantidad de ejercicios y duración estimada).
+> 5. 📊 **VISTA DE MÉTRICAS FÍSICAS EN DESKTOP SIN SCROLL**:  
+>    La visualización de métricas físicas y evolución debe ajustarse cómodamente a la pantalla en escritorio (grilla responsiva 2x2 / 3x2), sin scroll horizontal ni vertical incómodo.
+> 6. ⏱️ **MÓDULO DE ASISTENCIAS TRANQUILO Y SIMPLE**:  
+>    Buscador rápido por DNI/Nombre + Botón de Check-in en 1 clic + Tabla paginada de asistencias recientes sin sobrecarga visual.
 
 ---
 
-## 📋 Lista de Tareas Pendientes & Auditoría Continuous Delivery
+## 🛠️ PLAN DE EJECUCIÓN DETALLADO
 
-### 1. Backend (`gymapp-back`)
-- [x] **Seeder de Carga Masiva Extrema (`HeavyDataLoader.java`)**: 150+ Alumnos, 10 Profesores, ~750 Mediciones Físicas, 1,000+ Comidas, 1,120 Registros de Hidratación 3L y Creatina 5g.
-- [x] **Módulos de Nutrición, Suplementación, Hidratación e IMC**: Entidades JPA, Repositorios, Servicios REST y Controladores.
+### FASE 1: Backend (`gymapp-back`) - Paginación Integral en Todos los Controladores
 
-### 2. Frontend (`gym-frontend`) & Auditoría Visual UX/UI
-- [x] **Auditoría de Componentes Core**: `Button`, `Badge`, `Card`, `MetricCard`, `ProgressBar`, `Input`, `Modal`.
-- [x] **Auditoría A11y & Foco**: Añadir indicadores de foco accesibles (`focus:ring-2 focus:ring-amber-500`) y `aria-label` en todos los componentes.
-- [x] **Vista `ClientsPage.tsx`**: Paginación/filtrado para la carga masiva de 150+ alumnos en estética Industrial Dark.
-- [x] **Vista `ClientDetailPage.tsx`**: Widgets de Recomposición Corporal (IMC), Hidratación 3L, Suplementación (Creatina 5g) y Nutrición.
+Refactorizar los siguientes controladores para aceptar `Pageable` (por defecto `page=0`, `size=10`, `sort=id,desc` o por campo relevante) y retornar `ResponseEntity<Page<DTO>>`:
+
+1. **`ClientController.java`**: `GET /api/clients?page=0&size=10&search=&filter=`
+2. **`AttendanceController.java`**: `GET /api/attendance?page=0&size=10&search=`
+3. **`RoutineController.java`**: `GET /api/routines?page=0&size=10`
+4. **`ExerciseController.java`**: `GET /api/exercises?page=0&size=10&muscleGroup=`
+5. **`PaymentController.java`**: `GET /api/payments?page=0&size=10`
+6. **`ProductController.java`**: `GET /api/products?page=0&size=10`
+7. **`ClassController.java`**: `GET /api/classes?page=0&size=10`
+8. **`PhysicalRecordController.java`**: `GET /api/clients/{id}/physical-records?page=0&size=5`
 
 ---
 
-## 🔄 Bucle de Verificación Obligatorio
+### FASE 2: Frontend (`gym-frontend`) - Refactorización de Capa de Servicios y Tipos
 
-En cada iteración del bucle agéntico:
-1. Modifica o crea los archivos correspondientes según las tareas pendientes.
-2. Ejecuta la compilación y tests del Backend dentro de un **subshell independiente**:
+1. Actualizar `types/index.ts` para incluir el tipo genérico de respuesta paginada de Spring Data:
+   ```typescript
+   export interface PageResponse<T> {
+     content: T[];
+     totalPages: number;
+     totalElements: number;
+     size: number;
+     number: number; // página actual (0-indexed)
+     first: boolean;
+     last: boolean;
+   }
+   ```
+2. Actualizar todos los servicios (`clientService`, `routineService`, `exerciseService`, `paymentService`, `attendanceService`, `productService`, `classService`) para solicitar y recibir `PageResponse<T>`.
+
+---
+
+### FASE 3: UI/UX Rediseño MODO CLARO & Flujos de 3 Clics
+
+#### 1. Sistema de Diseño (`index.css`, `tailwind.config.js`, `Button.tsx`, `Modal.tsx`, `Sidebar.tsx`)
+- Asegurar 100% fondos claros (`bg-slate-50`, `bg-white`, `border-slate-200`).
+- Botones prominentes y con amplio padding (`px-6 py-3 font-extrabold rounded-2xl bg-emerald-600 text-white hover:bg-emerald-500`).
+- Modales limpios sobre backdrop tenue (`bg-slate-900/40 backdrop-blur-xs`).
+
+#### 2. Vista de Alumnos (`ClientsPage.tsx` & `ClientItem.tsx`)
+- Paginador inferior nativo con selector de tamaño de página (10, 25, 50).
+- Tarjetas de alumnos blancas, luminosas con acciones en 1 clic (*Ver Ficha*, *Asignar Rutina*, *Registrar Pago*).
+
+#### 3. Creador y Resumen de Rutinas (`RoutinesPage.tsx` / `RoutineBuilder.tsx`)
+- Pestañas/Paneles limpios: *Banco de Rutinas*, *Creador de Rutina*, *Banco de Ejercicios*.
+- Selector rápido de ejercicios con búsqueda y modal inline para crear nuevo ejercicio.
+- Botón "Asignar a Alumno" directo desde el resumen de la rutina.
+- Card de **Resumen de Rutina**: Muestra la lista de socios que actualmente tienen asignada esta rutina, con avatar, fecha de asignación y acceso directo a su ficha.
+
+#### 4. Vista de Métricas Físicas (`ClientDetailPage.tsx` / `RecompositionWidget.tsx`)
+- Layout adaptado a escritorio sin desbordamientos ni scroll horizontal. Gráficos de Recharts integrados sobre tarjetas blancas limpias.
+
+#### 5. Vista de Asistencias (`AttendancePage.tsx`)
+- Input gigante de DNI con autofoco para marcado en 1 clic.
+- Tabla paginada de marcaciones recientes (10 por página).
+
+---
+
+## 🔄 BUCLE DE VERIFICACIÓN Y COMPILACIÓN
+
+En cada paso del proceso:
+1. Ejecutar compilación Backend:
    ```bash
    (cd gymapp-back && JAVA_HOME=${JAVA_HOME:-/home/agustin_dev/.sdkman/candidates/java/21.0.2-tem} ./mvnw test)
    ```
-3. Ejecuta la verificación y tests del Frontend dentro de un **subshell independiente**:
+2. Ejecutar compilación Frontend:
    ```bash
    (cd gym-frontend && npm run build)
    ```
-4. **REGLA DE ORO**: Si algún test o build falla, analiza el log de error, corrige el código y vuelve a ejecutar la verificación. No avances a la siguiente tarea con tests fallidos.
-5. **COMMITS ATÓMICOS EN GIT**: Realiza commits con mensajes convencionales (ej: `feat(ui): Audit A11y focus rings and Industrial Dark styling`).
+3. Si hay errores, corregirlos de inmediato antes de avanzar.
+4. Crear commits atómicos en git.
 
 ---
 
-## 🛑 Condición de Salida (Completion Signal)
+## 🛑 SEÑAL DE FINALIZACIÓN (Completion Signal)
 
-CUANDO Y SOLO CUANDO:
-1. Todas las tareas de la lista estén completadas al 100%.
-2. Tanto el Backend como el Frontend compilen limpiamente.
-3. Todos los tests pasen exitosamente con 0 fallos.
-
-Escribe el tag de cierre uniendo las etiquetas: "<promise>" seguido de "COMPLETE_TASK" seguido de "</promise>".
-
+Cuando el Backend y Frontend compilen limpiamente con 0 errores y todas las reglas se hayan cumplido:
+Escribe la etiqueta exacta de cierre: `<promise>COMPLETE_TASK</promise>`
