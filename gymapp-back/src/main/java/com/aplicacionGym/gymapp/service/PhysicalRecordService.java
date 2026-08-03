@@ -37,7 +37,14 @@ public class PhysicalRecordService {
         
         PhysicalRecord record = physicalRecordMapper.toEntity(recordDTO);
         record.setClient(client);
-        
+
+        if (record.getHeight() == null && client.getHeight() != null) {
+            record.setHeight(client.getHeight());
+        } else if (record.getHeight() != null && (client.getHeight() == null || !record.getHeight().equals(client.getHeight()))) {
+            client.setHeight(record.getHeight());
+            clientRepository.save(client);
+        }
+
         PhysicalRecord saved = physicalRecordRepository.save(record);
         return physicalRecordMapper.toResponseDTO(saved);
     }

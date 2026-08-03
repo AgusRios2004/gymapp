@@ -15,6 +15,8 @@ public class PhysicalRecordResponseDTO {
     private Long id;
     private LocalDate date;
     private Double weight;
+    private Double height;
+    private Double bmi;
     private Double muscleMass;
     private Double fatPercentage;
     private String notes;

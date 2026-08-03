@@ -19,33 +19,33 @@ public class MonthlyTypeController {
     private MonthlyTypeService monthlyTypeService;
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getAllMonthlyType(){
+    public ResponseEntity<WebApiResponse> getAllMonthlyType(){
         List<MonthlyType> monthlyTypes = monthlyTypeService.getAllMonthlyType();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly types find successfully", monthlyTypes));
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<WebApiResponse> getMonthlyTypeById(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> getMonthlyTypeById(@PathVariable Long id){
         MonthlyType monthlyType = monthlyTypeService.getMonthlyTypeById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Monthly type not found with id: " +id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly type find successfully", monthlyType));
     }
 
     @PostMapping
-    private ResponseEntity<WebApiResponse> createMonthlyType(@RequestBody MonthlyType monthlyType){
+    public ResponseEntity<WebApiResponse> createMonthlyType(@RequestBody MonthlyType monthlyType){
         MonthlyType monthlyTypeCreated = monthlyTypeService.createMonthlyType(monthlyType);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly type created successfully", monthlyTypeCreated));
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<WebApiResponse> updateMonthlyType(@PathVariable Long id, @RequestBody MonthlyType monthlyType){
+    public ResponseEntity<WebApiResponse> updateMonthlyType(@PathVariable Long id, @RequestBody MonthlyType monthlyType){
         MonthlyType monthlyTypeUpdated = monthlyTypeService.updateMonthlyType(id, monthlyType)
                 .orElseThrow(() -> new ResourceNotFoundException("Monthly type not found with id: " +id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly updated succesfully", monthlyTypeUpdated));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<WebApiResponse> deleteMonthlyType(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> deleteMonthlyType(@PathVariable Long id){
         monthlyTypeService.deleteMonthlyType(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly Type delete successfully", null));
     }

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class PhysicalRecordRequestDTO {
     private LocalDate date;
     private Double weight;
+    private Double height;
     private Double muscleMass;
     private Double fatPercentage;
     private String notes;

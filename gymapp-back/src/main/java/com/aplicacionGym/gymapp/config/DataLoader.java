@@ -97,17 +97,32 @@ public class DataLoader implements CommandLineRunner {
             Client client = clients.get(i);
             
             if (i == 0) { // Carlos: Evolución constante (Baja peso, sube músculo)
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(3), 90.0, 30.0, 28.0, "Punto de partida"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 87.5, 31.5, 25.0, "Bajando harinas"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 85.0, 33.0, 22.0, "Más fuerza en sentadillas"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 82.5, 35.0, 19.0, "Gran progreso trimestral"));
+                client.setHeight(1.78);
+                client.setTargetFatPercentage(15.0);
+                client.setTargetMuscleMass(38.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(3), 90.0, 1.78, 30.0, 28.0, "Punto de partida"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 87.5, 1.78, 31.5, 25.0, "Bajando harinas"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 85.0, 1.78, 33.0, 22.0, "Más fuerza en sentadillas"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 82.5, 1.78, 35.0, 19.0, "Gran progreso trimestral"));
             } else if (i == 1) { // Ana: Mantenimiento y tonificación
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 60.0, 25.0, 22.0, "Iniciando Yoga"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 59.5, 26.0, 20.5, "Mejor flexibilidad"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 59.0, 27.5, 18.0, "Cuerpo más definido"));
+                client.setHeight(1.65);
+                client.setTargetFatPercentage(18.0);
+                client.setTargetMuscleMass(28.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 60.0, 1.65, 25.0, 22.0, "Iniciando Yoga"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 59.5, 1.65, 26.0, 20.5, "Mejor flexibilidad"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 59.0, 1.65, 27.5, 18.0, "Cuerpo más definido"));
             } else { // Roberto: Subida de peso inicial
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 75.0, 28.0, 24.0, "Primer registro"));
-                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 77.0, 29.5, 25.0, "Aumento de volumen (bulking)"));
+                client.setHeight(1.75);
+                client.setTargetFatPercentage(20.0);
+                client.setTargetMuscleMass(32.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 75.0, 1.75, 28.0, 24.0, "Primer registro"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 77.0, 1.75, 29.5, 25.0, "Aumento de volumen (bulking)"));
             }
         }
         System.out.println("✅ Professional mock metrics seeded!");

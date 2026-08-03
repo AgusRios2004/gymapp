@@ -17,6 +17,17 @@ public class Client extends Person {
 
     private boolean active;
 
+    private Double height; // En metros (ej: 1.78) o cm (ej: 178)
+
+    private Double targetWeight; // Peso objetivo (kg)
+
+    private Double targetFatPercentage; // % grasa objetivo
+
+    private Double targetMuscleMass; // Masa muscular objetivo (kg)
+
+    @Column(name = "primary_goal")
+    private String primaryGoal; // Ej: "Recomposición Corporal"
+
     @ManyToOne
     @JoinColumn(name = "active_class_id")
     private GroupClass activeClass;
@@ -37,3 +48,4 @@ public class Client extends Person {
         this.routines = routines;
     }
 }
+

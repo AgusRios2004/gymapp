@@ -25,9 +25,18 @@ public class PhysicalRecord {
     private LocalDate date;
 
     private Double weight;
+    private Double height; // En metros (ej: 1.78) o cm (ej: 178)
     private Double muscleMass;
     private Double fatPercentage;
 
     @Column(length = 500)
     private String notes;
+
+    public Double getBmi() {
+        if (weight == null || height == null || height <= 0) {
+            return null;
+        }
+        double heightInMeters = height > 3.0 ? height / 100.0 : height;
+        return Math.round((weight / (heightInMeters * heightInMeters)) * 10.0) / 10.0;
+    }
 }

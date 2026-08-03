@@ -8,12 +8,13 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class ExerciseLog {
+public class SupplementLog {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,21 +23,10 @@ public class ExerciseLog {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
-    private Exercise exercise;
-
     private LocalDate date;
+    private boolean creatineTaken; // 5g Creatina diaria
+    private boolean proteinTaken;  // Proteína en polvo
 
-    // Métricas de carga
-    private Double weight; // En kg o lbs
-    private Integer repsAchieved;
-    private Integer setsAchieved;
-
-    // Métricas de tiempo/resistencia (ej: sprints, cardio, plancha)
-    private Double timeInSeconds; 
-    private boolean isLissCardio; // Identifica cardio LISS de 10-15 min post entrenamiento
-
-    @Column(length = 500)
+    @Column(length = 255)
     private String notes;
 }

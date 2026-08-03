@@ -12,6 +12,7 @@ public class PhysicalRecordMapper {
         PhysicalRecord entity = new PhysicalRecord();
         entity.setDate(dto.getDate());
         entity.setWeight(dto.getWeight());
+        entity.setHeight(dto.getHeight());
         entity.setMuscleMass(dto.getMuscleMass());
         entity.setFatPercentage(dto.getFatPercentage());
         entity.setNotes(dto.getNotes());
@@ -23,6 +24,8 @@ public class PhysicalRecordMapper {
         dto.setId(entity.getId());
         dto.setDate(entity.getDate());
         dto.setWeight(entity.getWeight());
+        dto.setHeight(entity.getHeight());
+        dto.setBmi(entity.getBmi());
         dto.setMuscleMass(entity.getMuscleMass());
         dto.setFatPercentage(entity.getFatPercentage());
         dto.setNotes(entity.getNotes());

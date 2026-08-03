@@ -1,0 +1,9 @@
+{
+  "name": "gymapp",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@ai-hero/sandcastle": "^0.12.0",
+    "@types/node": "^26.1.2"
+  }
+}

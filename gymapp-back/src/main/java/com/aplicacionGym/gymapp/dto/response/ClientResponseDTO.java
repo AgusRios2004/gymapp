@@ -20,6 +20,13 @@ public class ClientResponseDTO {
     private Long activeClassId;
     private String activeClassName;
 
+    private Double height;
+    private Double targetWeight;
+    private Double targetFatPercentage;
+    private Double targetMuscleMass;
+    private String primaryGoal;
+    private Double bmi;
+
     public boolean isActive() {
         return active;
     }
@@ -40,3 +47,4 @@ public class ClientResponseDTO {
         this.routineActive = routineActive;
     }
 }
+

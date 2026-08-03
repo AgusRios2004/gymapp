@@ -141,10 +141,16 @@ public class ClientService {
         existingClient.setDni(updatedClient.getDni());
         existingClient.setPhone(updatedClient.getPhone());
         existingClient.setActive(updatedClient.isActive());
+        if (updatedClient.getHeight() != null) existingClient.setHeight(updatedClient.getHeight());
+        if (updatedClient.getTargetWeight() != null) existingClient.setTargetWeight(updatedClient.getTargetWeight());
+        if (updatedClient.getTargetFatPercentage() != null) existingClient.setTargetFatPercentage(updatedClient.getTargetFatPercentage());
+        if (updatedClient.getTargetMuscleMass() != null) existingClient.setTargetMuscleMass(updatedClient.getTargetMuscleMass());
+        if (updatedClient.getPrimaryGoal() != null) existingClient.setPrimaryGoal(updatedClient.getPrimaryGoal());
 
         clientRepository.save(existingClient);
 
         return ClientMapper.toDTO(existingClient);
+
     }
 
     public void deactivateClient(Long id) {

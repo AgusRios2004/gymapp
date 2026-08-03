@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   XCircle,
   TrendingUp,
-  Trash2
+  Trash2,
+  Utensils
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -39,8 +40,14 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import AssignRoutineModal from '../components/routines/AssignRoutineModal';
+import RecompositionWidget from '../components/physical/RecompositionWidget';
+import TrainingSchemeWidget from '../components/routines/TrainingSchemeWidget';
+import { HydrationTracker } from '../components/HydrationTracker';
+import { SupplementTracker } from '../components/SupplementTracker';
+import { ClientNutritionTab } from '../components/ClientNutritionTab';
 
-type TabType = 'general' | 'payments' | 'routines' | 'assistance' | 'products' | 'progress';
+
+type TabType = 'general' | 'payments' | 'routines' | 'assistance' | 'products' | 'progress' | 'nutrition';
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -127,6 +134,7 @@ export default function ClientDetailPage() {
     { id: 'payments', label: 'Pagos', icon: <CreditCard size={18} /> },
     { id: 'routines', label: 'Rutinas', icon: <Dumbbell size={18} /> },
     { id: 'progress', label: 'Progreso', icon: <TrendingUp size={18} /> },
+    { id: 'nutrition', label: 'Nutrición y Hábitos', icon: <Utensils size={18} /> },
     { id: 'assistance', label: 'Asistencias', icon: <Calendar size={18} /> },
     { id: 'products', label: 'Compras', icon: <ShoppingBag size={18} /> },
   ];
@@ -184,56 +192,64 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Content Area */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+      <div className="space-y-6">
         {activeTab === 'general' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900 border-l-4 border-blue-500 pl-3">Datos Personales</h3>
-              <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-2xl">
-                <div>
-                  <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Nombre Completo</p>
-                  <p className="text-gray-900 font-medium">{client.name} {client.lastName}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">DNI / ID</p>
-                  <p className="text-gray-900 font-medium">{client.dni}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Teléfono</p>
-                  <p className="text-gray-900 font-medium">{client.phone || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Estado Cuenta</p>
-                  <div className="flex items-center gap-1">
-                    {client.active ? <CheckCircle2 size={16} className="text-green-500" /> : <XCircle size={16} className="text-red-500" />}
-                    <span className={client.active ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
-                      {client.active ? "Al día" : "Inactivo"}
-                    </span>
+          <div className="space-y-6">
+            <RecompositionWidget 
+              client={client} 
+              latestWeight={physicalRecords.length > 0 ? physicalRecords[0].weight : undefined}
+              latestFat={physicalRecords.length > 0 ? physicalRecords[0].fatPercentage : undefined}
+              latestMuscle={physicalRecords.length > 0 ? physicalRecords[0].muscleMass : undefined}
+            />
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-900 border-l-4 border-blue-500 pl-3">Datos Personales</h3>
+                <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-2xl">
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Nombre Completo</p>
+                    <p className="text-gray-900 font-medium">{client.name} {client.lastName}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">DNI / ID</p>
+                    <p className="text-gray-900 font-medium">{client.dni}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Teléfono</p>
+                    <p className="text-gray-900 font-medium">{client.phone || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Estado Cuenta</p>
+                    <div className="flex items-center gap-1">
+                      {client.active ? <CheckCircle2 size={16} className="text-green-500" /> : <XCircle size={16} className="text-red-500" />}
+                      <span className={client.active ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                        {client.active ? "Al día" : "Inactivo"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900 border-l-4 border-amber-500 pl-3">Resumen Reciente</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 text-blue-600 rounded-xl"><CreditCard size={18} /></div>
-                    <span className="text-sm font-medium text-gray-700">Último Pago</span>
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-900 border-l-4 border-amber-500 pl-3">Resumen Reciente</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 text-blue-600 rounded-xl"><CreditCard size={18} /></div>
+                      <span className="text-sm font-medium text-gray-700">Último Pago</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">
+                      {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">
-                    {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 text-purple-600 rounded-xl"><Dumbbell size={18} /></div>
-                    <span className="text-sm font-medium text-gray-700">Rutina Activa</span>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-100 text-purple-600 rounded-xl"><Dumbbell size={18} /></div>
+                      <span className="text-sm font-medium text-gray-700">Rutina Activa</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">
+                      {routines.find(r => r.active)?.name || 'Ninguna'}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">
-                    {routines.find(r => r.active)?.name || 'Ninguna'}
-                  </span>
                 </div>
               </div>
             </div>
@@ -241,7 +257,7 @@ export default function ClientDetailPage() {
         )}
 
         {activeTab === 'payments' && (
-          <div className="space-y-6">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-gray-900">Historial de Pagos</h3>
             </div>
@@ -276,40 +292,52 @@ export default function ClientDetailPage() {
 
         {activeTab === 'routines' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-               <h3 className="text-xl font-bold text-gray-900">Planes de Entrenamiento</h3>
-               <Button variant="outline" size="sm" onClick={() => setIsAssignRoutineModalOpen(true)} className="gap-2">
-                 <Plus size={16} /> Nueva Asignación
-               </Button>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              {routines.length === 0 ? (
-                <p className="text-center py-8 text-gray-400">No hay rutinas asignadas</p>
-              ) : (
-                routines.map((r) => (
-                  <div key={r.id} className={`p-6 rounded-2xl border ${r.active ? 'border-blue-200 bg-blue-50/30' : 'border-gray-100 bg-gray-50/30'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                       <h4 className="font-bold text-gray-900">{r.name}</h4>
-                       {r.active && <Badge variant="success">ACTIVA</Badge>}
+            <TrainingSchemeWidget />
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Planes de Entrenamiento Asignados</h3>
+                <Button variant="outline" size="sm" onClick={() => setIsAssignRoutineModalOpen(true)} className="gap-2">
+                  <Plus size={16} /> Nueva Asignación
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {routines.length === 0 ? (
+                  <p className="text-center py-8 text-gray-400">No hay rutinas asignadas</p>
+                ) : (
+                  routines.map((r) => (
+                    <div key={r.id} className={`p-6 rounded-2xl border ${r.active ? 'border-blue-200 bg-blue-50/30' : 'border-gray-100 bg-gray-50/30'}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-bold text-gray-900">{r.name}</h4>
+                        {r.active && <Badge variant="success">ACTIVA</Badge>}
+                      </div>
+                      <p className="text-sm text-gray-500 mb-4">{r.goal}</p>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm" className="text-blue-600">Ver Ejercicios</Button>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">{r.goal}</p>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" className="text-blue-600">Ver Ejercicios</Button>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'progress' && (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-900">Evolución Física</h3>
-              <Button onClick={() => setIsRecordModalOpen(true)} className="gap-2">
-                <Plus size={18} /> Nuevo Registro
-              </Button>
+          <div className="space-y-6">
+            <RecompositionWidget 
+              client={client} 
+              latestWeight={physicalRecords.length > 0 ? physicalRecords[0].weight : undefined}
+              latestFat={physicalRecords.length > 0 ? physicalRecords[0].fatPercentage : undefined}
+              latestMuscle={physicalRecords.length > 0 ? physicalRecords[0].muscleMass : undefined}
+            />
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 space-y-8">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Evolución Física</h3>
+                <Button onClick={() => setIsRecordModalOpen(true)} className="gap-2">
+                  <Plus size={18} /> Nuevo Registro
+                </Button>
+              </div>
+
             </div>
 
             {physicalRecords.length > 1 ? (
@@ -382,6 +410,16 @@ export default function ClientDetailPage() {
                 ))
               )}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'nutrition' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <HydrationTracker clientId={clientId} />
+              <SupplementTracker clientId={clientId} />
+            </div>
+            <ClientNutritionTab clientId={clientId} />
           </div>
         )}
 
