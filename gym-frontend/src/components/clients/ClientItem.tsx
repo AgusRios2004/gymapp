@@ -13,43 +13,43 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
   const navigate = useNavigate();
 
   return (
-    <div className="bg-zinc-900/80 border border-zinc-800/90 hover:border-zinc-700 p-5 rounded-2xl shadow-industrial transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group">
+    <div className="bg-white border border-slate-200/80 hover:border-slate-300 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group">
       {/* Información del Cliente */}
       <div 
         className="flex-1 cursor-pointer hover:opacity-90"
         onClick={() => navigate(`/clients/${client.id}`)}
       >
         <div className="flex items-center gap-2 mb-1.5">
-          <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors font-display tracking-tight">
+          <h3 className="font-extrabold text-slate-900 text-lg group-hover:text-emerald-600 transition-colors font-display tracking-tight">
             {client.name} {client.lastName}
           </h3>
-          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${
+          <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${
             client.active 
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-              : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+              : 'bg-rose-100 text-rose-800 border-rose-200'
           }`}>
             {client.active ? 'Activo' : 'Inactivo'}
           </span>
           {client.isDebtor && (
-            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-orange-500/10 text-orange-400 border border-orange-500/20">
+            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
               Deuda
             </span>
           )}
         </div>
-        <p className="text-xs text-zinc-400 flex items-center gap-2 font-medium">
-          <span>DNI: <strong className="text-zinc-200">{client.dni}</strong></span>
-          <span className="text-zinc-700">•</span>
-          <span>Tel: <strong className="text-zinc-200">{client.phone || '-'}</strong></span>
+        <p className="text-xs text-slate-500 flex items-center gap-2 font-medium">
+          <span>DNI: <strong className="text-slate-700">{client.dni}</strong></span>
+          <span className="text-slate-300">•</span>
+          <span>Tel: <strong className="text-slate-700">{client.phone || '-'}</strong></span>
         </p>
       </div>
 
       {/* Botones de Acción */}
-      <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800">
+      <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         <Button 
           onClick={() => navigate(`/clients/${client.id}`)} 
           variant="outline" 
           size="sm"
-          className="flex-1 sm:flex-initial text-amber-400 border-amber-500/40 hover:bg-amber-500/10"
+          className="flex-1 sm:flex-initial text-emerald-700 border-emerald-300 bg-emerald-50/60 hover:bg-emerald-100/90 px-5 font-extrabold"
         >
           <Eye size={14} className="mr-1.5" />
           Ver Ficha
@@ -59,9 +59,9 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
           onClick={onAssignRoutine} 
           variant="secondary" 
           size="sm"
-          className="flex-1 sm:flex-initial bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700"
+          className="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200 px-5 font-bold"
         >
-          <Dumbbell size={14} className="mr-1.5 text-orange-400" />
+          <Dumbbell size={14} className="mr-1.5 text-emerald-600" />
           Rutina
         </Button>
         
@@ -69,7 +69,7 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
           onClick={onEdit} 
           variant="ghost"
           size="sm"
-          className="flex-1 sm:flex-initial text-zinc-400 hover:text-white hover:bg-zinc-800/60"
+          className="flex-1 sm:flex-initial text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-4 font-bold"
         >
           <Edit size={14} className="mr-1.5" />
           Editar

@@ -22,21 +22,21 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-64 bg-zinc-950 border-r border-zinc-800/80 h-full flex flex-col z-10 font-sans shadow-industrial">
+    <aside className="w-64 bg-white border-r border-slate-200/80 h-full flex flex-col z-10 font-sans shadow-sm">
       {/* Header / Logo */}
-      <div className="flex flex-col items-center justify-center p-5 border-b border-zinc-800/80 bg-zinc-900/40">
+      <div className="flex flex-col items-center justify-center p-5 border-b border-slate-200/80 bg-slate-50/50">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-black font-display text-white tracking-tight uppercase">
-            GYM<span className="text-amber-500">APP</span>
+          <span className="text-xl font-black font-display text-slate-900 tracking-tight uppercase">
+            GYM<span className="text-emerald-600">APP</span>
           </span>
         </div>
-        <span className="text-[10px] font-bold text-zinc-400 tracking-widest uppercase mt-0.5">
+        <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase mt-0.5">
           Functional Performance
         </span>
         <img
           src={logo}
           alt="Gym Logo"
-          className="w-12 h-12 mt-3 rounded-xl object-cover ring-2 ring-amber-500/30 shadow-glow-amber"
+          className="w-12 h-12 mt-3 rounded-2xl object-cover ring-2 ring-emerald-500/30 shadow-md shadow-emerald-600/10"
         />
       </div>
 
@@ -114,16 +114,16 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
       </nav>
 
       {/* User & Logout Footer */}
-      <div className="p-4 border-t border-zinc-800/80 bg-zinc-900/60">
-        <div className="flex items-center gap-3 mb-3 p-2 rounded-xl bg-zinc-800/50 border border-zinc-700/40">
-          <div className="w-9 h-9 rounded-lg bg-amber-500 text-zinc-950 flex items-center justify-center font-extrabold text-sm shadow-glow-amber">
+      <div className="p-4 border-t border-slate-200/80 bg-slate-50/50">
+        <div className="flex items-center gap-3 mb-3 p-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-extrabold text-sm shadow-sm shadow-emerald-600/30">
             {user?.name ? user.name.charAt(0) : 'U'}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs font-bold text-white truncate">
+            <p className="text-xs font-bold text-slate-900 truncate">
               {user?.name} {user?.lastName}
             </p>
-            <p className="text-[10px] text-amber-400 font-extrabold uppercase tracking-wider">
+            <p className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wider">
               {user?.role || 'CLIENT'}
             </p>
           </div>
@@ -131,15 +131,15 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
 
         <button
           onClick={logout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-rose-400 hover:text-rose-300 bg-rose-950/40 hover:bg-rose-950/80 border border-rose-900/50 rounded-xl transition-all group"
+          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/80 rounded-xl transition-all group"
         >
           <LogOut size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           Cerrar Sesión
         </button>
 
-        <div className="mt-3 pt-3 border-t border-zinc-800/50">
-          <p className="text-[10px] text-zinc-500 text-center font-semibold tracking-wide">
-            GYMAPP v1.0.0 • INDUSTRIAL UI
+        <div className="mt-3 pt-3 border-t border-slate-200/60">
+          <p className="text-[10px] text-slate-400 text-center font-semibold tracking-wide">
+            GYMAPP v1.0.0 • VITALITY GREEN
           </p>
         </div>
       </div>

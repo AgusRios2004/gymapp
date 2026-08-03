@@ -23,8 +23,8 @@ export const SidebarItem = ({ path, label, icon, end, relatedPaths, onClick }: S
         const active = isActive || isRelatedActive;
         return `flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 ${
           active
-            ? 'bg-amber-500/15 text-amber-400 border border-amber-500/40 shadow-glow-amber'
-            : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border border-transparent'
+            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-sm font-extrabold'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
         }`;
       }}
     >

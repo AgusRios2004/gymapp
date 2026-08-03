@@ -142,16 +142,16 @@ export default function ClientsPage() {
     <div className="max-w-6xl mx-auto space-y-6 pb-20"> 
       
       {/* HEADER + BOTÓN ACCIÓN */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/80 border border-zinc-800/90 rounded-3xl p-6 shadow-xl backdrop-blur-md">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm">
         <div>
-          <h1 className="text-3xl font-black font-display uppercase tracking-tight text-gradient-amber">Directorio de Alumnos</h1>
-          <p className="text-zinc-400 text-sm mt-1">Gestión integral de socios, estado de cuenta y rutinas</p>
+          <h1 className="text-3xl font-black font-display uppercase tracking-tight text-slate-900">Directorio de Alumnos</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Gestión integral de socios, estado de cuenta y rutinas</p>
         </div>
         
         <Button 
           onClick={handleNewClient}
           size="lg" 
-          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black rounded-2xl shadow-glow-amber active:scale-95 gap-2"
+          className="w-full sm:w-auto px-8 min-w-[200px] bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/25 active:scale-95 gap-2"
         >
           <Plus size={20} />
           <span>Nuevo Alumno</span>
@@ -162,46 +162,46 @@ export default function ClientsPage() {
       <div className="flex flex-col md:flex-row gap-4">
         {/* Barra de Búsqueda */}
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
           <input 
             type="text" 
             placeholder="Buscar alumno por nombre, apellido o DNI..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3.5 bg-zinc-900/80 border border-zinc-800 rounded-2xl text-slate-100 placeholder-zinc-500 focus:outline-none focus:border-amber-500/80 focus:ring-1 focus:ring-amber-500/50 shadow-inner transition-all text-sm"
+            className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-sm transition-all text-sm font-medium"
           />
         </div>
 
         {/* Filtros (Pills) */}
-        <div className="flex p-1.5 bg-zinc-900 border border-zinc-800 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap">
+        <div className="flex p-1.5 bg-white border border-slate-200 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap shadow-sm">
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-              filterStatus === 'all' ? 'bg-amber-500 text-zinc-950 shadow-glow-amber' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+              filterStatus === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Todos
           </button>
           <button
             onClick={() => setFilterStatus('active')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-              filterStatus === 'active' ? 'bg-emerald-500 text-zinc-950 shadow-glow-emerald' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+              filterStatus === 'active' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Activos
           </button>
           <button
             onClick={() => setFilterStatus('inactive')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-              filterStatus === 'inactive' ? 'bg-rose-500 text-zinc-950 shadow-glow-rose' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+              filterStatus === 'inactive' ? 'bg-rose-600 text-white shadow-md shadow-rose-600/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Inactivos
           </button>
           <button
             onClick={() => setFilterStatus('debtors')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-              filterStatus === 'debtors' ? 'bg-orange-500 text-zinc-950 shadow-glow-orange' : 'text-zinc-400 hover:text-zinc-200'
+            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+              filterStatus === 'debtors' ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Deudores
