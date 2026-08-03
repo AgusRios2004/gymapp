@@ -43,62 +43,70 @@ export const SupplementTracker: React.FC<Props> = ({ clientId }) => {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400">
+    <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 bg-emerald-100 border border-emerald-200 rounded-2xl text-emerald-700">
           <Pill className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-base font-semibold text-slate-100">Suplementación Diaria</h3>
-          <p className="text-xs text-slate-400">Toma continua recomendada</p>
+          <h3 className="text-base font-extrabold text-slate-900 font-display uppercase tracking-tight">Suplementación Diaria</h3>
+          <p className="text-xs text-slate-500 font-medium">Toma continua recomendada para rendimiento</p>
         </div>
       </div>
 
       <div className="space-y-3">
         <div
           onClick={() => !loading && toggleSupplement('creatine')}
-          className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition ${
+          className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
             log?.creatineTaken
-              ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
-              : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:border-slate-600'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+              : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
           }`}
         >
           <div className="flex items-center gap-3">
             {log?.creatineTaken ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
             ) : (
-              <Circle className="w-5 h-5 text-slate-500" />
+              <Circle className="w-5 h-5 text-slate-400" />
             )}
             <div>
-              <p className="text-xs font-semibold">Creatina Monohidrato (5g)</p>
-              <p className="text-[11px] text-slate-400">Toma diaria post-entrenamiento</p>
+              <p className="text-xs font-bold">Creatina Monohidrato (5g)</p>
+              <p className="text-[11px] text-slate-500">Toma diaria post-entrenamiento</p>
             </div>
           </div>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-slate-900 border border-slate-700">
+          <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
+            log?.creatineTaken 
+              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+              : 'bg-white text-slate-500 border-slate-200'
+          }`}>
             {log?.creatineTaken ? 'Tomado' : 'Pendiente'}
           </span>
         </div>
 
         <div
           onClick={() => !loading && toggleSupplement('protein')}
-          className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition ${
+          className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
             log?.proteinTaken
-              ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
-              : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:border-slate-600'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+              : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
           }`}
         >
           <div className="flex items-center gap-3">
             {log?.proteinTaken ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
             ) : (
-              <Circle className="w-5 h-5 text-slate-500" />
+              <Circle className="w-5 h-5 text-slate-400" />
             )}
             <div>
-              <p className="text-xs font-semibold">Proteína en Polvo (Whey)</p>
-              <p className="text-[11px] text-slate-400">1 scoop (25-30g proteína)</p>
+              <p className="text-xs font-bold">Proteína en Polvo (Whey)</p>
+              <p className="text-[11px] text-slate-500">1 scoop (25-30g proteína)</p>
             </div>
           </div>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-slate-900 border border-slate-700">
+          <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
+            log?.proteinTaken 
+              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+              : 'bg-white text-slate-500 border-slate-200'
+          }`}>
             {log?.proteinTaken ? 'Tomado' : 'Pendiente'}
           </span>
         </div>
