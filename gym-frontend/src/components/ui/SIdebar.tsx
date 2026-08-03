@@ -8,7 +8,6 @@ import {
   Tag,
   LogOut,
   ShieldPlus,
-  Palette,
 } from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
 import logo from '../../assets/funcional kids.jpeg';

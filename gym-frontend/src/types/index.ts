@@ -7,6 +7,16 @@ export interface Person {
     email?: string;
 }
 
+export interface PageResponse<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+}
+
 export interface Professor extends Person {
     active: boolean;
 }

@@ -103,9 +103,7 @@ En cada paso del proceso:
 3. Si hay errores, corregirlos de inmediato antes de avanzar.
 4. Crear commits atómicos en git.
 
----
-
 ## 🛑 SEÑAL DE FINALIZACIÓN (Completion Signal)
 
-Cuando el Backend y Frontend compilen limpiamente con 0 errores y todas las reglas se hayan cumplido:
-Escribe la etiqueta exacta de cierre: `<promise>COMPLETE_TASK</promise>`
+Cuando el Backend y Frontend compilen limpiamente con 0 errores y todas las tareas hayan finalizado:
+Escribe la etiqueta de salida combinando "<promise>" + "COMPLETE_TASK" + "</promise>".

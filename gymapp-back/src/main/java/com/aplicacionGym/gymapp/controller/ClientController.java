@@ -29,23 +29,16 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<WebApiResponse> getAllClients(
             @RequestParam(required = false) Boolean active,
-            @RequestParam(required = false) Boolean debtors) {
+            @RequestParam(required = false) Boolean debtors,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        List<ClientResponseDTO> dto;
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        org.springframework.data.domain.Page<ClientResponseDTO> paginatedClients = 
+                clientService.getPaginatedClients(pageable, active, debtors, search);
 
-        if (Boolean.TRUE.equals(debtors)) {
-            dto = clientService.getDebtorClients();
-        } else {
-            dto = clientService.getAllClients();
-        }
-
-        // Filtramos la lista en el controlador si se pide por estado activo
-        if (active != null) {
-            dto = dto.stream()
-                    .filter(c -> active.equals(c.isActive()))
-                    .toList();
-        }
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Clients found successfully", dto));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Clients found successfully", paginatedClients));
     }
 
     @GetMapping("/{id}")

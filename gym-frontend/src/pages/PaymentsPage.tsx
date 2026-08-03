@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Search } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllPayments, createMonthlyPayment, getMonthlyTypes } from '../services/paymentService';
-import { getClients } from '../services/clientService';
+import { getAllClientsList } from '../services/clientService';
 import { getProfessors } from '../services/professorService';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
@@ -30,7 +30,7 @@ export default function PaymentsPage() {
 
   const { data: clients = [] } = useQuery({
     queryKey: ['clients', 'active'],
-    queryFn: () => getClients(true)
+    queryFn: () => getAllClientsList(true)
   });
 
   const { data: professors = [] } = useQuery({

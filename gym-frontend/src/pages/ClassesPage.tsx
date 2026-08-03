@@ -4,7 +4,7 @@ import { Clock, Plus, Trash2, Edit, User as UserIcon, Users, UserMinus, UserPlus
 import { getProfessors } from '../services/professorService';
 import { getClasses, createClass, deleteClass, updateClass, getStudentsByClass, unassignClass, assignClass } from '../services/classService';
 import { getRoutines } from '../services/routineService';
-import { createClient, getClients } from '../services/clientService';
+import { createClient, getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -72,7 +72,7 @@ export default function ClassesPage() {
 
   const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ['clients', 'active'],
-    queryFn: () => getClients(true)
+    queryFn: () => getAllClientsList(true)
   });
 
   const { data: studentsInClass = [], isLoading: isLoadingStudents } = useQuery<Client[]>({

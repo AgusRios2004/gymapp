@@ -1,6 +1,6 @@
 import api from '../lib/axios';
-import type { Client } from '../types/index';
-import type { ApiResponse } from '../types/api.types'; // Asegúrate de importar esto
+import type { Client, PageResponse } from '../types/index';
+import type { ApiResponse } from '../types/api.types';
 import { ClientSchema, AssignRoutineSchema } from '../types/schema.type';
 import { z } from 'zod';
 
@@ -9,13 +9,29 @@ type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 const path = '/clients';
 
-export const getClients = async (active?: boolean, debtors?: boolean): Promise<Client[]> => {
-    const params: Record<string, boolean | undefined> = {};
+export const getClients = async (
+    page = 0,
+    size = 10,
+    search = '',
+    active?: boolean,
+    debtors?: boolean
+): Promise<PageResponse<Client>> => {
+    const params: Record<string, string | number | boolean | undefined> = { page, size };
+    if (search) params.search = search;
     if (active !== undefined) params.active = active;
     if (debtors !== undefined) params.debtors = debtors;
     
-    const response = await api.get<ApiResponse<Client[]>>(path, { params });
+    const response = await api.get<ApiResponse<PageResponse<Client>>>(path, { params });
     return response.data.data;
+};
+
+export const getAllClientsList = async (active?: boolean, debtors?: boolean): Promise<Client[]> => {
+    const params: Record<string, string | number | boolean | undefined> = { page: 0, size: 1000 };
+    if (active !== undefined) params.active = active;
+    if (debtors !== undefined) params.debtors = debtors;
+    
+    const response = await api.get<ApiResponse<PageResponse<Client>>>(path, { params });
+    return response.data.data.content || [];
 };
 
 export const getClientById = async (id: number | string): Promise<Client> => {
