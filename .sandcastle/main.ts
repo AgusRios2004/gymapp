@@ -40,7 +40,7 @@ async function main() {
     const result = await interactive({
       name: "gymania-os-completion",
       agent: pi(model, { env: sandboxEnv }),
-      sandbox: noSandbox({ env: sandboxEnv }),
+      sandbox: noSandbox(),
       promptFile: ".sandcastle/prompt.md",
       branchStrategy: {
         type: "branch",
@@ -54,7 +54,7 @@ async function main() {
     const result = await run({
       name: "gymania-os-completion",
       agent: pi(model, { env: sandboxEnv }),
-      sandbox: noSandbox({ env: sandboxEnv }),
+      sandbox: noSandbox(),
       promptFile: ".sandcastle/prompt.md",
       maxIterations: 10,
       completionSignal: "<promise>COMPLETE_TASK</promise>",
