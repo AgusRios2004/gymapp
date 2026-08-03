@@ -105,12 +105,6 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
           icon={<LayoutDashboard size={18} />}
           onClick={onClose}
         />
-        <SidebarItem
-          path="/design-system"
-          label="Design System"
-          icon={<Palette size={18} />}
-          onClick={onClose}
-        />
       </nav>
 
       {/* User & Logout Footer */}

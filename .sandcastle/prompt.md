@@ -8,14 +8,17 @@
 >    Cualquier flujo principal (crear rutina, asignarla, ver ficha, registrar pago, marcar asistencia) DEBE requerir máximo 3 clics desde cualquier punto de la aplicación.
 > 3. 📄 **PAGINACIÓN BACKEND OBLIGATORIA EN TODOS LOS GETS**:  
 >    **TODOS** los endpoints de listados en el Backend (`gymapp-back`) deben retornar `Page<T>` usando `Pageable` (`page`, `size`, `sort`). El Frontend debe consumir paginación limpia con controles (`< Anterior`, `Página X de Y`, `Siguiente >`), eliminando el scroll infinito y la carga pesada de 150+ registros en memoria.
-> 4. 🏋️ **MÓDULO DE RUTINAS Y EJERCICIOS FLUIDO**:  
+> 4. 🏛️ **REUTILIZACIÓN TOTAL DEL DESIGN SYSTEM (`src/components/ui/` / `src/modules/design/`)**:  
+>    **TODOS los componentes visuales de la aplicación DEBEN nacer, vivir y exportarse desde el módulo común del Design System (`Button`, `Badge`, `Card`, `Input`, `Modal`, `Pagination`, `Select`, `Table`, `StatCard`, etc.)**.  
+>    ❌ **EL DESIGN SYSTEM ES UN MÓDULO TÉCNICO INTERNO Y NO DEBE MOSTRARSE EN LA BARRA DE NAVEGACIÓN DEL USUARIO (`Sidebar.tsx`)**.
+> 5. 🏋️ **MÓDULO DE RUTINAS Y EJERCICIOS FLUIDO**:  
 >    - Creador visual de rutinas sin recargar pantalla.
 >    - Acceso directo al banco de ejercicios e inserción de ejercicios nuevos *inline* o modal rápido.
 >    - Asignación directa a alumnos en 1 clic.
 >    - **Resumen de Rutina**: Mostrar dónde está siendo usada (lista de alumnos activos asignados, cantidad de ejercicios y duración estimada).
-> 5. 📊 **VISTA DE MÉTRICAS FÍSICAS EN DESKTOP SIN SCROLL**:  
+> 6. 📊 **VISTA DE MÉTRICAS FÍSICAS EN DESKTOP SIN SCROLL**:  
 >    La visualización de métricas físicas y evolución debe ajustarse cómodamente a la pantalla en escritorio (grilla responsiva 2x2 / 3x2), sin scroll horizontal ni vertical incómodo.
-> 6. ⏱️ **MÓDULO DE ASISTENCIAS TRANQUILO Y SIMPLE**:  
+> 7. ⏱️ **MÓDULO DE ASISTENCIAS TRANQUILO Y SIMPLE**:  
 >    Buscador rápido por DNI/Nombre + Botón de Check-in en 1 clic + Tabla paginada de asistencias recientes sin sobrecarga visual.
 
 ---
@@ -37,9 +40,14 @@ Refactorizar los siguientes controladores para aceptar `Pageable` (por defecto `
 
 ---
 
-### FASE 2: Frontend (`gym-frontend`) - Refactorización de Capa de Servicios y Tipos
+### FASE 2: Frontend (`gym-frontend`) - Design System Centralizado & Servicios Paginados
 
-1. Actualizar `types/index.ts` para incluir el tipo genérico de respuesta paginada de Spring Data:
+1. **Módulo de Design System Centralizado (`src/components/ui/` / `src/modules/design/`)**:
+   - Centralizar y exportar todos los elementos atómicos y moleculares (`Button`, `Badge`, `Card`, `Input`, `Modal`, `Pagination`, `Select`, `Table`, `StatCard`).
+   - Ninguna página o vista debe definir componentes visuales ad-hoc fuera del Design System.
+   - Ocultar `/design-system` de la navegación del usuario en `Sidebar.tsx`.
+
+2. Actualizar `types/index.ts` para incluir el tipo genérico de respuesta paginada de Spring Data:
    ```typescript
    export interface PageResponse<T> {
      content: T[];
@@ -51,7 +59,7 @@ Refactorizar los siguientes controladores para aceptar `Pageable` (por defecto `
      last: boolean;
    }
    ```
-2. Actualizar todos los servicios (`clientService`, `routineService`, `exerciseService`, `paymentService`, `attendanceService`, `productService`, `classService`) para solicitar y recibir `PageResponse<T>`.
+3. Actualizar todos los servicios (`clientService`, `routineService`, `exerciseService`, `paymentService`, `attendanceService`, `productService`, `classService`) para solicitar y recibir `PageResponse<T>`.
 
 ---
 
@@ -63,7 +71,7 @@ Refactorizar los siguientes controladores para aceptar `Pageable` (por defecto `
 - Modales limpios sobre backdrop tenue (`bg-slate-900/40 backdrop-blur-xs`).
 
 #### 2. Vista de Alumnos (`ClientsPage.tsx` & `ClientItem.tsx`)
-- Paginador inferior nativo con selector de tamaño de página (10, 25, 50).
+- Paginador inferior nativo con selector de tamaño de página (10 por defecto, opcional 25, 50).
 - Tarjetas de alumnos blancas, luminosas con acciones en 1 clic (*Ver Ficha*, *Asignar Rutina*, *Registrar Pago*).
 
 #### 3. Creador y Resumen de Rutinas (`RoutinesPage.tsx` / `RoutineBuilder.tsx`)
