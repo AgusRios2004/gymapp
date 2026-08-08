@@ -25,25 +25,25 @@ public class ClientInfoController {
     private AssistanceService assistanceService;
 
     @GetMapping("/{idClient}/assistance")
-    private ResponseEntity<WebApiResponse> getAssistance(@PathVariable Long idClient){
+    public ResponseEntity<WebApiResponse> getAssistance(@PathVariable Long idClient){
         List<AssistanceResponseDTO> assistanceList = assistanceService.getAssistanceByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Assistance founds successfully!", assistanceList));
     }
 
     @GetMapping("/{idClient}/payments")
-    private ResponseEntity<WebApiResponse> getPayments(@PathVariable Long idClient){
+    public ResponseEntity<WebApiResponse> getPayments(@PathVariable Long idClient){
         List<PaymentResponseDTO> payments = paymentService.getPaymentsByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payments founds successfully!", payments));
     }
 
     @GetMapping("/{idClient}/routines")
-    private ResponseEntity<WebApiResponse> getRoutines(@PathVariable Long idClient){
+    public ResponseEntity<WebApiResponse> getRoutines(@PathVariable Long idClient){
         List<RoutineResponseDTO> routines = clientService.getAllRoutinesByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Routines founds successfully!", routines));
     }
 
     @GetMapping("/{idClient}/products")
-    private ResponseEntity<WebApiResponse> getProductsPurchased(@PathVariable Long idClient){
+    public ResponseEntity<WebApiResponse> getProductsPurchased(@PathVariable Long idClient){
         List<ProductsPurchasedResponseDTO> products = clientService.getProductsPurchasedByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Products purchased founds successfully!", products));
     }

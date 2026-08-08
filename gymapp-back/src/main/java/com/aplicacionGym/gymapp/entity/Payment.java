@@ -2,7 +2,6 @@ package com.aplicacionGym.gymapp.entity;
 
 import com.aplicacionGym.gymapp.entity.enums.PaymentType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,21 +11,13 @@ import java.util.List;
 
 @Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Payment {
 
-    // Getters y setters...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private LocalDate date;
-    private double amount;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "client_id")
@@ -40,9 +31,36 @@ public class Payment {
     @JoinColumn(name = "monthly_type_id")
     private MonthlyType monthlyType;
 
-    // CAMBIO PRINCIPAL: @OneToMany en lugar de @ManyToMany
+    private double amount;
+
+    private LocalDate date;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PaymentProduct> paymentProducts;
+
+    public Payment(Long id, Client client, Professor professor, MonthlyType monthlyType, double amount, LocalDate date, PaymentType paymentType) {
+        this.id = id;
+        this.client = client;
+        this.professor = professor;
+        this.monthlyType = monthlyType;
+        this.amount = amount;
+        this.date = date;
+        this.paymentType = paymentType;
+    }
+
+    public Payment(Long id, Client client, Professor professor, MonthlyType monthlyType, double amount, LocalDate date, PaymentType paymentType, List<PaymentProduct> paymentProducts) {
+        this.id = id;
+        this.client = client;
+        this.professor = professor;
+        this.monthlyType = monthlyType;
+        this.amount = amount;
+        this.date = date;
+        this.paymentType = paymentType;
+        this.paymentProducts = paymentProducts;
+    }
 
     public LocalDate getExpirationDate() {
         if (this.date != null && this.monthlyType != null) {

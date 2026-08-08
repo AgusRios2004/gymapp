@@ -19,33 +19,33 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getAllProducts(){
+    public ResponseEntity<WebApiResponse> getAllProducts(){
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Products find successfully", products));
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<WebApiResponse> getProductsById(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> getProductsById(@PathVariable Long id){
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: "+id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product find successfully", product));
     }
 
     @PostMapping
-    private ResponseEntity<WebApiResponse> createProduct(@RequestBody Product product){
+    public ResponseEntity<WebApiResponse> createProduct(@RequestBody Product product){
         Product productCreated = productService.createProduct(product);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product created successfully", productCreated));
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<WebApiResponse> updateProduct(@PathVariable Long id, @RequestBody Product productUpdate){
+    public ResponseEntity<WebApiResponse> updateProduct(@PathVariable Long id, @RequestBody Product productUpdate){
         Product product = productService.updateProduct(id, productUpdate)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " +id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product find successfully", product));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<WebApiResponse> deleteProduct(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> deleteProduct(@PathVariable Long id){
         productService.deleteProduct(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product delete successfully", null));
     }

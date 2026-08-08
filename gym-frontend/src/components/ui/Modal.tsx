@@ -1,17 +1,25 @@
-import type { ReactNode } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Button from './Button';
+import { X } from 'lucide-react';
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: ReactNode;
+  subtitle?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-  // 1. Lógica de cierre con la tecla ESC
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  footer,
+}) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -21,47 +29,59 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
     if (isOpen) {
       window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
     }
 
-    // Limpieza del evento al desmontar o cerrar
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
-  // 2. Early Return: Si no está abierto, no renderizamos nada
   if (!isOpen) return null;
 
-  // 3. Renderizado usando Portal (se inyecta en el body directamente)
   return ReactDOM.createPortal(
-    // CAPA 1: El Overlay (Fondo oscuro)
-    // 'fixed inset-0' ocupa toda la pantalla. 'z-50' asegura que esté encima.
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
-      onClick={onClose} // Cierra al hacer clic fuera
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+      onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
-      <div 
-        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all"
-        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()} // Evita que el clic cierre el modal (Stop Propagation)
+      <div
+        className="bg-white border border-slate-200 rounded-3xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all animate-in zoom-in-95 duration-200"
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {title}
-          </h3>
+        {/* Header */}
+        <div className="flex justify-between items-start px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+          <div>
+            <h3 className="font-display text-xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-2">
+              <span className="w-2 h-5 bg-emerald-600 rounded-full inline-block"></span>
+              {title}
+            </h3>
+            {subtitle && (
+              <p className="text-xs text-slate-500 font-medium mt-1">{subtitle}</p>
+            )}
+          </div>
           <Button
             onClick={onClose}
             variant="ghost"
             size="sm"
+            className="!p-1.5 rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100"
+            aria-label="Cerrar modal"
           >
-            Cerrar
+            <X className="w-5 h-5" />
           </Button>
         </div>
 
-        <div className="p-6">
-          {children}
-        </div>
+        {/* Content */}
+        <div className="p-6 max-h-[80vh] overflow-y-auto text-slate-900">{children}</div>
+
+        {/* Optional Footer */}
+        {footer && (
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body

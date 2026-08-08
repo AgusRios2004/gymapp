@@ -13,61 +13,70 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="bg-white border border-slate-200/80 hover:border-slate-300 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group">
       {/* Información del Cliente */}
       <div 
-        className="flex-1 cursor-pointer hover:opacity-80 group"
+        className="flex-1 cursor-pointer hover:opacity-90"
         onClick={() => navigate(`/clients/${client.id}`)}
       >
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">
+        <div className="flex items-center gap-2 mb-1.5">
+          <h3 className="font-extrabold text-slate-900 text-lg group-hover:text-emerald-600 transition-colors font-display tracking-tight">
             {client.name} {client.lastName}
           </h3>
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${client.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${
+            client.active 
+              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+              : 'bg-rose-100 text-rose-800 border-rose-200'
+          }`}>
             {client.active ? 'Activo' : 'Inactivo'}
           </span>
           {client.isDebtor && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-amber-100 text-amber-700">
+            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
               Deuda
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-500 flex items-center gap-2">
-          <span className="font-medium">DNI:</span> {client.dni}
-          <span className="text-gray-300">|</span>
-          <span className="font-medium">Tel:</span> {client.phone}
+        <p className="text-xs text-slate-500 flex items-center gap-2 font-medium">
+          <span>DNI: <strong className="text-slate-700">{client.dni}</strong></span>
+          <span className="text-slate-300">•</span>
+          <span>Tel: <strong className="text-slate-700">{client.phone || '-'}</strong></span>
         </p>
       </div>
 
-      <div className="grid grid-cols-3 sm:flex items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+      {/* Botones de Acción */}
+      <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         <Button 
           onClick={() => navigate(`/clients/${client.id}`)} 
-          variant="ghost" 
-          className="w-full text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
+          variant="outline" 
+          size="sm"
+          className="flex-1 sm:flex-initial text-emerald-700 border-emerald-300 bg-emerald-50/60 hover:bg-emerald-100/90 px-5 font-extrabold"
         >
-          <Eye size={16} className="sm:mr-2 mb-1 sm:mb-0" />
+          <Eye size={14} className="mr-1.5" />
           Ver Ficha
         </Button>
 
         <Button 
           onClick={onAssignRoutine} 
-          variant="ghost" 
-          className="w-full text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-100 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
+          variant="secondary" 
+          size="sm"
+          className="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200 px-5 font-bold"
         >
-          <Dumbbell size={16} className="sm:mr-2 mb-1 sm:mb-0" />
+          <Dumbbell size={14} className="mr-1.5 text-emerald-600" />
           Rutina
         </Button>
         
         <Button 
           onClick={onEdit} 
-          variant="secondary"
-          className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-1 sm:px-4 text-[11px] sm:text-sm flex-col sm:flex-row h-auto py-2 sm:py-3"
+          variant="ghost"
+          size="sm"
+          className="flex-1 sm:flex-initial text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-4 font-bold"
         >
-          <Edit size={16} className="sm:mr-2 mb-1 sm:mb-0" />
+          <Edit size={14} className="mr-1.5" />
           Editar
         </Button>
       </div>
     </div>
   );
 };
+
 

@@ -108,6 +108,43 @@ public class ClientService {
                 .toList();
     }
 
+    public org.springframework.data.domain.Page<ClientResponseDTO> getPaginatedClients(
+            org.springframework.data.domain.Pageable pageable, 
+            Boolean active, 
+            Boolean debtors, 
+            String search) {
+        
+        List<ClientResponseDTO> allDtos;
+
+        if (Boolean.TRUE.equals(debtors)) {
+            allDtos = getDebtorClients();
+        } else if (Boolean.TRUE.equals(active)) {
+            allDtos = getActiveClients();
+        } else if (Boolean.FALSE.equals(active)) {
+            allDtos = getInactiveClients();
+        } else {
+            allDtos = getAllClients();
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String lowerSearch = search.trim().toLowerCase();
+            allDtos = allDtos.stream()
+                    .filter(c -> (c.getName() != null && c.getName().toLowerCase().contains(lowerSearch)) ||
+                                 (c.getLastName() != null && c.getLastName().toLowerCase().contains(lowerSearch)) ||
+                                 (c.getDni() != null && c.getDni().contains(lowerSearch)))
+                    .toList();
+        }
+
+        int start = (int) pageable.getOffset();
+        if (start >= allDtos.size()) {
+            return new org.springframework.data.domain.PageImpl<>(List.of(), pageable, allDtos.size());
+        }
+        int end = Math.min((start + pageable.getPageSize()), allDtos.size());
+        List<ClientResponseDTO> pageContent = allDtos.subList(start, end);
+
+        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, allDtos.size());
+    }
+
     private ClientResponseDTO mapToDTOWithDebtorStatus(Client c) {
         ClientResponseDTO dto = ClientMapper.toDTO(c);
         if (c.isActive()) {
@@ -141,10 +178,16 @@ public class ClientService {
         existingClient.setDni(updatedClient.getDni());
         existingClient.setPhone(updatedClient.getPhone());
         existingClient.setActive(updatedClient.isActive());
+        if (updatedClient.getHeight() != null) existingClient.setHeight(updatedClient.getHeight());
+        if (updatedClient.getTargetWeight() != null) existingClient.setTargetWeight(updatedClient.getTargetWeight());
+        if (updatedClient.getTargetFatPercentage() != null) existingClient.setTargetFatPercentage(updatedClient.getTargetFatPercentage());
+        if (updatedClient.getTargetMuscleMass() != null) existingClient.setTargetMuscleMass(updatedClient.getTargetMuscleMass());
+        if (updatedClient.getPrimaryGoal() != null) existingClient.setPrimaryGoal(updatedClient.getPrimaryGoal());
 
         clientRepository.save(existingClient);
 
         return ClientMapper.toDTO(existingClient);
+
     }
 
     public void deactivateClient(Long id) {

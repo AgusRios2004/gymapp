@@ -19,6 +19,10 @@ public class RoutineExercise {
 
     private int repetitions;
 
+    private Integer durationMinutes;
+
+    private String cardioIntensity;
+
     public RoutineExercise() {
     }
 
@@ -69,4 +73,21 @@ public class RoutineExercise {
     public void setRoutineDay(RoutineDay routineDay) {
         this.routineDay = routineDay;
     }
+
+    public Integer getDurationMinutes() {
+        return durationMinutes;
+    }
+
+    public void setDurationMinutes(Integer durationMinutes) {
+        this.durationMinutes = durationMinutes;
+    }
+
+    public String getCardioIntensity() {
+        return cardioIntensity;
+    }
+
+    public void setCardioIntensity(String cardioIntensity) {
+        this.cardioIntensity = cardioIntensity;
+    }
 }
+

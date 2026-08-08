@@ -20,31 +20,31 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/monthly")
-    private ResponseEntity<WebApiResponse> createMonthlyPayment(@RequestBody MonthlyPaymentRequestDTO dto) {
+    public ResponseEntity<WebApiResponse> createMonthlyPayment(@RequestBody MonthlyPaymentRequestDTO dto) {
         PaymentResponseDTO paymentResponseDTO = paymentService.createMonthlyPayment(dto);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payment register successfully!", paymentResponseDTO));
     }
 
     @PostMapping("/product")
-    private ResponseEntity<WebApiResponse> createProductsPayment(@RequestBody ProductPaymentRequestDTO dto) {
+    public ResponseEntity<WebApiResponse> createProductsPayment(@RequestBody ProductPaymentRequestDTO dto) {
         PaymentResponseDTO paymentResponseDTO = paymentService.createProductPayment(dto);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payment register successfully!", paymentResponseDTO));
     }
 
     @GetMapping("/{idProfessor}")
-    private ResponseEntity<WebApiResponse> getPaymentsByProfessor(@PathVariable Long idProfessor) {
+    public ResponseEntity<WebApiResponse> getPaymentsByProfessor(@PathVariable Long idProfessor) {
         List<PaymentResponseDTO> paymentResponseDTOS = paymentService.getPaymentsByProfessor(idProfessor);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payments founds successfully!", paymentResponseDTOS));
     }
 
     @GetMapping("/{idClient}")
-    private ResponseEntity<WebApiResponse> getPaymentsByClient(@PathVariable Long idClient) {
+    public ResponseEntity<WebApiResponse> getPaymentsByClient(@PathVariable Long idClient) {
         List<PaymentResponseDTO> paymentResponseDTOS = paymentService.getPaymentsByClient(idClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payments founds successfully!", paymentResponseDTOS));
     }
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getAllPayments() {
+    public ResponseEntity<WebApiResponse> getAllPayments() {
         List<PaymentResponseDTO> paymentResponseDTOS = paymentService.getAllPayments();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Payments founds successfully!", paymentResponseDTOS));
     }

@@ -39,6 +39,7 @@ public class DataLoader implements CommandLineRunner {
     @Autowired private AssistanceRepository assistanceRepository;
     @Autowired private PaymentProductRepository paymentProductRepository;
     @Autowired private RoutineRepository routineRepository;
+    @Autowired private PhysicalRecordRepository physicalRecordRepository;
 
     @Override
     @Transactional
@@ -50,7 +51,7 @@ public class DataLoader implements CommandLineRunner {
                 
                 String[] tables = {
                     "assistance", "payment_product", "payment", "clients_routines", 
-                    "routine_exercise", "routine_day", "client", "professor", 
+                    "routine_exercise", "routine_day", "physical_record", "client", "professor", 
                     "administrator", "person", "group_class", "product", "exercise", 
                     "routine", "monthly_type"
                 };
@@ -77,28 +78,74 @@ public class DataLoader implements CommandLineRunner {
                 executeSeed();
             }
 
+            // Mock de métricas físicas si no existen
+            if (physicalRecordRepository.count() == 0) {
+                seedPhysicalRecords();
+            }
+
         } catch (Exception ex) {
             System.err.println("❌ Error: " + ex.getMessage());
         }
+    }
+
+    private void seedPhysicalRecords() {
+        System.out.println("📈 Seeding professional mock physical records...");
+        List<Client> clients = clientRepository.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (int i = 0; i < clients.size(); i++) {
+            Client client = clients.get(i);
+            
+            if (i == 0) { // Carlos: Evolución constante (Baja peso, sube músculo)
+                client.setHeight(1.78);
+                client.setTargetFatPercentage(15.0);
+                client.setTargetMuscleMass(38.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(3), 90.0, 1.78, 30.0, 28.0, "Punto de partida"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 87.5, 1.78, 31.5, 25.0, "Bajando harinas"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 85.0, 1.78, 33.0, 22.0, "Más fuerza en sentadillas"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 82.5, 1.78, 35.0, 19.0, "Gran progreso trimestral"));
+            } else if (i == 1) { // Ana: Mantenimiento y tonificación
+                client.setHeight(1.65);
+                client.setTargetFatPercentage(18.0);
+                client.setTargetMuscleMass(28.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(2), 60.0, 1.65, 25.0, 22.0, "Iniciando Yoga"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 59.5, 1.65, 26.0, 20.5, "Mejor flexibilidad"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 59.0, 1.65, 27.5, 18.0, "Cuerpo más definido"));
+            } else { // Roberto: Subida de peso inicial
+                client.setHeight(1.75);
+                client.setTargetFatPercentage(20.0);
+                client.setTargetMuscleMass(32.0);
+                clientRepository.save(client);
+
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today.minusMonths(1), 75.0, 1.75, 28.0, 24.0, "Primer registro"));
+                physicalRecordRepository.save(new PhysicalRecord(null, client, today, 77.0, 1.75, 29.5, 25.0, "Aumento de volumen (bulking)"));
+            }
+        }
+        System.out.println("✅ Professional mock metrics seeded!");
     }
 
     private void executeSeed() {
         System.out.println("🌱 Starting Seed Process on a clean schema...");
 
         // 1. Planes Mensuales
-        monthlyTypeRepository.saveAll(Arrays.asList(
-            new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30),
-            new MonthlyType(null, "Plan Full (Acceso Total)", 22000, 30),
-            new MonthlyType(null, "Plan Estudiante", 12000, 30)
-        ));
+        MonthlyType basic = monthlyTypeRepository.save(new MonthlyType(null, "Plan Básico (3 veces por semana)", 15000, 30));
+        MonthlyType full = monthlyTypeRepository.save(new MonthlyType(null, "Plan Full (Acceso Total)", 22000, 30));
+        MonthlyType student = monthlyTypeRepository.save(new MonthlyType(null, "Plan Estudiante", 12000, 30));
 
-        // 2. Ejercicios
+        // 2. Ejercicios (Variedad para rutinas)
         exerciseRepository.save(new Exercise(null, "Sentadilla Libre", "Piernas", "Músculo principal: Cuádriceps"));
         exerciseRepository.save(new Exercise(null, "Press de Banca", "Pectoral", "Músculo principal: Pectoral Mayor"));
+        exerciseRepository.save(new Exercise(null, "Peso Muerto", "Espalda/Piernas", "Músculo principal: Cadena Posterior"));
+        exerciseRepository.save(new Exercise(null, "Press Militar", "Hombros", "Músculo principal: Deltoides"));
+        exerciseRepository.save(new Exercise(null, "Dominadas", "Espalda", "Músculo principal: Dorsal Ancho"));
         
         // 3. Admin y Staff
         Administrator admin = new Administrator();
-        admin.setName("Admin"); admin.setLastName("Gym"); admin.setDni("11111111");
+        admin.setName("Agustin"); admin.setLastName("Admin"); admin.setDni("11111111");
         admin.setEmail("admin@gymapp.com"); admin.setPhone("12345678");
         admin.setPassword(passwordEncoder.encode("admin123"));
         administratorRepository.save(admin);
@@ -107,37 +154,44 @@ public class DataLoader implements CommandLineRunner {
             "marcos@gymapp.com", passwordEncoder.encode("marcos123"), true);
         marcos = professorRepository.save(marcos);
         
-        professorRepository.save(new Professor(null, "Sofia", "Gimnasia", "33333333", "11443322", 
+        Professor sofia = professorRepository.save(new Professor(null, "Sofia", "Gimnasia", "33333333", "11443322", 
             "sofia@gymapp.com", passwordEncoder.encode("sofia123"), true));
 
         // 4. Clases Grupales
         GroupClass crossfit = new GroupClass();
-        crossfit.setClassName("Crossfit");
-        crossfit.setCapacity(20);
-        crossfit.setDayOfWeek("MONDAY");
-        crossfit.setStartTime("10:00");
-        crossfit.setEndTime("11:00");
-        crossfit.setProfessor(marcos);
+        crossfit.setClassName("Crossfit"); crossfit.setCapacity(20); crossfit.setDayOfWeek("MONDAY");
+        crossfit.setStartTime("10:00"); crossfit.setEndTime("11:00"); crossfit.setProfessor(marcos);
         crossfit = groupClassRepository.save(crossfit);
 
-        // 5. Alumnos
+        GroupClass yoga = new GroupClass();
+        yoga.setClassName("Yoga"); yoga.setCapacity(15); yoga.setDayOfWeek("WEDNESDAY");
+        yoga.setStartTime("18:00"); yoga.setEndTime("19:00"); yoga.setProfessor(sofia);
+        yoga = groupClassRepository.save(yoga);
+
+        // 5. Alumnos (Diversos perfiles)
         Client c1 = new Client(null, "Carlos", "Perez", "12345678", "11667788", "carlos@gmail.com", 
             passwordEncoder.encode("alumno123"), true, crossfit, new ArrayList<>());
         clientRepository.save(c1);
         
-        clientRepository.save(new Client(null, "Ana", "Gomez", "23456789", "11334455", "ana@gmail.com", 
-            passwordEncoder.encode("alumno123"), true, null, new ArrayList<>()));
+        Client c2 = new Client(null, "Ana", "Gomez", "23456789", "11334455", "ana@gmail.com", 
+            passwordEncoder.encode("alumno123"), true, yoga, new ArrayList<>());
+        clientRepository.save(c2);
 
-        // 6. Pago Inicial
-        MonthlyType type = monthlyTypeRepository.findAll().get(0);
-        Payment p = new Payment();
-        p.setClient(c1);
-        p.setProfessor(marcos);
-        p.setMonthlyType(type);
-        p.setAmount(type.getPrice());
-        p.setDate(LocalDate.now());
-        p.setPaymentType(PaymentType.MONTHLY);
-        paymentRepository.save(p);
+        Client c3 = new Client(null, "Roberto", "Sanchez", "34567890", "11223344", "roberto@gmail.com", 
+            passwordEncoder.encode("alumno123"), false, null, new ArrayList<>());
+        clientRepository.save(c3);
+
+        // 6. Pagos para que se vean en el historial
+        LocalDate today = LocalDate.now();
+        paymentRepository.save(new Payment(null, c1, marcos, full, full.getPrice(), today.minusDays(5), PaymentType.MONTHLY));
+        paymentRepository.save(new Payment(null, c2, sofia, student, student.getPrice(), today.minusDays(10), PaymentType.MONTHLY));
+        
+        // 7. Rutina Global
+        Routine fatLoss = new Routine();
+        fatLoss.setName("Quema de Grasa Extrema");
+        fatLoss.setGoal("Bajar porcentaje de grasa manteniendo músculo");
+        fatLoss.setActive(true);
+        routineRepository.save(fatLoss);
 
         System.out.println("✅ Seed Finished Successfully!");
     }

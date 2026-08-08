@@ -15,12 +15,27 @@ public class ClientMapper {
         dto.setPhone(client.getPhone());
         dto.setLastName(client.getLastName());
         dto.setActive(client.isActive());
+        dto.setHeight(client.getHeight());
+        dto.setTargetWeight(client.getTargetWeight());
+        dto.setTargetFatPercentage(client.getTargetFatPercentage());
+        dto.setTargetMuscleMass(client.getTargetMuscleMass());
+        dto.setPrimaryGoal(client.getPrimaryGoal());
+        
         dto.setRoutineActive(RoutineMapper.mapRoutineSummary(client.getRoutineActive()));
         if (client.getActiveClass() != null) {
             dto.setActiveClassId(client.getActiveClass().getId());
             dto.setActiveClassName(client.getActiveClass().getClassName());
         }
+
+        // Calculate BMI if height and target weight or latest weight are available
+        if (client.getHeight() != null && client.getHeight() > 0) {
+            double heightMeters = client.getHeight() > 3.0 ? client.getHeight() / 100.0 : client.getHeight();
+            if (client.getTargetWeight() != null && client.getTargetWeight() > 0) {
+                double bmi = client.getTargetWeight() / (heightMeters * heightMeters);
+                dto.setBmi(Math.round(bmi * 10.0) / 10.0);
+            }
+        }
         return dto;
     }
-
 }
+

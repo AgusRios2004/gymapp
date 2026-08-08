@@ -31,4 +31,19 @@ public class ClientRequestDTO {
 
     @Nullable
     private Long routineActiveId;
+
+    @Nullable
+    private Double height;
+
+    @Nullable
+    private Double targetWeight;
+
+    @Nullable
+    private Double targetFatPercentage;
+
+    @Nullable
+    private Double targetMuscleMass;
+
+    @Nullable
+    private String primaryGoal;
 }

@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,8 +17,9 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Llave secreta generada automáticamente para HS256
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // Clave secreta fija para mantener la validez de los tokens entre reinicios del servidor
+    private static final String SECRET_STRING = "GymAppSecuritySecretKey2026WithHS256BitEncodingSecretKeyForJWTAuth!";
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
     
     // Tiempo de expiración: 30 días para mantener la sesión iniciada
     private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 30;
@@ -58,7 +60,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -67,3 +69,4 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
+

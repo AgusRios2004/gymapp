@@ -1,29 +1,21 @@
 package com.aplicacionGym.gymapp.service;
 
+import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineDayRequestDTO;
 import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
-import com.aplicacionGym.gymapp.entity.Exercise;
-import com.aplicacionGym.gymapp.entity.Routine;
-import com.aplicacionGym.gymapp.entity.RoutineDay;
-import com.aplicacionGym.gymapp.entity.RoutineExercise;
+import com.aplicacionGym.gymapp.entity.*;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.RoutineMapper;
-import com.aplicacionGym.gymapp.repository.ClientRepository;
-import com.aplicacionGym.gymapp.repository.ExerciseRepository;
-import com.aplicacionGym.gymapp.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.time.DayOfWeek;
-import com.aplicacionGym.gymapp.entity.Client;
-import com.aplicacionGym.gymapp.entity.ClientRoutine;
-import com.aplicacionGym.gymapp.entity.ClientSchedule;
-import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
-import com.aplicacionGym.gymapp.repository.ClientRoutineRepository;
 
 @Service
 @Transactional
@@ -143,7 +135,6 @@ public class RoutineService {
         Routine routine = routineRepository.findById(request.getRoutineTemplateId())
                 .orElseThrow(() -> new ResourceNotFoundException("Routine not found: " + request.getRoutineTemplateId()));
 
-        // Retro-compatibilidad para que aparezca en el frontend en la vista antigua
         if (!client.getRoutines().contains(routine)) {
             client.getRoutines().add(routine);
         }
@@ -154,7 +145,7 @@ public class RoutineService {
         clientRoutine.setClient(client);
         clientRoutine.setRoutine(routine);
         clientRoutine.setActive(true);
-        clientRoutine.setStartDate(request.getStartDate());
+        clientRoutine.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
 
         if (request.getSchedule() != null) {
             List<ClientSchedule> schedules = request.getSchedule().stream().map(sch -> {
@@ -171,4 +162,7 @@ public class RoutineService {
         clientRoutineRepository.save(clientRoutine);
     }
 
+    public void assignRoutineToClientComplex(AssignRoutineRequestDTO request) {
+        assignComplexRoutine(request);
+    }
 }

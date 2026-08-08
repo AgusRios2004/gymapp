@@ -29,10 +29,14 @@ public class ProductService {
     }
 
     public Product createProduct(Product product) {
-        Administrator admin = administratorRepository.findById(product.getAdministrator().getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Admin not found with id: " + product.getAdministrator().getId()));
-        product.setAdministrator(admin);
+        if (product.getAdministrator() != null && product.getAdministrator().getId() != null) {
+            Administrator admin = administratorRepository.findById(product.getAdministrator().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Admin not found with id: " + product.getAdministrator().getId()));
+            product.setAdministrator(admin);
+        } else {
+            administratorRepository.findById(1L).ifPresent(product::setAdministrator);
+        }
         return productRepository.save(product);
     }
 

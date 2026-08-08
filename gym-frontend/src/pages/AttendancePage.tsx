@@ -9,7 +9,7 @@ import {
   CalendarDays,
   AlertCircle
 } from 'lucide-react';
-import { getClients } from '../services/clientService';
+import { getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
@@ -27,7 +27,7 @@ export default function AttendancePage() {
   // Queries
   const { data: clients = [], isLoading: loadingClients } = useQuery<Client[]>({
     queryKey: ['clients', 'active'],
-    queryFn: () => getClients(true)
+    queryFn: () => getAllClientsList(true)
   });
 
   const { data: todayAssistance = [], isLoading: loadingAssistance } = useQuery<Assistance[]>({

@@ -19,15 +19,16 @@ export const SidebarItem = ({ path, label, icon, end, relatedPaths, onClick }: S
       to={path}
       end={end}
       onClick={onClick}
-      className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
-          isActive || isRelatedActive
-            ? 'bg-blue-50 text-green-600 font-medium'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-        }`
-      }
+      className={({ isActive }) => {
+        const active = isActive || isRelatedActive;
+        return `flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 ${
+          active
+            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-sm font-extrabold'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+        }`;
+      }}
     >
-      {icon}
+      <span className="inline-flex shrink-0">{icon}</span>
       <span>{label}</span>
     </NavLink>
   );

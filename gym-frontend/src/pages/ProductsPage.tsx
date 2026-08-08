@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../services/productService';
 import { createProductPayment, getAllPayments } from '../services/paymentService';
-import { getClients } from '../services/clientService';
+import { getAllClientsList } from '../services/clientService';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -49,9 +49,9 @@ export default function ProductsPage() {
     queryFn: getProducts
   });
 
-  const { data: clients = [] } = useQuery({
+  const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ['clients', 'active'],
-    queryFn: () => getClients(true),
+    queryFn: () => getAllClientsList(true),
     enabled: activeTab === 'pos'
   });
 

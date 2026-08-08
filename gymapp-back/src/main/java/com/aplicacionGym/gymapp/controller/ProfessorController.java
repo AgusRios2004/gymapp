@@ -19,7 +19,7 @@ public class ProfessorController {
     private ProfessorService professorService;
 
     @GetMapping
-    private ResponseEntity<WebApiResponse> getAllProfessors(@RequestParam(required = false) Boolean active){
+    public ResponseEntity<WebApiResponse> getAllProfessors(@RequestParam(required = false) Boolean active){
         List<Professor> professors;
 
         if(active == null){
@@ -34,27 +34,27 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<WebApiResponse> getProfessorById(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> getProfessorById(@PathVariable Long id){
         Professor professor = professorService.getProfessorById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor found successfully", professor));
     }
 
     @PostMapping
-    private ResponseEntity<WebApiResponse> createProfessor(@RequestBody Professor professor){
+    public ResponseEntity<WebApiResponse> createProfessor(@RequestBody Professor professor){
         Professor professorCreated = professorService.createProfesor(professor);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor created succesfully", professorCreated));
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<WebApiResponse> updateProfessor(@PathVariable Long id, @RequestBody Professor updatedProfessor){
+    public ResponseEntity<WebApiResponse> updateProfessor(@PathVariable Long id, @RequestBody Professor updatedProfessor){
         Professor professor = professorService.updateProfessor(id, updatedProfessor)
                 .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor updated successfully", professor));
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<WebApiResponse> deleteProfessor(@PathVariable Long id){
+    public ResponseEntity<WebApiResponse> deleteProfessor(@PathVariable Long id){
         professorService.deleteProfessor(id);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor successfully terminated", null));
     }
