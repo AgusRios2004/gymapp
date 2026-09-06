@@ -1,8 +1,9 @@
 package com.aplicacionGym.gymapp.service;
 
-import com.aplicacionGym.gymapp.entity.Routine;
-import com.aplicacionGym.gymapp.entity.RoutineDay;
-import com.aplicacionGym.gymapp.entity.RoutineExercise;
+import com.aplicacionGym.gymapp.modules.routines.entity.Routine;
+import com.aplicacionGym.gymapp.modules.routines.entity.RoutineDay;
+import com.aplicacionGym.gymapp.modules.routines.entity.RoutineExercise;
+import com.aplicacionGym.gymapp.modules.core.service.VersioningService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

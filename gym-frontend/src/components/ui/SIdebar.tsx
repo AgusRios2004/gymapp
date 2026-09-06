@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Users, CreditCard, LayoutDashboard, Dumbbell, PersonStanding, UserCheck, Tag, LogOut, ShieldPlus, Sun, Moon } from 'lucide-react';
 import { SidebarItem } from './SidebarItem';
 import logo from '../../assets/funcional kids.jpeg';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../features/auth/context/AuthContext';
+import { useFeatures } from '../../context/FeatureContext';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -10,6 +11,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ onClose }: SidebarProps) => {
   const { user, logout } = useAuth();
+  const { features } = useFeatures();
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
 
   const toggleDarkMode = () => {
@@ -57,50 +59,71 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
             onClick={onClose}
           />
         )}
-        <SidebarItem 
-          path="/plans" 
-          label="Planes" 
-          icon={<Tag size={20} />} 
-          onClick={onClose}
-        />
-        <SidebarItem 
-          path="/payments" 
-          label="Pagos" 
-          icon={<CreditCard size={20} />} 
-          onClick={onClose}
-        />
+        
+        {features.payments && (
+          <>
+            <SidebarItem 
+              path="/plans" 
+              label="Planes" 
+              icon={<Tag size={20} />} 
+              onClick={onClose}
+            />
+            <SidebarItem 
+              path="/payments" 
+              label="Pagos" 
+              icon={<CreditCard size={20} />} 
+              onClick={onClose}
+            />
+          </>
+        )}
 
-        <SidebarItem 
-          path="/exercises" 
-          label="Ejercicios" 
-          icon={<Dumbbell size={20} />} 
-          onClick={onClose}
-        />
-        <SidebarItem 
-          path="/routines" 
-          label="Rutinas" 
-          icon={<PersonStanding size={20} />} 
-          onClick={onClose}
-        />
-        <SidebarItem 
-          path="/attendance" 
-          label="Asistencia" 
-          icon={<UserCheck size={20} />} 
-          onClick={onClose}
-        />
-        <SidebarItem 
-          path="/products" 
-          label="Tienda y Stock" 
-          icon={<Tag size={20} />} 
-          onClick={onClose}
-        />
-        <SidebarItem 
-          path="/classes" 
-          label="Clases" 
-          icon={<LayoutDashboard size={20} />} 
-          onClick={onClose}
-        />
+        {features.routines && (
+          <>
+            <SidebarItem 
+              path="/exercises" 
+              label="Ejercicios" 
+              icon={<Dumbbell size={20} />} 
+              onClick={onClose}
+            />
+            <SidebarItem 
+              path="/routines" 
+              label="Rutinas" 
+              icon={<PersonStanding size={20} />} 
+              onClick={onClose}
+            />
+          </>
+        )}
+
+        {features.attendance && (
+          <>
+            <SidebarItem 
+              path="/attendance" 
+              label="Asistencia" 
+              icon={<UserCheck size={20} />} 
+              onClick={onClose}
+            />
+          </>
+        )}
+
+        {features.payments && (
+          <SidebarItem 
+            path="/products" 
+            label="Tienda y Stock" 
+            icon={<Tag size={20} />} 
+            onClick={onClose}
+          />
+        )}
+
+        {features.attendance && (
+          <SidebarItem 
+            path="/classes" 
+            label="Clases" 
+            icon={<LayoutDashboard size={20} />} 
+            onClick={onClose}
+          />
+        )}
       </nav>
+
       
       {/* Footer del sidebar */}
       <div className="p-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">

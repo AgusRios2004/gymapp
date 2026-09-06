@@ -1,9 +1,10 @@
 package com.aplicacionGym.gymapp.service;
 
-import com.aplicacionGym.gymapp.dto.request.RoutineRequestDTO;
-import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
-import com.aplicacionGym.gymapp.entity.Routine;
-import com.aplicacionGym.gymapp.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.modules.routines.dto.request.RoutineRequestDTO;
+import com.aplicacionGym.gymapp.modules.routines.dto.response.RoutineResponseDTO;
+import com.aplicacionGym.gymapp.modules.routines.entity.Routine;
+import com.aplicacionGym.gymapp.modules.routines.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.modules.routines.service.RoutineService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/potential-improvements-backend.md",
+                "file": "ds/back/mapstruct-standardization-plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "potential-improvements-backend"
+              "title": "mapstruct-standardization-plan"
             }
           }
         ]
@@ -40,7 +40,7 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical",
+                "sortOrder": "byModifiedTime",
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
@@ -185,10 +185,14 @@
   },
   "active": "be2a60c40bc14426",
   "lastOpenFiles": [
-    "notes/infrastructure-strategy.md",
-    "notes/business-features-roadmap.md",
+    "ds/front/architecture-api-review.md",
+    "ds/back/modularization-plan.md",
+    "ds/back/mapstruct-standardization-plan.md",
     "ds/back/architecture-review.md",
     "notes/potential-improvements-backend.md",
+    "ds/front/modularization-plan.md",
+    "notes/business-features-roadmap.md",
+    "notes/infrastructure-strategy.md",
     "notes/potential-improvements-ux-ui.md",
     "notes",
     "ds/front/architecture-review.md"

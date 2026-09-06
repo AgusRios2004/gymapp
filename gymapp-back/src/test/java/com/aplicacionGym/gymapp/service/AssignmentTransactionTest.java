@@ -1,12 +1,13 @@
 package com.aplicacionGym.gymapp.service;
 
-import com.aplicacionGym.gymapp.dto.request.AssignRoutineRequestDTO;
-import com.aplicacionGym.gymapp.dto.request.ScheduleRequestDTO;
-import com.aplicacionGym.gymapp.entity.Client;
-import com.aplicacionGym.gymapp.entity.Routine;
-import com.aplicacionGym.gymapp.repository.ClientRepository;
-import com.aplicacionGym.gymapp.repository.ClientRoutineRepository;
-import com.aplicacionGym.gymapp.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.modules.routines.dto.request.AssignRoutineRequestDTO;
+import com.aplicacionGym.gymapp.modules.routines.dto.request.ScheduleRequestDTO;
+import com.aplicacionGym.gymapp.modules.clients.entity.Client;
+import com.aplicacionGym.gymapp.modules.routines.entity.Routine;
+import com.aplicacionGym.gymapp.modules.clients.repository.ClientRepository;
+import com.aplicacionGym.gymapp.modules.routines.repository.ClientRoutineRepository;
+import com.aplicacionGym.gymapp.modules.routines.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.modules.routines.service.RoutineService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

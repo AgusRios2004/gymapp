@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, User, Dumbbell, CreditCard, Calendar, X, Hash } from 'lucide-react';
-import { getClients } from '../../services/clientService';
-import { getRoutines } from '../../services/routineService';
+import { getClients } from '../../features/clients/services/clientService';
+import { getRoutines } from '../../features/routines/services/routineService';
 import type { Client, Routine } from '../../types';
 
 interface CommandPaletteProps {
