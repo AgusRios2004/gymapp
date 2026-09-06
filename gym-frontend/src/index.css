@@ -7,7 +7,7 @@
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased font-sans selection:bg-emerald-500 selection:text-white min-h-screen;
-    background-image: 
+    background-image:
       radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.04) 0px, transparent 50%);
     background-attachment: fixed;
@@ -18,45 +18,45 @@
   }
 }
 
-/* Scrollbars Industriales Oscuros */
+/* Scrollbars — Light Mode */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f59e0b;
+  background: #10b981;
 }
 
-/* Utility Classes para el Design System del Gimnasio */
+/* Utility Classes para el Design System del Gimnasio (Light Mode) */
 @layer utilities {
   .glass-panel {
-    @apply bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 shadow-industrial;
+    @apply bg-white/80 backdrop-blur-md border border-slate-200 shadow-industrial;
   }
 
   .industrial-card {
-    @apply bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/80;
+    @apply bg-white border border-slate-200 rounded-2xl p-6 transition-all duration-300 hover:border-slate-300 hover:shadow-md;
   }
 
   .glow-amber-hover {
-    @apply transition-all duration-300 hover:shadow-glow-amber hover:border-amber-500/50;
+    @apply transition-all duration-300 hover:shadow-glow-amber hover:border-amber-400/60;
   }
 
   .glow-rose-hover {
-    @apply transition-all duration-300 hover:shadow-glow-rose hover:border-rose-500/50;
+    @apply transition-all duration-300 hover:shadow-glow-rose hover:border-rose-400/60;
   }
 
   .glow-emerald-hover {
-    @apply transition-all duration-300 hover:shadow-glow-emerald hover:border-emerald-500/50;
+    @apply transition-all duration-300 hover:shadow-glow-emerald hover:border-emerald-400/60;
   }
 
   .text-gradient-amber {

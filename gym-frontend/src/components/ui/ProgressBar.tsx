@@ -15,7 +15,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   max = 100,
   label,
   showPercentage = true,
-  color = 'amber',
+  color = 'emerald',
   size = 'md',
   className = '',
 }) => {
@@ -26,6 +26,13 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     emerald: 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-glow-emerald',
     rose: 'bg-gradient-to-r from-rose-500 to-red-600 shadow-glow-rose',
     orange: 'bg-gradient-to-r from-orange-500 to-amber-600 shadow-glow-orange',
+  };
+
+  const percentageText = {
+    amber: 'text-amber-600',
+    emerald: 'text-emerald-600',
+    rose: 'text-rose-600',
+    orange: 'text-orange-600',
   };
 
   const heights = {
@@ -39,19 +46,19 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       {(label || showPercentage) && (
         <div className="flex items-center justify-between text-xs">
           {label && (
-            <span className="font-bold uppercase tracking-wider text-zinc-300">
+            <span className="font-bold uppercase tracking-wider text-slate-500">
               {label}
             </span>
           )}
           {showPercentage && (
-            <span className="font-mono font-bold text-amber-400">
+            <span className={`font-mono font-bold ${percentageText[color]}`}>
               {percentage}%
             </span>
           )}
         </div>
       )}
 
-      <div className={`w-full bg-zinc-800/90 rounded-full overflow-hidden p-0.5 border border-zinc-700/50 ${heights[size]}`}>
+      <div className={`w-full bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200 ${heights[size]}`}>
         <div
           className={`h-full rounded-full transition-all duration-500 ease-out ${gradients[color]}`}
           style={{ width: `${percentage}%` }}

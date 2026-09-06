@@ -1,4 +1,4 @@
-# 🎯 PROMPT MAESTRO: Refactorización Total GymApp / Gymania OS
+    # 🎯 PROMPT MAESTRO: Refactorización Total GymApp / Gymania OS
 
 > [!IMPORTANT]
 > **REGLAS INFLEXIBLES Y DIRECTIVAS SUPREMAS:**

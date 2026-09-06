@@ -23,29 +23,29 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   subtitle,
   icon,
   trend,
-  accentColor = 'amber',
+  accentColor = 'emerald',
   className = '',
 }) => {
   const accentStyles = {
     amber: {
       border: 'border-l-4 border-l-amber-500',
-      iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      valueText: 'text-amber-400',
+      iconBg: 'bg-amber-50 text-amber-600 border-amber-200',
+      valueText: 'text-amber-600',
     },
     rose: {
       border: 'border-l-4 border-l-rose-500',
-      iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-      valueText: 'text-rose-400',
+      iconBg: 'bg-rose-50 text-rose-600 border-rose-200',
+      valueText: 'text-rose-600',
     },
     emerald: {
       border: 'border-l-4 border-l-emerald-500',
-      iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      valueText: 'text-emerald-400',
+      iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+      valueText: 'text-emerald-600',
     },
     orange: {
       border: 'border-l-4 border-l-orange-500',
-      iconBg: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-      valueText: 'text-orange-400',
+      iconBg: 'bg-orange-50 text-orange-600 border-orange-200',
+      valueText: 'text-orange-600',
     },
   };
 
@@ -53,12 +53,12 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
   return (
     <Card
-      variant="glass"
+      variant="default"
       className={`relative overflow-hidden ${style.border} ${className}`}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             {title}
           </span>
           <div className="flex items-baseline gap-1.5">
@@ -66,7 +66,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
               {value}
             </span>
             {unit && (
-              <span className="text-sm font-semibold text-zinc-400">{unit}</span>
+              <span className="text-sm font-semibold text-slate-500">{unit}</span>
             )}
           </div>
         </div>
@@ -81,18 +81,18 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-4 pt-3 border-t border-zinc-800/60 flex items-center justify-between text-xs">
-          {subtitle && <span className="text-zinc-400">{subtitle}</span>}
+        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          {subtitle && <span className="text-slate-500">{subtitle}</span>}
           {trend && (
             <div
               className={`inline-flex items-center gap-1 font-bold ${
-                trend.isPositive ? 'text-emerald-400' : 'text-rose-400'
+                trend.isPositive ? 'text-emerald-600' : 'text-rose-600'
               }`}
             >
               <span>{trend.isPositive ? '↑' : '↓'}</span>
               <span>{trend.value}</span>
               {trend.label && (
-                <span className="text-zinc-500 font-normal ml-0.5">
+                <span className="text-slate-400 font-normal ml-0.5">
                   {trend.label}
                 </span>
               )}

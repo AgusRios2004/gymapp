@@ -14,11 +14,11 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    default: 'bg-zinc-900/80 border border-zinc-800/90 shadow-industrial rounded-2xl p-6',
+    default: 'bg-white border border-slate-200 shadow-industrial rounded-2xl p-6',
     glass: 'glass-panel rounded-2xl p-6',
     interactive:
-      'bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-900/90 rounded-2xl p-6 transition-all duration-300 cursor-pointer hover:-translate-y-0.5',
-    outline: 'bg-transparent border border-zinc-800 rounded-2xl p-6',
+      'bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md rounded-2xl p-6 transition-all duration-300 cursor-pointer hover:-translate-y-0.5',
+    outline: 'bg-transparent border border-slate-200 rounded-2xl p-6',
   };
 
   const glowStyles = {
@@ -54,7 +54,7 @@ export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
   ...props
 }) => (
   <h3
-    className={`font-display text-xl font-bold uppercase tracking-tight text-white ${className}`}
+    className={`font-display text-xl font-bold uppercase tracking-tight text-slate-900 ${className}`}
     {...props}
   >
     {children}
@@ -66,7 +66,7 @@ export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement
   children,
   ...props
 }) => (
-  <p className={`text-xs text-zinc-400 font-medium ${className}`} {...props}>
+  <p className={`text-xs text-slate-500 font-medium ${className}`} {...props}>
     {children}
   </p>
 );
@@ -83,7 +83,7 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => (
   <div
-    className={`flex items-center pt-4 mt-4 border-t border-zinc-800/80 ${className}`}
+    className={`flex items-center pt-4 mt-4 border-t border-slate-100 ${className}`}
     {...props}
   >
     {children}

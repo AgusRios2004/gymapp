@@ -11,12 +11,12 @@ export interface BadgeProps {
 }
 
 const variants: Record<BadgeVariant, string> = {
-  success: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60 shadow-sm',
-  danger: 'bg-rose-950/80 text-rose-400 border-rose-800/60 shadow-sm',
-  warning: 'bg-amber-950/80 text-amber-400 border-amber-800/60 shadow-sm',
-  energy: 'bg-orange-950/80 text-orange-400 border-orange-800/60 shadow-sm',
-  neutral: 'bg-zinc-800/80 text-zinc-300 border-zinc-700/60 shadow-sm',
-  outline: 'bg-transparent text-zinc-400 border-zinc-700',
+  success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  danger: 'bg-rose-50 text-rose-700 border-rose-200',
+  warning: 'bg-amber-50 text-amber-700 border-amber-200',
+  energy: 'bg-orange-50 text-orange-700 border-orange-200',
+  neutral: 'bg-slate-100 text-slate-600 border-slate-200',
+  outline: 'bg-transparent text-slate-500 border-slate-300',
 };
 
 const sizes = {

@@ -8,16 +8,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Tokens semánticos de GymApp — Light Mode / "Vitality Green".
+        // Cambiar la marca es cambiar estos valores, no cada componente.
         gym: {
-          dark: '#020617',     // slate-950 base background
-          surface: '#09090b',  // zinc-950 surface
-          card: '#18181b',     // zinc-900 card background
-          border: '#27272a',   // zinc-800 subtle borders
-          muted: '#3f3f46',    // zinc-700
-          accent: '#ea580c',   // orange-600 secondary accent
-          energy: '#f59e0b',   // amber-500 primary energy color
-          success: '#10b981',  // emerald-500 progress/success
-          metric: '#f43f5e',   // rose-500 calories/heart rate
+          bg: '#f8fafc',        // slate-50 — fondo de aplicación
+          surface: '#ffffff',   // blanco — paneles y superficies
+          card: '#ffffff',      // blanco — tarjetas
+          border: '#e2e8f0',    // slate-200 — bordes por defecto
+          muted: '#64748b',     // slate-500 — texto secundario
+          primary: '#059669',   // emerald-600 — acento de marca (Vitality Green)
+          accent: '#ea580c',    // orange-600 — acento secundario
+          success: '#10b981',   // emerald-500 — progreso/éxito
+          danger: '#f43f5e',    // rose-500 — grasa/calorías/error
+          warning: '#f59e0b',   // amber-500 — advertencias (NO es el color de marca)
         }
       },
       fontFamily: {
@@ -25,16 +28,16 @@ export default {
         display: ['Outfit', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        'glow-amber': '0 0 20px -5px rgba(245, 158, 11, 0.4)',
-        'glow-orange': '0 0 20px -5px rgba(234, 88, 12, 0.4)',
-        'glow-rose': '0 0 20px -5px rgba(244, 63, 94, 0.4)',
-        'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.4)',
-        'industrial': '0 10px 30px -10px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 255, 255, 0.05)',
+        // Sombras suaves, coherentes con fondo claro (reemplazan los "glow" de neón del tema oscuro).
+        'glow-amber': '0 4px 14px -4px rgba(245, 158, 11, 0.35)',
+        'glow-orange': '0 4px 14px -4px rgba(234, 88, 12, 0.35)',
+        'glow-rose': '0 4px 14px -4px rgba(244, 63, 94, 0.35)',
+        'glow-emerald': '0 4px 14px -4px rgba(16, 185, 129, 0.35)',
+        'industrial': '0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.06)',
       },
       backgroundImage: {
         'gradient-energy': 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
-        'gradient-dark': 'linear-gradient(180deg, #09090b 0%, #020617 100%)',
-        'gradient-card': 'linear-gradient(145deg, rgba(39, 39, 42, 0.4) 0%, rgba(24, 24, 27, 0.6) 100%)',
+        'gradient-card': 'linear-gradient(145deg, rgba(248, 250, 252, 0.6) 0%, rgba(255, 255, 255, 0.9) 100%)',
         'gradient-rose': 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
         'gradient-emerald': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       }

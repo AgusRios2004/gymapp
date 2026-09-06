@@ -43,9 +43,9 @@ gym-frontend/src/
 ## 📏 3. Reglas de Codificación y Estética UI/UX
 
 ### 3.1. Estética y Diseño Visual (Design Excellence)
-- **Modo Oscuro / Dark Mode Integrado:** Usar paleta coherente con Tailwind (`bg-gray-900`, `bg-gray-800`, `text-white`, acentos en `indigo-500`, `emerald-500`, `amber-500`).
+- **Light Mode único (sin dark mode):** decisión del 05/09/2026, ver [`docs/DESIGN_SYSTEM.md`](file:///home/agustin_dev/WorkSpace/gymapp/docs/DESIGN_SYSTEM.md). Paleta: `bg-white`/`bg-slate-50`, `text-slate-900`, `border-slate-200`; **marca en `emerald-600`** (no amber — amber es solo warning); acento secundario `orange-600`; métricas en `rose-500` (grasa) y `emerald-600` (progreso).
 - **Sin Placeholders:** Cada componente debe tener estados visuales limpios (*Loading State*, *Empty State*, *Error State*).
-- **Tipografía y Legibilidad:** Usar jerarquía visual clara (`text-2xl font-bold`, `text-sm text-gray-400`).
+- **Tipografía y Legibilidad:** Usar jerarquía visual clara (`text-2xl font-bold`, `text-sm text-slate-500`).
 - **Transiciones y Animaciones:** Micro-interacciones suaves en botones (`transition-all duration-200 hover:scale-[1.02]`).
 
 ### 3.2. TypeScript Obligatorio (Strict Typing)
@@ -70,5 +70,6 @@ export interface WebApiResponse<T> {
 ## 🔗 Enlaces a Documentación General
 
 - 🗺️ [**`SITEMAP.md`**](file:///home/agustin_dev/WorkSpace/gymapp/docs/SITEMAP.md)
-- 📄 [**`GEMINI.md` Global**](file:///home/agustin_dev/WorkSpace/gymapp/docs/GEMINI.md)
-- 🎨 [**Plan FE Fase 1 (`2026-29-07-fe-perfil-objetivo-entrenamiento.md`)**](file:///home/agustin_dev/WorkSpace/gymapp/docs/2026-29-07-fe-perfil-objetivo-entrenamiento.md)
+- 📄 [**`CLAUDE.md` / `GEMINI.md` Global**](file:///home/agustin_dev/WorkSpace/gymapp/CLAUDE.md)
+- 🎨 [**`DESIGN_SYSTEM.md`**](file:///home/agustin_dev/WorkSpace/gymapp/docs/DESIGN_SYSTEM.md)
+- 📋 [**Sprint activo**](file:///home/agustin_dev/WorkSpace/gymapp/docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md)
