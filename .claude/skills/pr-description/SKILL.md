@@ -4,7 +4,7 @@ description: >
   Genera la descripción de un Pull Request de GitHub para gymapp, en español, pensada para tres
   lectores a la vez: otro programador (qué se cambió y dónde), el histórico del proyecto, y quien
   no es técnico (sin jerga). Analiza commits y diff de la rama actual contra la rama base
-  (develop/main) y produce el texto listo para pegar. Disparar cuando el usuario diga "generá la
+  (main) y produce el texto listo para pegar. Disparar cuando el usuario diga "generá la
   descripción del PR", "descripción de pull request", "armá el PR", "qué pongo en el PR" o
   "pr-description". NO confundir con pr-review ni strict-review (eso hace code review) ni con la
   skill de git (eso ejecuta commit/push/merge).
@@ -25,18 +25,13 @@ el código, sino **contar qué se hizo** para tres lectores a la vez:
 git branch --show-current
 git remote show origin 2>/dev/null | grep "HEAD branch"
 
-# Rama base: gymapp usa gitflow (main ← develop ← feature/*). Usá tres puntos.
-git log --oneline --no-merges origin/develop...HEAD 2>/dev/null || \
-git log --oneline --no-merges origin/main...HEAD 2>/dev/null
-
-git diff --name-status origin/develop...HEAD 2>/dev/null || \
-git diff --name-status origin/main...HEAD 2>/dev/null
-
-git diff --stat origin/develop...HEAD 2>/dev/null || \
-git diff --stat origin/main...HEAD 2>/dev/null
+# Rama base: en gymapp los PR van a `main`. `develop` quedó abandonada en abril 2026.
+git log --oneline --no-merges origin/main...HEAD
+git diff --name-status origin/main...HEAD
+git diff --stat origin/main...HEAD
 ```
 
-Si la rama salió de `main` (hotfix), la base es `main`. Si no podés determinarla, preguntá.
+Si el usuario te dice que el PR va a otra rama, usá esa. Si no podés determinarla, preguntá.
 Si hay trabajo **sin commitear**, avisalo: no entra al PR hasta que se commitee.
 
 ## Paso 2: Entender QUÉ se hizo

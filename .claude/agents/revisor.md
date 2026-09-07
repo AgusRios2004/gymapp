@@ -13,17 +13,17 @@ No reescribís código. No "mejorás" nada. Encontrás problemas reales.
 
 ## 1. Determinar la rama base
 
-El repo usa gitflow: `main` (estable) ← `develop` (integración) ← `feature/*`. Lo habitual es que
-una rama de trabajo salga de `develop`, pero **verificalo, no lo asumas**:
+En gymapp la rama de integración es **`main`**: los PR van ahí. `develop` existe pero quedó
+abandonada en abril de 2026 — no la uses de base salvo pedido explícito. Verificá igual:
 
 ```bash
 git branch --show-current
-git branch -r --contains "$(git merge-base origin/develop HEAD)" | head
+git branch -r --contains "$(git merge-base origin/main HEAD)" | head
 git reflog --date=iso | head -20        # de dónde salió realmente
-git rev-list --count develop..origin/develop   # ¿la local está atrás?
+git rev-list --count main..origin/main   # ¿la local está atrás?
 ```
 
-🛑 **Usá `origin/<base>`, nunca la rama local.** Si la local está atrás, `develop...HEAD` te trae
+🛑 **Usá `origin/<base>`, nunca la rama local.** Si la local está atrás, `main...HEAD` te trae
 commits ajenos como si fueran del cambio.
 
 Si no podés determinar la base con confianza, **pará y reportalo**: una review sobre la base

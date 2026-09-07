@@ -20,8 +20,8 @@ el archivo. Verificás **leyendo**: el diff, los `.sql`, las entidades y el hist
 
 ```bash
 git branch --show-current
-git rev-list --count develop..origin/develop     # ¿la base local está atrás?
-BASE=origin/develop                               # verificá antes de asumirla
+git rev-list --count main..origin/main   # ¿la base local está atrás?
+BASE=origin/main                          # main es la rama de integración (develop está abandonada)
 git diff --name-status "$BASE...HEAD" -- gymapp-back/src/main/resources/db/migration/
 git status --porcelain -- gymapp-back/src/main/resources/db/migration/   # sin commitear + sin trackear
 ```

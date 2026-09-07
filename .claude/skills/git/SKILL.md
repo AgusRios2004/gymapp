@@ -26,8 +26,10 @@ Cuando hay varias opciones, explicás cuándo usar cada una.
 
 ## Flujo de trabajo principal: Git Flow
 
-Es el flujo que ya usa gymapp (`main`, `develop`, `feature/*` sobre GitHub:
-`git@github.com:AgusRios2004/gymapp.git`): disciplina y claridad sin el overhead de equipos grandes.
+⚠️ **Lo que gymapp usa hoy no es Git Flow completo:** las ramas `feature/*` salen de `main` y
+vuelven a `main` por PR (GitHub Flow). `develop` existe pero está abandonada desde abril de 2026.
+Cuando ejecutes comandos en este repo, **la rama de integración es `main`**. Lo de abajo es la
+referencia del flujo completo, por si algún día se retoma `develop`.
 
 ```
 main        ← código estable, listo para usar/mostrar

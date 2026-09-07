@@ -37,7 +37,7 @@ De cualquiera de los dos tenés que sacar, y si falta lo preguntás:
 date +%F
 git branch --show-current
 git status --porcelain          # ¿hay trabajo previo sin commitear?
-git rev-list --count develop..origin/develop   # ¿la base local está atrás?
+git rev-list --count main..origin/main   # ¿la base local está atrás? (main es la integración)
 ```
 
 Leé el `CLAUDE.md` de la raíz y el de la punta que se va a tocar. Si el trabajo toca esquema
@@ -158,5 +158,5 @@ En este orden:
 - **No declares éxito sin el veredicto del verificador.** Un implementador diciendo COMPLETO no es
   evidencia de que funciona.
 - **Nadie del equipo escribe en la base.** Los pasos 🙋 son del usuario.
-- **Rama base**: no asumas `develop` sin mirar; un hotfix sale de `main`.
+- **Rama base**: es `main`. `develop` quedó abandonada en abril de 2026; no la uses sin pedido explícito.
 - Reportes honestos siempre: si no convergió, el usuario tiene que saberlo con el error textual.

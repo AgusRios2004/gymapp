@@ -5,7 +5,7 @@ description: >
   Detecta inconsistencias con los patrones del proyecto (capas Spring, mappers MapStruct, manejo
   de errores, validación, seguridad JWT, TanStack Query, servicios del front) y genera un archivo
   de review estructurado. Disparar cuando el usuario diga "pr-review", "analizá/revisá los cambios
-  de esta rama", "revisá esta rama contra develop", "qué cambié en esta rama" o "detectá
+  de esta rama", "revisá esta rama contra main", "qué cambié en esta rama" o "detectá
   inconsistencias con los patrones del proyecto". Para una review estricta contra CLAUDE.md usá
   strict-review; para la descripción del PR usá pr-description.
 ---
@@ -21,12 +21,15 @@ Output: `docs/_interno/reviews/YYYY-MM-DD-pr-review-<rama>.md` (gitignoreado —
 git branch --show-current
 git remote show origin | grep "HEAD branch"
 
-# Rama base: gymapp usa gitflow (main ← develop ← feature/*). Probá en orden.
-for b in develop main master; do
+# Rama base: en gymapp los PR van a `main` (develop quedó abandonada en abril 2026).
+for b in main develop master; do
   git rev-parse --verify origin/$b >/dev/null 2>&1 && BASE=origin/$b && break
 done
 echo "Rama base: $BASE"
 ```
+
+> ⚠️ **La rama de integración real es `main`.** `develop` quedó abandonada en abril de 2026 y no
+> recibe merges: los PR de este repo van a `main`. Usala como base salvo que el usuario diga otra cosa.
 
 ### ⚠️ Diff de merge-base, NO de dos puntos
 
@@ -135,7 +138,7 @@ Estructura:
 # PR Review: [nombre de la rama]
 
 **Fecha:** [fecha]
-**Rama base:** [origin/develop]
+**Rama base:** [origin/main]
 **Merge-base:** [hash corto]
 **Commits:** [N] · **Archivos modificados (reales, merge-base + working tree):** [N]
 

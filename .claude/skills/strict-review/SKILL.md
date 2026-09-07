@@ -30,16 +30,17 @@ mismo diff puede tocar las dos. Si es así, entregá **un solo reporte con una s
 
 ```bash
 git branch --show-current
-git rev-list --count develop..origin/develop   # ¿cuánto atrás está la local?
+git rev-list --count main..origin/main   # ¿cuánto atrás está la local?
 ```
 
-🛑 **Si eso devuelve algo distinto de 0, `develop...HEAD` está roto** y te va a traer commits ajenos
+🛑 **Si eso devuelve algo distinto de 0, `main...HEAD` está roto** y te va a traer commits ajenos
 como si fueran del cambio. Usá siempre `origin/<base>`.
 
-Y no asumas `develop` sin mirar: el repo tiene `main` y `develop`, y un hotfix sale de `main`.
+⚠️ **La rama de integración es `main`.** `develop` existe pero quedó abandonada en abril de 2026:
+no la uses de base salvo que el usuario lo pida explícitamente.
 
 ```bash
-git branch -r --contains "$(git merge-base origin/develop HEAD)" | head
+git branch -r --contains "$(git merge-base origin/main HEAD)" | head
 git reflog --date=iso | head -20   # de dónde salió realmente la rama
 ```
 
