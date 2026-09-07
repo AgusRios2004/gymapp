@@ -17,3 +17,7 @@ target/
 .vscode/
 .DS_Store
 mysql-data/
+
+# Claude Code
+.claude/settings.local.json
+docs/_interno/
