@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP — GymApp
 
-> Vista de meses. Para "qué toca en las próximas 2 semanas" ver [`sprints/`](./sprints/). Para "por qué se decidió X" ver [`adr/`](./adr/). Para "qué se construye en esta capa" ver [`prd/`](./prd/).
-> **Última actualización:** 06/09/2026
+> Vista de meses. Para "qué toca en las próximas semanas" ver [`sprints/`](./sprints/). Para "por qué se decidió X" ver [`adr/`](./adr/). Para "qué se construye en esta capa" ver [`prd/`](./prd/).
+> **Última actualización:** 06/09/2026 (saneamiento de docs + recalendarización Sprint 1)
 
 ---
 
@@ -21,11 +21,19 @@ CAPA 3 — ALUMNO      Consumo de su propio plan
 
 | Capa | Estado | Período | PRD | Sprint(s) |
 |:---|:---:|:---|:---|:---|
-| **1 — Admin** | 🔵 En curso | 06/09 → 19/09/2026 | [`prd/PRD_REFACTOR.md`](./prd/PRD_REFACTOR.md) | [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) |
-| **2 — Entrenador** | ⬜ Sin fecha | A definir tras QA Sesión 02 (19/09) | Falta escribir `prd/PRD_ENTRENADOR.md` | — |
+| **1 — Admin** | 🔵 En curso | 07/09 → 04/10/2026 | [`prd/PRD_REFACTOR.md`](./prd/PRD_REFACTOR.md) | [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) |
+| **2 — Entrenador** | ⬜ Sin fecha | A definir tras QA Sesión 02 (03/10) | Falta escribir `prd/PRD_ENTRENADOR.md` | — |
 | **3 — Alumno** | ⬜ Sin fecha | Después de Capa 2 | Falta escribir `prd/PRD_ALUMNO.md` | — |
 
 Las fechas de Capa 2 y 3 son deliberadamente "sin fecha" — no las inventamos hasta que la Capa 1 cierre y sepamos la velocidad real del equipo. Cuando eso pase, actualizar esta tabla, no antes.
+
+---
+
+## ⏱️ Capacidad del proyecto — leer antes de poner cualquier fecha
+
+GymApp es un **proyecto de pasatiempo**. La capacidad real (declarada el 06/09/2026) es **~2 hs/día de lunes a viernes y ~4 hs/día los fines de semana** — techo de 18 hs/semana, y se planifica sobre **~12,5 hs/semana efectivas** para absorber los días que se saltean.
+
+Cualquier fecha de este roadmap sale de dividir el esfuerzo estimado por esas 12,5 hs/semana. **No planificar sobre días hábiles completos ni sobre 5 hs/día** — así se estimó Sprint 1 la primera vez y quedaba en 2 semanas cuando en realidad son 4.
 
 ---
 
@@ -38,7 +46,8 @@ Las fechas de Capa 2 y 3 son deliberadamente "sin fecha" — no las inventamos h
 ## Hitos
 
 - [x] Capa 1 — QA Sesión 01 (05/09/2026): relevamiento de bugs, decisión de light mode.
-- [ ] Capa 1 — Sprint 1 cierra (19/09/2026) con QA Sesión 02 sin bugs críticos ni de experiencia.
+- [x] Capa 1 — saneamiento de documentación (06/09/2026): duplicados de `docs/` eliminados, `CLAUDE.md`/`GEMINI.md` sincronizados, backlog auditado contra el código, sprint recalendarizado sobre la capacidad real.
+- [ ] Capa 1 — Sprint 1 cierra (04/10/2026) con QA Sesión 02 sin bugs críticos ni de experiencia.
 - [ ] Capa 1 — merge a `main`.
 - [ ] Capa 2 — escribir `prd/PRD_ENTRENADOR.md` (alcance de rutinas inteligentes + LLM).
 - [ ] Capa 2 — primer sprint.

@@ -4,7 +4,7 @@ Este archivo es el punto de entrada para cualquier agente de Claude (Claude Code
 
 👉 [`docs/SITEMAP.md`](docs/SITEMAP.md)
 
-Este archivo convive con `GEMINI.md` (usado por Gemini CLI / Antigravity) y debe decir lo mismo que él. Si edits uno, editá el otro.
+Este archivo convive con `GEMINI.md` (usado por Gemini CLI / Antigravity) y debe decir lo mismo que él. Si editás uno, editá el otro.
 
 ---
 
@@ -25,7 +25,7 @@ Decisión tomada el 05/09/2026 (QA Sesión 01) y confirmada en el PRD de refacto
 
 Fuente de verdad del diseño: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
-**Cuidado:** documentos y un skill local quedaron desactualizados con la decisión anterior (dark mode "Industrial"). Ya fueron corregidos en esta pasada (06/09/2026), pero si en el futuro alguno vuelve a mencionar `bg-slate-950`, `bg-zinc-900`, `bg-gray-900` o "prohibido bg-white" como regla activa, es un documento viejo — ignéralo y avisá para corregirlo. Ver detalle en `docs/SITEMAP.md` → sección "Documentación histórica".
+**Cuidado:** documentos y un skill local quedaron desactualizados con la decisión anterior (dark mode "Industrial"). Ya fueron corregidos en esta pasada (06/09/2026), pero si en el futuro alguno vuelve a mencionar `bg-slate-950`, `bg-zinc-900`, `bg-gray-900` o "prohibido bg-white" como regla activa, es un documento viejo — ignoralo y avisá para corregirlo. Ver detalle en `docs/SITEMAP.md` → sección "Documentación histórica".
 
 ---
 
@@ -33,7 +33,7 @@ Fuente de verdad del diseño: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 Vista completa de meses/capas en [`docs/ROADMAP.md`](docs/ROADMAP.md). Resumen — 3 capas (ver [`docs/prd/PRD_REFACTOR.md`](docs/prd/PRD_REFACTOR.md)):
 
-1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 en curso (06/09 → 19/09/2026). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
+1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 en curso (07/09 → 04/10/2026). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
 2. **Capa 2 — Entrenador**: rutinas inteligentes + LLM. Pendiente.
 3. **Capa 3 — Alumno**: consumo de su plan. Pendiente.
 

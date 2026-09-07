@@ -1,7 +1,7 @@
 # 🗺️ SITEMAP — Índice General de Documentación GymApp
 
 > Punto de entrada único para toda la documentación del proyecto.
-> **Última actualización:** 06/09/2026
+> **Última actualización:** 06/09/2026 (saneamiento de docs + recalendarización Sprint 1)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Capa | Estado | Descripción |
 |:---|:---:|:---|
-| **Capa 1 — Admin** | 🟡 En refactor | Funcional con bugs y deuda UX. Sprint 1 en curso (06/09 → 19/09). |
+| **Capa 1 — Admin** | 🟡 En refactor | Funcional con bugs y deuda UX. Sprint 1 en curso (07/09 → 04/10). |
 | **Capa 2 — Entrenador** | ⬜ Pendiente | Arranca cuando Capa 1 pase QA sin bugs críticos. Incluirá LLM. |
 | **Capa 3 — Alumno** | ⬜ Pendiente | Después de Capa 2. |
 
@@ -24,7 +24,7 @@
 | ¿Qué viene en los próximos meses? | [`ROADMAP.md`](./ROADMAP.md) |
 | ¿Por qué se decidió X? | [`adr/`](./adr/) |
 | ¿Qué hay que construir en esta capa? | [`prd/`](./prd/) |
-| ¿Qué toca en las próximas 2 semanas? | [`sprints/`](./sprints/) |
+| ¿Qué toca en las próximas semanas? | [`sprints/`](./sprints/) |
 | ¿Qué se probó y qué bugs salieron? | [`notes/`](./notes/) |
 | ¿Cómo se ve la UI? | [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
 
@@ -86,7 +86,11 @@ docs/
 
 | Sprint | Período | Objetivo | Estado |
 |:---:|:---|:---|:---:|
-| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 06/09 → 19/09/2026 | Refactor core admin — bugs críticos + UX + light mode | ⬜ Pendiente |
+| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — bugs críticos + UX + light mode | 🔵 En curso |
+
+> El nombre del archivo conserva la fecha `06-09-2026` (día en que se escribió el sprint). El período real arranca el 07/09 — ver la tabla de fechas dentro del documento.
+>
+> **Capacidad del proyecto:** ~2 hs/día entre semana, ~4 hs los findes. Toda fecha de sprint se calcula sobre ~12,5 hs/semana efectivas — detalle en [`ROADMAP.md`](./ROADMAP.md).
 
 ---
 
@@ -106,6 +110,8 @@ docs/
 ## 📚 archive/ — Documentación histórica
 
 > Ya no refleja el estado actual del proyecto. Se conserva como referencia de decisiones pasadas, no como fuente de verdad. **No seguir estas reglas si contradicen los documentos vigentes de arriba.**
+>
+> **Estos 5 archivos viven únicamente en `archive/`.** Hasta el 06/09/2026 existía una copia idéntica de cada uno en `docs/` raíz (el commit `894de10` los copió en vez de moverlos), y `docs/GEMINI.md` — que describe el tema "Industrial Dark" con amber — parecía vigente. Si volvés a ver alguno fuera de `archive/`, es un duplicado: borralo.
 
 | Archivo | Por qué quedó obsoleto |
 |:---|:---|
