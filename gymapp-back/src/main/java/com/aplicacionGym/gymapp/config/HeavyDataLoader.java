@@ -4,6 +4,7 @@ import com.aplicacionGym.gymapp.entity.*;
 import com.aplicacionGym.gymapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,6 +16,8 @@ import java.util.*;
  * rutinas, registros de entrenamiento, comidas, hidratación y suplementación.
  */
 @Component
+// Los tests lo apagan con app.seed.enabled=false (src/test/resources/application.properties).
+@ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true", matchIfMissing = true)
 public class HeavyDataLoader implements CommandLineRunner {
 
     @Autowired
