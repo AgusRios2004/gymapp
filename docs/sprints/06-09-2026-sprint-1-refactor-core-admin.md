@@ -68,21 +68,21 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | ID | Tarea | Archivos | Est. | Depende de | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|
 | T-31 | Mergear el harness + Sandcastle `spec-driven` a `main` | — | — | — | ✅ |
-| T-32 | Perfil de test del backend con H2: `./mvnw test` no usa la MySQL local ni corre los `DataLoader` | `pom.xml`, `src/test/resources/`, `config/*DataLoader.java` | 2 hs | — | ⬜ |
-| T-33 | Vitest mínimo en el frontend + sumarlo a `commands.test` | `gym-frontend/package.json`, `vite.config.ts`, `harness.config.yml` | 1,5 hs | — | ⬜ |
+| T-32 | Perfil de test del backend con H2: `./mvnw test` no usa la MySQL local ni corre los `DataLoader` | `pom.xml`, `src/test/resources/`, `config/*DataLoader.java` | 2 hs | — | ✅ |
+| T-33 | Vitest mínimo en el frontend + sumarlo a `commands.test` | `gym-frontend/package.json`, `vite.config.ts`, `harness.config.yml` | 1,5 hs | — | ✅ |
 | T-34 | Credenciales de Claude en `.sandcastle/.env` (**lo hace el dev**) | `.sandcastle/.env` | 15 min | — | ⬜ |
-| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | ⬜ |
+| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | 🔵 spec en `propuesta` |
 
 ### 🔴 Backlog
 
 | ID | Tarea | Archivos | Est. | Depende de | Spec | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
-| T-01 | Traducir al español los mensajes de validación de `ClientRequestDTO` (+ BUG-15) | `ClientRequestDTO.java` | 15 min | — | 0001 | ⬜ |
+| T-01 | `ClientController` con `@Valid ClientRequestDTO` + mensajes en español (+ BUG-15). Ver corrección de BUG-03 del 13/09 | `ClientRequestDTO.java`, `ClientController.java`, `ClientMapper.java` | 1,5 hs | — | 0001 | ⬜ |
 | T-02 | `GlobalExceptionHandler`: mapear todos los errores 4xx con mensajes en español | `GlobalExceptionHandler.java` | 4 hs | — | 0001 | ⬜ |
 | T-08 | PATCH `/api/clients/{id}/toggle-status` — activar/desactivar cliente | `ClientController.java`, `ClientService.java` | 1 h | — | 0004 | ⬜ |
 | T-13 | Dashboard: subir `totalProfessors` y `lowStockCount` a `MetricCard` (7 KPIs) | `DashboardPage.tsx` | 30 min | — | — | ⬜ |
 
-**Estimación Semana 2: ~11,75 hs**
+**Estimación Semana 2: ~13 hs** — pasa el techo de 12,5 por la re-estimación de T-01 (13/09); se absorbe del buffer.
 
 ---
 
@@ -123,7 +123,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 
 | Spec | Tareas | Cómo se ejecuta | Estado |
 |:---:|:---|:---|:---:|
-| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) | ⬜ |
+| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) | 🔵 propuesta |
 | 0002 — Venta de producto con profesor desde JWT | T-03, T-11, T-12 | Sandcastle BE + interactivo FE | ⬜ |
 | 0003 — Clases multi-día | T-07, T-14 | Sandcastle BE + interactivo FE | ⬜ |
 | 0004 — Activar/desactivar cliente | T-08, T-25 | A decidir tras el piloto | ⬜ |
@@ -161,10 +161,10 @@ T-15 ──► T-16
 | Semana | Bloque | Estimación |
 |:---:|:---|:---:|
 | 1 | Docs + harness (fuera de plan) | — |
-| 2 | Fase 0 + T-01, T-02, T-08, T-13 | ~11,75 hs |
+| 2 | Fase 0 + T-01, T-02, T-08, T-13 | ~13 hs |
 | 3 | Bugs críticos BE + clases multi-día + T-09, T-10 | ~12 hs |
 | 4 | Bugs críticos FE + `SearchableSelect` + toggle + QA | ~11 hs |
-| — | Buffer | ~2,75 hs |
+| — | Buffer | ~1,5 hs |
 | | **TOTAL (semanas 2–4)** | **~37,5 hs** |
 
 > El buffer es chico a propósito: es lo que entra en 3 semanas. **Si el Checkpoint 2 (27/09) llega con atraso**, el recorte pre-acordado es, en orden: T-25 → T-16 → T-15 (pasan al Sprint 2). No se mueve la fecha de QA.

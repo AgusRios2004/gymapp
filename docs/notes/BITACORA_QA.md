@@ -2,7 +2,7 @@
 
 > Registro cronológico de sesiones de prueba, bugs y decisiones.
 >
-> **Entradas:** [Sesión 01 (05/09)](#-sesión-01--05-sep-2026) · [Auditoría de Documentación y Código (06/09)](#-auditoría-de-documentación-y-código--06-sep-2026)
+> **Entradas:** [Sesión 01 (05/09)](#-sesión-01--05-sep-2026) · [Auditoría de Documentación y Código (06/09)](#-auditoría-de-documentación-y-código--06-sep-2026) · [Fase 0 del pipeline + corrección de BUG-03 (13/09)](#-fase-0-del-pipeline--corrección-de-bug-03--13-sep-2026)
 
 ---
 
@@ -141,3 +141,44 @@ La Sesión 01 fue QA de pantalla. Al contrastar contra el código, tres bugs est
 ### ▶️ Próximo paso
 
 **T-02** (`GlobalExceptionHandler`) es la primera tarea de código del sprint: desbloquea T-03, T-05, T-06 y T-10 — cuatro tareas, la mitad de los bugs críticos. No se escribió código en esta pasada.
+
+---
+---
+
+## 📅 Fase 0 del pipeline + corrección de BUG-03 — 13 Sep 2026
+**Ejecutó:** Agustín + Claude Code | **Branch:** `chore/fase-0-pipeline` | **Tipo:** lectura de código y pruebas del harness (no se ejecutó la app)
+
+> ⚠️ **Esta entrada corrige a la del 06/09.** La corrección de BUG-03 de esa auditoría estaba equivocada.
+
+---
+
+### 🔍 BUG-03 era real en el backend
+
+| Lo que dijo la auditoría del 06/09 | Lo que dice el código |
+|:---|:---|
+| "El BE **sí valida**: `ClientRequestDTO.java:29` tiene `@NotBlank` + `@Size`. Lo que falla es que el mensaje no llega." | `ClientRequestDTO` **no lo usa ningún controller**. `ClientController` recibe la entidad `Client` directo en `POST` y `PUT`, y no hay un solo `@Valid` en todo `controller/`. El backend acepta un cliente sin DNI. |
+
+**Por qué se escapó:** la auditoría leyó el DTO y asumió que estaba cableado, sin seguir el `@RequestBody` del controller. Es el mismo error que venía a corregir: dar por hecho algo leyendo en vez de verificar el camino completo.
+
+**Impacto en el backlog:**
+- T-01 deja de ser "traducir mensajes" (15 min): hay que pasar el controller a `@Valid ClientRequestDTO` sin romper el contrato con el frontend. Re-estimada en **1,5 hs**. Queda en la [spec 0001](../../specs/0001-errores-del-backend-legibles.md), tarea T2.
+- **Riesgo nuevo:** el DTO exige `name` y `lastName` de 4+ caracteres y el frontend acepta desde 1. Al activar la validación, altas como "Ana Gil" pasarían a fallar. Pregunta abierta 3 de la spec 0001.
+- **Deuda documentada, fuera del sprint:** otros 7 controllers reciben entidades en vez de `RequestDTO` (`Exercise`, `GroupClass`, `Product`, `Professor`, `MonthlyType`, `ExerciseLog`, nutrición/suplementos), contra `gymapp-back/GEMINI.md` §3.1.
+
+---
+
+### 🐛 Bugs nuevos encontrados leyendo código
+
+| ID | Módulo | Descripción |
+|:---:|:---|:---|
+| BUG-16 | Pagos (BE) | `createProductPayment` descuenta stock producto por producto y `PaymentService` no es `@Transactional`: si falla el tercer ítem por stock, los dos primeros ya quedaron descontados. Cubierto por AC-0001-10. |
+| BUG-17 | Asistencias / Pagos (BE) | "Sin membresía", "membresía vencida" y "stock insuficiente" se lanzan como `RuntimeException` y hoy salen como 500 genérico. Cubierto por AC-0001-07, 08 y 10. |
+
+---
+
+### ⚙️ Fase 0 — resultados
+
+- **Tests del backend sin MySQL (T-32):** perfil de test con H2 + `app.seed.enabled=false`. Verificado con `DB_URL` apuntando a un puerto muerto: el contexto levanta contra H2 y los seeders no corren.
+- **Vitest en el frontend (T-33):** vitest + Testing Library, test de humo sobre `EmptyState`, sumado a `commands.test`.
+- **Compuerta dentro del sandbox:** `verify.sh` pasa en la imagen `sandcastle:gymapp` sin MySQL (79 s). **Pero el install en frío tardó 609 s**, contra el timeout de 300 s de `onSandboxReady` en `main.mts`: Sandcastle se habría caído en la primera fase. Se precachean `~/.m2` y `~/.npm` en la imagen (`npm run sandcastle:image`).
+
