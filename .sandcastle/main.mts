@@ -261,6 +261,13 @@ const revisionSchema = z.object({
 
 type Hallazgo = z.infer<typeof hallazgoSchema>;
 
+// Últimas líneas de un sandbox.exec, con el código de salida adelante. Es lo
+// que se inyecta en los prompts como TEST_RESULT / VERIFY_RESULT.
+const resumenDeSalida = (r: { exitCode: number; stdout: string; stderr: string }): string => {
+  const lineas = `${r.stdout}\n${r.stderr}`.trim().split("\n").slice(-40);
+  return [`exit code: ${r.exitCode}`, ...lineas].join("\n");
+};
+
 const esAccionable = (h: Hallazgo): boolean =>
   Boolean(h.ac_violado) || Boolean(h.escenario_de_falla);
 
@@ -335,12 +342,20 @@ for (let vuelta = 1; vuelta <= MAX_ITERACIONES; vuelta++) {
         }
 
         // 2b. Verde.
+        //
+        // La salida de los tests se corre ACÁ con sandbox.exec y entra al
+        // prompt como TEST_RESULT, en vez de un !`{{TEST_COMMAND}}` dentro del
+        // prompt: sandcastle 0.12.0 corta las expansiones de shell a los 30 s
+        // (PROMPT_EXPANSION_TIMEOUT_MS, no configurable) y aborta la fase.
+        // exec no tiene ese límite. Encontrado en gymapp el 13/09/2026, donde
+        // la suite de Spring Boot pasa los 30 s dentro del sandbox.
+        const testsRojos = await sandbox.exec(COMANDOS.TEST_COMMAND);
         const impl = await sandbox.run({
           name: `implementer:${spec.id}`,
           maxIterations: 100,
           agent: AGENTE.implementer,
           promptFile: "./.sandcastle/implement-prompt.md",
-          promptArgs: argsBase,
+          promptArgs: { ...argsBase, TEST_RESULT: resumenDeSalida(testsRojos) },
         });
 
         // 2b'. Compuerta del orquestador. Con Claude la G2 la aplica
@@ -388,7 +403,11 @@ for (let vuelta = 1; vuelta <= MAX_ITERACIONES; vuelta++) {
           maxIterations: 1,
           agent: AGENTE.reviewer,
           promptFile: "./.sandcastle/review-prompt.md",
-          promptArgs: argsBase,
+          // Misma razón que TEST_RESULT: la compuerta ya corrió arriba
+          // (gate), se reusa su salida en vez de volver a correrla dentro del
+          // prompt. En gymapp verify.sh tarda ~50 s y el reviewer moría por
+          // PromptExpansionTimeoutError aunque la rama estuviera en verde.
+          promptArgs: { ...argsBase, VERIFY_RESULT: resumenDeSalida(gate) },
           output: sandcastle.Output.object({
             tag: "revision",
             schema: revisionSchema,

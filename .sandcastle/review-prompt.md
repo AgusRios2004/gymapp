@@ -32,7 +32,7 @@ revisa tu arreglo.
 
 <verificacion>
 
-!`{{VERIFY_COMMAND}} 2>&1 | tail -40`
+{{VERIFY_RESULT}}
 
 </verificacion>
 

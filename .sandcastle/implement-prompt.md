@@ -31,7 +31,7 @@ Estado actual de los tests:
 
 <tests>
 
-!`{{TEST_COMMAND}} 2>&1 | tail -40`
+{{TEST_RESULT}}
 
 </tests>
 
