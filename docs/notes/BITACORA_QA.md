@@ -213,3 +213,5 @@ La Sesión 01 fue QA de pantalla. Al contrastar contra el código, tres bugs est
 
 Ramas conservadas: `respaldo/spec-0001-intento-{1,3,4}` y `sandcastle/spec-0001` (intento 5, la revisada).
 
+**Cierre (13/09/2026):** los 5 hallazgos se corrigieron a mano sobre `sandcastle/spec-0001`, con un test rojo por hallazgo antes de cada arreglo (6 tests nuevos). `verify.sh` completo en verde: 13/13 AC con test, 21 tests de backend. Spec 0001 → `implementada`, mergeada a `main`. Cierra T-01, T-02, T-05, T-06 y T-35.
+

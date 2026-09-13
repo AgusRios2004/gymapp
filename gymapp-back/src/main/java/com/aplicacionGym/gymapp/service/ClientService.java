@@ -42,10 +42,10 @@ public class ClientService {
         Objects.requireNonNull(idClass, "idClass cannot be null");
 
         Client client = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + idClient));
 
         GroupClass groupClass = groupClassRepository.findById(idClass)
-                .orElseThrow(() -> new ResourceNotFoundException("Class not found with id: " + idClass));
+                .orElseThrow(() -> new ResourceNotFoundException("Clase no encontrada con id: " + idClass));
 
         client.setActiveClass(groupClass);
         clientRepository.save(client);
@@ -57,7 +57,7 @@ public class ClientService {
         Objects.requireNonNull(idClient, "idClient cannot be null");
 
         Client client = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + idClient));
 
         client.setActiveClass(null);
         clientRepository.save(client);
@@ -72,7 +72,7 @@ public class ClientService {
 
         clientRepository.findByDni(client.getDni())
                 .ifPresent(existingClient -> {
-                    throw new IllegalArgumentException("Client with DNI " + client.getDni() + " already exists.");
+                    throw new IllegalArgumentException("Ya existe un cliente con el DNI " + client.getDni() + ".");
                 });
         client.setActive(true);
         Client saved = clientRepository.save(client);
@@ -171,12 +171,14 @@ public class ClientService {
     public ClientResponseDTO updateClient(Long id, Client updatedClient) {
         Objects.requireNonNull(id, "ID cannot be null");
         Client existingClient = clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
 
         existingClient.setName(updatedClient.getName());
         existingClient.setLastName(updatedClient.getLastName());
         existingClient.setDni(updatedClient.getDni());
         existingClient.setPhone(updatedClient.getPhone());
+        // El modal de edición no manda email: un null significa "no cambió", no "borralo".
+        if (updatedClient.getEmail() != null) existingClient.setEmail(updatedClient.getEmail());
         existingClient.setActive(updatedClient.isActive());
         if (updatedClient.getHeight() != null) existingClient.setHeight(updatedClient.getHeight());
         if (updatedClient.getTargetWeight() != null) existingClient.setTargetWeight(updatedClient.getTargetWeight());
@@ -193,10 +195,10 @@ public class ClientService {
     public void deactivateClient(Long id) {
         Objects.requireNonNull(id, "ID cannot be null");
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
 
         if (!client.isActive()) {
-            throw new ResourceNotFoundException("Client already desactivate");
+            throw new ResourceNotFoundException("El cliente ya está desactivado");
         }
 
         client.setActive(false);
@@ -207,10 +209,10 @@ public class ClientService {
         Objects.requireNonNull(idClient, "idClient cannot be null");
         Objects.requireNonNull(idRoutine, "idRoutine cannot be null");
         Client saved = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + idClient));
 
         Routine routine = routineRepository.findById(idRoutine)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + idRoutine));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + idRoutine));
 
         if (!saved.getRoutines().contains(routine)) {
             saved.getRoutines().add(routine);
@@ -229,7 +231,7 @@ public class ClientService {
     public List<RoutineResponseDTO> getAllRoutinesByClient(Long idClient) {
         Objects.requireNonNull(idClient, "idClient cannot be null");
         Client client = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + idClient));
         return client.getRoutines().stream()
                 .map(RoutineMapper::toDTO)
                 .toList();
@@ -239,10 +241,10 @@ public class ClientService {
         Objects.requireNonNull(idClient, "idClient cannot be null");
         Objects.requireNonNull(idRoutine, "idRoutine cannot be null");
         Client client = clientRepository.findById(idClient)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + idClient));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + idClient));
 
         Routine routine = routineRepository.findById(idRoutine)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + idRoutine));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + idRoutine));
 
         client.setRoutineActive(routine);
 
@@ -254,7 +256,7 @@ public class ClientService {
     public List<ProductsPurchasedResponseDTO> getProductsPurchasedByClient(Long id) {
         Objects.requireNonNull(id, "ID cannot be null");
         clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
         List<PaymentProduct> paymentProducts = paymentProductRepository.findByClientId(id);
         return paymentProducts.stream().map(purchase -> {
             ProductsPurchasedResponseDTO dto = new ProductsPurchasedResponseDTO();

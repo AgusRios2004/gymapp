@@ -1,12 +1,15 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
 import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
+import com.aplicacionGym.gymapp.mapper.ClientMapper;
 import com.aplicacionGym.gymapp.service.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +24,10 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping
-    public ResponseEntity<WebApiResponse> createClient(@RequestBody Client client) {
+    public ResponseEntity<WebApiResponse> createClient(@Valid @RequestBody ClientRequestDTO dto) {
+        Client client = ClientMapper.toEntity(dto);
         ClientResponseDTO created = clientService.createClient(client);
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Client created successfully", created));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Cliente creado correctamente", created));
     }
 
     @GetMapping
@@ -44,14 +48,15 @@ public class ClientController {
     @GetMapping("/{id}")
     public ResponseEntity<WebApiResponse> getClientById(@PathVariable Long id) {
         ClientResponseDTO client = clientService.getClientById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Client retrieved successfully", client));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Cliente encontrado correctamente", client));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WebApiResponse> updateClient(@PathVariable Long id, @RequestBody Client updatedClient) {
+    public ResponseEntity<WebApiResponse> updateClient(@PathVariable Long id, @Valid @RequestBody ClientRequestDTO dto) {
+        Client updatedClient = ClientMapper.toEntity(dto);
         ClientResponseDTO client = clientService.updateClient(id, updatedClient);
-        return ResponseEntity.ok(WebApiResponseBuilder.success("Client updated successfully", client));
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Cliente actualizado correctamente", client));
     }
 
     @DeleteMapping("/{id}")

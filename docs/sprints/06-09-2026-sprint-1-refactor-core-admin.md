@@ -71,14 +71,14 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-32 | Perfil de test del backend con H2: `./mvnw test` no usa la MySQL local ni corre los `DataLoader` | `pom.xml`, `src/test/resources/`, `config/*DataLoader.java` | 2 hs | — | ✅ |
 | T-33 | Vitest mínimo en el frontend + sumarlo a `commands.test` | `gym-frontend/package.json`, `vite.config.ts`, `harness.config.yml` | 1,5 hs | — | ✅ |
 | T-34 | Credenciales de Claude en `.sandcastle/.env` (**lo hace el dev**) | `.sandcastle/.env` | 15 min | — | ✅ |
-| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | 🔵 spec aprobada, corriendo |
+| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | ✅ |
 
 ### 🔴 Backlog
 
 | ID | Tarea | Archivos | Est. | Depende de | Spec | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
-| T-01 | `ClientController` con `@Valid ClientRequestDTO` + mensajes en español (+ BUG-15). Ver corrección de BUG-03 del 13/09 | `ClientRequestDTO.java`, `ClientController.java`, `ClientMapper.java` | 1,5 hs | — | 0001 | ⬜ |
-| T-02 | `GlobalExceptionHandler`: mapear todos los errores 4xx con mensajes en español | `GlobalExceptionHandler.java` | 4 hs | — | 0001 | ⬜ |
+| T-01 | `ClientController` con `@Valid ClientRequestDTO` + mensajes en español (+ BUG-15). Ver corrección de BUG-03 del 13/09 | `ClientRequestDTO.java`, `ClientController.java`, `ClientMapper.java` | 1,5 hs | — | 0001 | ✅ |
+| T-02 | `GlobalExceptionHandler`: mapear todos los errores 4xx con mensajes en español | `GlobalExceptionHandler.java` | 4 hs | — | 0001 | ✅ |
 | T-08 | PATCH `/api/clients/{id}/toggle-status` — activar/desactivar cliente | `ClientController.java`, `ClientService.java` | 1 h | — | 0004 | ⬜ |
 | T-13 | Dashboard: subir `totalProfessors` y `lowStockCount` a `MetricCard` (7 KPIs) | `DashboardPage.tsx` | 30 min | — | — | ⬜ |
 
@@ -91,8 +91,8 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | ID | Tarea | Archivos | Est. | Depende de | Spec | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
 | T-03 | Fix venta de producto — `Professor not found` — resolver profesor desde JWT | `PaymentService.java`, `PaymentController.java` | 3 hs | T-02 | 0002 | ⬜ |
-| T-05 | Asistencias: error descriptivo si cliente no tiene cuota activa | `AssistanceService.java` | 1 h | T-02 | 0001 | ⬜ |
-| T-06 | Pagos: error descriptivo si cliente ya tiene suscripción activa | `PaymentService.java` | 1 h | T-02 | 0001 | ⬜ |
+| T-05 | Asistencias: error descriptivo si cliente no tiene cuota activa | `AssistanceService.java` | 1 h | T-02 | 0001 | ✅ |
+| T-06 | Pagos: error descriptivo si cliente ya tiene suscripción activa | `PaymentService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-07 | Clases: migrar `dayOfWeek: String` → `daysOfWeek: List<String>` (BE) | `GroupClass.java`, `GroupClassService.java`, `GroupClassController.java`, `GroupClassRepository.java` | 3 hs | — | 0003 | ⬜ |
 | T-09 | Validación DNI obligatorio en formulario de cliente (deshabilitar submit) | `ClientModal.tsx` | 30 min | T-01 | — | ⬜ |
 | T-10 | Mostrar mensaje de error del backend en toast — leer `error.response.data.message` | `clientService.ts`, `paymentService.ts`, `assistanceService.ts` | 1,5 hs | T-02 | — | ⬜ |
@@ -123,7 +123,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 
 | Spec | Tareas | Cómo se ejecuta | Estado |
 |:---:|:---|:---|:---:|
-| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) | 🔵 aprobada |
+| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) + corrección manual de hallazgos | ✅ implementada |
 | 0002 — Venta de producto con profesor desde JWT | T-03, T-11, T-12 | Sandcastle BE + interactivo FE | ⬜ |
 | 0003 — Clases multi-día | T-07, T-14 | Sandcastle BE + interactivo FE | ⬜ |
 | 0004 — Activar/desactivar cliente | T-08, T-25 | A decidir tras el piloto | ⬜ |
