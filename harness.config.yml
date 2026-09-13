@@ -16,9 +16,8 @@ project:
 
 # Comandos reales del proyecto. Los hooks y el CI ejecutan exactamente esto.
 commands:
-  install: "(cd gymapp-back && ./mvnw -q -B dependency:go-offline) && (cd gym-frontend && npm ci)"
-  # Solo backend: el frontend todavía no tiene test runner.
-  test: "cd gymapp-back && ./mvnw -q -B test"
+  install: "(cd gymapp-back && ./mvnw -q -B dependency:go-offline) && (cd gym-frontend && npm ci --prefer-offline --no-audit --no-fund)"
+  test: "(cd gymapp-back && ./mvnw -q -B test) && (cd gym-frontend && npm test)"
   lint: "cd gym-frontend && npm run lint"
   format: ""
   typecheck: "cd gym-frontend && npx tsc -b --noEmit"
