@@ -42,6 +42,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// El hook vive junto al Provider a propósito: separarlos obliga a exportar el
+// contexto desde un tercer archivo. Solo afecta al Fast Refresh en dev.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

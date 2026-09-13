@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Button from '../ui/Button';
@@ -51,15 +51,18 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
     enabled: isOpen,
   });
 
-  // Resetear formulario al abrir
-  useEffect(() => {
+  // Resetear formulario al abrir. Se ajusta el estado durante el render en vez
+  // de en un useEffect, para no disparar un render extra en cascada.
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setName('');
       setGoal('');
       setDays([]);
       setErrors([]);
     }
-  }, [isOpen]);
+  }
 
   const addDay = () => {
     const newDayOrder = days.length + 1;

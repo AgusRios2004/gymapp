@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { z } from 'zod';
 import Button from '../ui/Button';
@@ -35,8 +35,12 @@ const ClientModal: React.FC<ClientModalProps> = ({
     active: true
   } as ClientFormData); 
 
-  // Efecto: Cuando se abre el modal o cambia initialData, actualizamos el formulario
-  useEffect(() => {
+  // Cuando se abre el modal o cambia initialData, actualizamos el formulario.
+  // Se ajusta durante el render en vez de en un useEffect, para no disparar un
+  // render extra en cascada. Arranca en null para aplicar también en el montaje.
+  const [prevSync, setPrevSync] = useState<{ isOpen: boolean; initialData: typeof initialData } | null>(null);
+  if (prevSync === null || isOpen !== prevSync.isOpen || initialData !== prevSync.initialData) {
+    setPrevSync({ isOpen, initialData });
     if (isOpen && initialData) {
       // Modo Edición: Rellenamos con los datos del cliente
       setFormData(initialData);
@@ -51,7 +55,7 @@ const ClientModal: React.FC<ClientModalProps> = ({
         active: true
       } as ClientFormData);
     }
-  }, [isOpen, initialData]);
+  }
 
   // Manejador de cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +69,13 @@ const ClientModal: React.FC<ClientModalProps> = ({
       onSave(formData);
     }
   };
+
+  // Manejador para confirmar antes de cerrar
+  const handleCloseAttempt = useCallback(() => {
+    if (window.confirm('¿Estás seguro de que quieres cerrar? Se perderán los datos no guardados.')) {
+      onClose();
+    }
+  }, [onClose]);
 
   // Lógica de cierre con la tecla ESC
   useEffect(() => {
@@ -81,14 +92,7 @@ const ClientModal: React.FC<ClientModalProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
-
-  // Manejador para confirmar antes de cerrar
-  const handleCloseAttempt = () => {
-    if (window.confirm('¿Estás seguro de que quieres cerrar? Se perderán los datos no guardados.')) {
-      onClose();
-    }
-  };
+  }, [isOpen, handleCloseAttempt]);
 
   if (!isOpen) return null;
 

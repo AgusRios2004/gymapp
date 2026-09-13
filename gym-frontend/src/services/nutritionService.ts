@@ -5,7 +5,7 @@ export const getActiveNutritionPlan = async (clientId: number): Promise<Nutritio
   try {
     const response = await api.get<NutritionPlan>(`/clients/${clientId}/nutrition/plan`);
     return response.data;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

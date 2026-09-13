@@ -22,10 +22,19 @@ const CreateExerciseModal: React.FC<CreateExerciseModalProps> = ({ isOpen, onClo
     const [errors, setErrors] = useState<Record<string, string>>({});
     const nameInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
+    // Resetear formulario al abrir. Se ajusta el estado durante el render en vez
+    // de en el useEffect, para no disparar un render extra en cascada.
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+    if (isOpen !== prevIsOpen) {
+        setPrevIsOpen(isOpen);
         if (isOpen) {
             setFormData({ name: '', muscleGroup: 'Pecho', description: '' });
             setErrors({});
+        }
+    }
+
+    useEffect(() => {
+        if (isOpen) {
             // UX: Focus automático al abrir
             setTimeout(() => {
                 nameInputRef.current?.focus();

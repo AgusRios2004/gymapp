@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -46,8 +46,11 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     enabled: isOpen, // Solo cargar cuando se abre el modal
   });
 
-  // Resetear estado al abrir/cerrar
-  useEffect(() => {
+  // Resetear estado al abrir o al cambiar de cliente. Se ajusta durante el
+  // render en vez de en un useEffect, para no disparar un render extra en cascada.
+  const [prevReset, setPrevReset] = useState({ isOpen, client });
+  if (isOpen !== prevReset.isOpen || client !== prevReset.client) {
+    setPrevReset({ isOpen, client });
     if (isOpen) {
       setSelectedRoutineId(null);
       setScheduleMap({});
@@ -56,7 +59,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       setStartDate(new Date().toISOString().split('T')[0]);
       setErrors([]);
     }
-  }, [isOpen, client]);
+  }
 
   // Obtener la rutina seleccionada completa para ver sus días
   const selectedRoutine = routines.find((r: Routine) => r.id === selectedRoutineId);

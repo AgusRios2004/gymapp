@@ -67,7 +67,7 @@ const EditRoutineModal: React.FC<EditRoutineModalProps> = ({ isOpen, onClose, ro
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       
       if (exerciseModalTarget) {
-        setValue(`days.${exerciseModalTarget.nestIndex}.routineExercises.${exerciseModalTarget.k}.exerciseId` as any, newExercise.id);
+        setValue(`days.${exerciseModalTarget.nestIndex}.routineExercises.${exerciseModalTarget.k}.exerciseId`, newExercise.id);
       }
       setExerciseModalTarget(null);
       toast.success("Ejercicio creado y asignado con éxito");

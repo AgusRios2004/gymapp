@@ -117,7 +117,7 @@ export default function ClassesPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: { id: number, form: any }) => updateClass(data.id, data.form),
+    mutationFn: (data: { id: number, form: Parameters<typeof updateClass>[1] }) => updateClass(data.id, data.form),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success("📝 Clase actualizada");
@@ -508,7 +508,7 @@ export default function ClassesPage() {
                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
                >
                  <option value="">Sin rutina asignada</option>
-                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                 {routines.filter((r) => r.active).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                </select>
             </div>
 
@@ -574,7 +574,7 @@ export default function ClassesPage() {
                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
                >
                  <option value="">Sin rutina asignada</option>
-                 {routines.filter((r: any) => r.active).map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                 {routines.filter((r) => r.active).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                </select>
             </div>
 

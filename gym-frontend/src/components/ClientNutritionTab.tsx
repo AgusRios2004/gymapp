@@ -128,7 +128,7 @@ export const ClientNutritionTab: React.FC<Props> = ({ clientId }) => {
             <label className="block text-xs font-bold text-slate-600 mb-1">Tipo de Comida</label>
             <select
               value={mealType}
-              onChange={(e) => setMealType(e.target.value as any)}
+              onChange={(e) => setMealType(e.target.value as MealLog['mealType'])}
               className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
             >
               <option value="DESAYUNO">Desayuno</option>
