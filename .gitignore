@@ -21,3 +21,9 @@ mysql-data/
 # Sandcastle (orquestación de agentes)
 .sandcastle/logs/
 .sandcastle/worktrees/
+
+# harness
+.claude/skills/
+.claude/settings.local.json
+.sandcastle/.env
+__pycache__/

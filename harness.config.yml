@@ -1,0 +1,80 @@
+# harness.config.yml — ÚNICO archivo a editar al instalar el harness en un repo.
+#
+# Todo lo demás del kit (skills, agentes, hooks, CI, spec_coverage) lee de acá
+# y no se toca. Si tenés que editar otra cosa para que ande en tu proyecto,
+# eso es un bug del kit: reportalo en commons/ en vez de parchear el repo.
+#
+# gymapp es un monorepo: backend Maven en gymapp-back/ y frontend Vite en
+# gym-frontend/. Cada comando entra al subproyecto que le toca.
+#
+# OJO con el parser: un " #" en un valor se toma como comentario y corta el
+# comando. No usar # dentro de los comandos.
+
+project:
+  name: "gymapp"
+  language: "java + typescript"
+
+# Comandos reales del proyecto. Los hooks y el CI ejecutan exactamente esto.
+commands:
+  install: "(cd gymapp-back && ./mvnw -q -B dependency:go-offline) && (cd gym-frontend && npm ci)"
+  # Solo backend: el frontend todavía no tiene test runner.
+  test: "cd gymapp-back && ./mvnw -q -B test"
+  lint: "cd gym-frontend && npm run lint"
+  format: ""
+  typecheck: "cd gym-frontend && npx tsc -b --noEmit"
+  run: "docker compose up"
+  # Compuerta rápida después de cada Edit/Write. Los archivos que no son del
+  # frontend (Java, markdown) ESLint los ignora y sale 0.
+  format_file: ""
+  lint_file: "cd gym-frontend && npx eslint --no-warn-ignored {file}"
+
+paths:
+  source: "gymapp-back/src/main/ gym-frontend/src/"
+  tests: "gymapp-back/src/test/"
+  specs: "specs/"
+  docs: "docs/"
+
+spec_coverage:
+  # Archivos donde spec_coverage.py busca las referencias a los AC-ID.
+  test_glob:
+    - "gymapp-back/src/test/**/*.java"
+    - "gym-frontend/src/**/*.test.ts"
+    - "gym-frontend/src/**/*.test.tsx"
+  ac_pattern: "AC-[0-9]{4}-[0-9]{2}"
+
+# Modelo por rol. Valores válidos: opus | sonnet | haiku | inherit.
+# Sin versiones pineadas: el kit no debe quedar atado a un modelo puntual.
+# El mapeo alias -> id concreto vive en .sandcastle/main.mts (MODELOS).
+agents:
+  spec_writer: opus
+  planner: opus
+  test_author: sonnet
+  implementer: sonnet
+  reviewer: opus
+  curator: haiku
+
+# Delegación de I/O: el modelo caro razona, un modelo barato carga las cajas.
+# Ver commons/harness/README.md → "La delegación".
+delegacion:
+  enabled: true
+
+  # Umbral de bloqueo. Un Read sin offset/limit sobre un archivo con más
+  # líneas que esto se rechaza.
+  max_read_lines: 350
+
+  # Acepta gemini-* o claude-*; el proveedor se infiere del nombre.
+  # Si ves un 404 acá, el id caducó: actualizá el id, no el código.
+  worker_read: "gemini-3.6-flash"
+  worker_write: "gemini-3.6-flash"
+
+  timeout_seconds: 60
+  max_tokens_salida: 4096
+
+  # De qué variable de entorno sale cada clave. Las claves NO van acá:
+  # van en el .env de la raíz, que está gitignoreado.
+  api_key_env_gemini: "GEMINI_API_KEY"
+  api_key_env_anthropic: "ANTHROPIC_API_KEY"
+
+# Variables extra que el agente necesita ver dentro del sandbox de sandcastle.
+# JAVA_HOME no va acá: lo fija .sandcastle/Dockerfile.
+sandbox_env: []
