@@ -13,21 +13,26 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientRequestDTO {
-    
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 4, max = 15, message = "Name must be between 4 and 15 characters")
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 2, max = 15, message = "El nombre debe tener entre 2 y 15 caracteres")
     private String name;
-    
-    @NotBlank(message = "Last name cannot be blank")
-    @Size(min = 4, max = 15, message = "Last name must be between 4 and 15 characters")
+
+    @NotBlank(message = "El apellido es obligatorio")
+    @Size(min = 2, max = 15, message = "El apellido debe tener entre 2 y 15 caracteres")
     private String lastName;
-    
-    @Size(min = 10, max = 15, message = "Phone must be between 7 and 15 characters")
+
+    @Size(min = 10, max = 15, message = "El teléfono debe tener entre 10 y 15 caracteres")
     private String phone;
 
-    @NotBlank(message = "DNI cannot be blank")
-    @Size(min = 8, max = 8, message = "DNI must be 8 characters")
+    @NotBlank(message = "El DNI es obligatorio")
+    @Size(min = 8, max = 8, message = "El DNI debe tener 8 caracteres")
     private String dni;
+
+    @Nullable
+    private String email;
+
+    private boolean active;
 
     @Nullable
     private Long routineActiveId;

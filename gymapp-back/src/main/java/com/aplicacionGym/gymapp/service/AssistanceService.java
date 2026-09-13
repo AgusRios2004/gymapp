@@ -5,6 +5,7 @@ import com.aplicacionGym.gymapp.dto.response.AssistanceResponseDTO;
 import com.aplicacionGym.gymapp.entity.Assistance;
 import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.entity.Person;
+import com.aplicacionGym.gymapp.exception.BusinessRuleException;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.AssistanceMapper;
 import com.aplicacionGym.gymapp.entity.Payment;
@@ -33,24 +34,24 @@ public class AssistanceService {
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
         if (dto.getIdClient() == null || dto.getIdProfessor() == null) {
-            throw new IllegalArgumentException("Client ID and Staff ID cannot be null");
+            throw new IllegalArgumentException("El ID del cliente y el ID del profesor no pueden ser nulos.");
         }
 
         Client client = clientRepository.findById(dto.getIdClient())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
 
         // CHECK: Latest monthly payment
         Payment latestPayment = paymentRepository
                 .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId())
-                .orElseThrow(() -> new RuntimeException("El alumno no tiene una membresía registrada."));
+                .orElseThrow(() -> new BusinessRuleException("El alumno no tiene una membresía registrada."));
 
         if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
+            throw new BusinessRuleException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
         }
 
         Person staff = personRepository.findById(dto.getIdProfessor())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Staff member not found with id: " + dto.getIdProfessor()));
+                        () -> new ResourceNotFoundException("Profesional no encontrado con id: " + dto.getIdProfessor()));
 
         Assistance assistance = AssistanceMapper.toEntity(client, staff, dto);
         @SuppressWarnings("null")

@@ -1,5 +1,6 @@
 package com.aplicacionGym.gymapp.mapper;
 
+import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.entity.Client;
 import org.springframework.stereotype.Component;
@@ -7,12 +8,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientMapper {
 
+    public static Client toEntity(ClientRequestDTO dto) {
+        Client client = new Client();
+        client.setName(dto.getName());
+        client.setLastName(dto.getLastName());
+        client.setDni(dto.getDni());
+        client.setPhone(dto.getPhone());
+        client.setEmail(dto.getEmail());
+        client.setActive(dto.isActive());
+        client.setHeight(dto.getHeight());
+        client.setTargetWeight(dto.getTargetWeight());
+        client.setTargetFatPercentage(dto.getTargetFatPercentage());
+        client.setTargetMuscleMass(dto.getTargetMuscleMass());
+        client.setPrimaryGoal(dto.getPrimaryGoal());
+        return client;
+    }
+
     public static ClientResponseDTO toDTO(Client client) {
         ClientResponseDTO dto = new ClientResponseDTO();
         dto.setId(client.getId());
         dto.setDni(client.getDni());
         dto.setName(client.getName());
         dto.setPhone(client.getPhone());
+        dto.setEmail(client.getEmail());
         dto.setLastName(client.getLastName());
         dto.setActive(client.isActive());
         dto.setHeight(client.getHeight());

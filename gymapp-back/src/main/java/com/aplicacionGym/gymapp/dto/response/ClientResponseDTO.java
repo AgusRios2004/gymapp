@@ -14,6 +14,7 @@ public class ClientResponseDTO {
     private String lastName;
     private String dni;
     private String phone;
+    private String email;
     private boolean active;
     private boolean isDebtor;
     private RoutineSummaryResponseDTO routineActive;

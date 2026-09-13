@@ -5,11 +5,13 @@ import com.aplicacionGym.gymapp.dto.request.ProductPaymentRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.PaymentResponseDTO;
 import com.aplicacionGym.gymapp.entity.*;
 import com.aplicacionGym.gymapp.entity.enums.PaymentType;
+import com.aplicacionGym.gymapp.exception.BusinessRuleException;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.PaymentMapper;
 import com.aplicacionGym.gymapp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,13 +34,13 @@ public class PaymentService {
 
     public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto) {
         Client client = clientRepository.findById(dto.getIdClient())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
         
         MonthlyType newType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
-                .orElseThrow(() -> new ResourceNotFoundException("Monthly Type not found with id: " + dto.getIdMonthlyType()));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + dto.getIdMonthlyType()));
 
         Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
+                .orElseThrow(() -> new ResourceNotFoundException("Profesor no encontrado con id: " + dto.getIdProfessor()));
 
         // Logic check: Does the client already have an active monthly payment?
         java.util.Optional<Payment> activePaymentOpt = paymentRepository
@@ -56,8 +58,8 @@ public class PaymentService {
                 
                 // CASE 1: Same plan already paid (ERROR)
                 if (activePayment.getMonthlyType().getId().equals(newType.getId())) {
-                    throw new IllegalArgumentException("Duplicate payment: Client already has an active '" + 
-                        newType.getType() + "' plan until " + activePayment.getExpirationDate());
+                    throw new BusinessRuleException("Ya existe un pago del plan '" +
+                        newType.getType() + "' vigente hasta " + activePayment.getExpirationDate() + ".");
                 }
 
                 // CASE 2: Upgrade to a better plan (CHARGING DIFFERENCE)
@@ -70,7 +72,7 @@ public class PaymentService {
                         ". Charging difference: $" + amountToPay);
                 } else {
                     // Downgrade or same price but different plan while active - usually not allowed or just warning
-                    throw new IllegalArgumentException("Cannot change to a lower or equivalent plan while the current one is active.");
+                    throw new BusinessRuleException("No se puede cambiar a un plan menor o equivalente mientras el actual esté vigente.");
                 }
             }
         }
@@ -88,41 +90,52 @@ public class PaymentService {
         return PaymentMapper.toDTO(payment);
     }
 
+    @Transactional
     public PaymentResponseDTO createProductPayment(ProductPaymentRequestDTO dto) {
         Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + dto.getIdClient()));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
         Professor professor = professorRepository.findById(dto.getIdProfessor())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Professor not found with id: " + dto.getIdProfessor()));
+                        () -> new ResourceNotFoundException("Profesor no encontrado con id: " + dto.getIdProfessor()));
 
         payment.setClient(client);
         payment.setProfessor(professor);
         payment.setDate(dto.getDate());
         payment.setPaymentType(PaymentType.PRODUCTS);
 
-        List<PaymentProduct> productsPayment = dto.getProducts().stream().map(productDetailRequestDTO -> {
-            Product product = productRepository.findById(productDetailRequestDTO.getIdProduct())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Product not found with id: " + productDetailRequestDTO.getIdProduct()));
+        List<Product> products = dto.getProducts().stream().map(productDetailRequestDTO ->
+                productRepository.findById(productDetailRequestDTO.getIdProduct())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Producto no encontrado con id: " + productDetailRequestDTO.getIdProduct())))
+                .toList();
 
-            if (product.getStock() < productDetailRequestDTO.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
+        // Validar el stock de todos los ítems antes de descontar ninguno.
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantity = dto.getProducts().get(i).getQuantity();
+            if (product.getStock() < quantity) {
+                throw new BusinessRuleException("Stock insuficiente para el producto: " + product.getProductName());
             }
+        }
 
-            // Decrease stock
-            product.setStock(product.getStock() - productDetailRequestDTO.getQuantity());
+        List<PaymentProduct> productsPayment = new java.util.ArrayList<>();
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantity = dto.getProducts().get(i).getQuantity();
+
+            product.setStock(product.getStock() - quantity);
             productRepository.save(product);
 
             PaymentProduct paymentProduct = new PaymentProduct();
             paymentProduct.setProduct(product);
-            paymentProduct.setQuantity(productDetailRequestDTO.getQuantity());
+            paymentProduct.setQuantity(quantity);
             paymentProduct.setClient(client);
             paymentProduct.setPayment(payment);
             paymentProduct.setUnitPrice(product.getPrice());
 
-            return paymentProduct;
-        }).toList();
+            productsPayment.add(paymentProduct);
+        }
 
         payment.setPaymentProducts(productsPayment);
 
