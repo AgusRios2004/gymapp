@@ -51,4 +51,10 @@ public class ClientRequestDTO {
 
     @Nullable
     private String primaryGoal;
+
+    // Trim al deserializar, antes de que corra @Valid: si no, @Size mide los espacios y rechaza
+    // un DNI como " 12345678 " que la spec 0001 acepta.
+    public void setDni(String dni) {
+        this.dni = dni == null ? null : dni.trim();
+    }
 }

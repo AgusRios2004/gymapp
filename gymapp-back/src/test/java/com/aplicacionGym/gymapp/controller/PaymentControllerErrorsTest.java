@@ -170,4 +170,35 @@ class PaymentControllerErrorsTest {
         assertThat(sufficientStockAfter).isEqualTo(10);
         assertThat(insufficientStockAfter).isEqualTo(2);
     }
+
+    // AC-0001-10 (hallazgo del reviewer): dos líneas del mismo producto que juntas superan el stock
+    // también responden 409. Validar línea por línea las dejaba pasar y el stock quedaba negativo.
+    @Test
+    void createProductPayment_withRepeatedProductExceedingStockInTotal_respondsConflictAndKeepsStock() throws Exception {
+        Client client = saveClient("60111224");
+        Professor professor = saveProfessor("91111224");
+        Product product = saveProduct("Barra proteica", 1200, 5);
+
+        Map<String, Object> firstLine = new LinkedHashMap<>();
+        firstLine.put("idProduct", product.getId());
+        firstLine.put("quantity", 3);
+
+        Map<String, Object> secondLine = new LinkedHashMap<>();
+        secondLine.put("idProduct", product.getId());
+        secondLine.put("quantity", 3);
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("idClient", client.getId());
+        body.put("idProfessor", professor.getId());
+        body.put("date", LocalDate.now().toString());
+        body.put("products", List.of(firstLine, secondLine));
+
+        mockMvc.perform(post("/api/payments/product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.succes").value(false));
+
+        assertThat(productRepository.findById(product.getId()).orElseThrow().getStock()).isEqualTo(5);
+    }
 }

@@ -158,6 +158,63 @@ class ClientControllerValidationTest {
 
         JsonNode data = objectMapper.readTree(result.getResponse().getContentAsString()).get("data");
         assertThat(data).isNotNull();
-        assertThat(data.get("name").asText()).isNotBlank();
+        String nameMessage = data.get("name").asText();
+        assertThat(nameMessage).isNotBlank();
+        // AC-0001-12: verificar el texto en español, no solo que haya un mensaje.
+        assertThat(nameMessage.toLowerCase()).contains("nombre");
+    }
+
+    // AC-0001-03 (hallazgo del reviewer): el modal de edición no manda `email`. Editar un cliente
+    // sin ese campo no puede borrar el email que ya tenía en base.
+    @Test
+    void updateClient_withoutEmailInPayload_keepsPersistedEmail() throws Exception {
+        MvcResult createResult = mockMvc.perform(post("/api/clients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validClientPayload("50111222"))))
+                .andExpect(status().isOk())
+                .andReturn();
+        long id = objectMapper.readTree(createResult.getResponse().getContentAsString())
+                .get("data").get("id").asLong();
+
+        // Mismo payload que arma ClientsPage.handleEditClient: sin email.
+        Map<String, Object> editFromModal = validClientPayload("50111222");
+        editFromModal.remove("email");
+        editFromModal.put("phone", "1199887766");
+
+        mockMvc.perform(put("/api/clients/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editFromModal)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/clients/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.phone").value("1199887766"))
+                .andExpect(jsonPath("$.data.email").value("marina.suarez@example.com"));
+    }
+
+    // Caso de borde de la spec 0001 (hallazgo del reviewer): un DNI con espacios alrededor que queda
+    // en 8 caracteres después del trim se acepta, y se guarda sin los espacios.
+    @Test
+    void createClient_withDniSurroundedBySpaces_isAcceptedAndStoredTrimmed() throws Exception {
+        MvcResult createResult = mockMvc.perform(post("/api/clients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validClientPayload(" 51111222 "))))
+                .andExpect(status().isOk())
+                .andReturn();
+        long id = objectMapper.readTree(createResult.getResponse().getContentAsString())
+                .get("data").get("id").asLong();
+
+        mockMvc.perform(get("/api/clients/{id}", id))
+                .andExpect(jsonPath("$.data.dni").value("51111222"));
+    }
+
+    // Caso de borde de la spec 0001: un DNI de solo espacios sigue siendo obligatorio.
+    @Test
+    void createClient_withBlankDni_respondsBadRequest() throws Exception {
+        mockMvc.perform(post("/api/clients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validClientPayload("        "))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data.dni").exists());
     }
 }

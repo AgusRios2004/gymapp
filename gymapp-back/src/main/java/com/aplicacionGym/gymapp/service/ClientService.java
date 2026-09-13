@@ -177,7 +177,8 @@ public class ClientService {
         existingClient.setLastName(updatedClient.getLastName());
         existingClient.setDni(updatedClient.getDni());
         existingClient.setPhone(updatedClient.getPhone());
-        existingClient.setEmail(updatedClient.getEmail());
+        // El modal de edición no manda email: un null significa "no cambió", no "borralo".
+        if (updatedClient.getEmail() != null) existingClient.setEmail(updatedClient.getEmail());
         existingClient.setActive(updatedClient.isActive());
         if (updatedClient.getHeight() != null) existingClient.setHeight(updatedClient.getHeight());
         if (updatedClient.getTargetWeight() != null) existingClient.setTargetWeight(updatedClient.getTargetWeight());

@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,6 +98,35 @@ class GlobalExceptionHandlerTest {
         JsonNode json = objectMapper.readTree(body);
         assertThat(json.get("message").asText()).isEqualTo("Error inesperado, intentá de nuevo.");
         assertThat(body).doesNotContain(internalMessage);
+    }
+
+    // Comportamiento esperado 3 y 4 de la spec 0001 (hallazgo del reviewer): los errores de cliente que
+    // resuelve Spring MVC no pueden terminar en el 500 genérico del handler de Exception.
+    @Test
+    void nonNumericPathVariable_respondsBadRequestInSpanish() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/clients/{id}", "abc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.succes").value(false))
+                .andReturn();
+
+        String message = objectMapper.readTree(result.getResponse().getContentAsString()).get("message").asText();
+        assertThat(message).isNotBlank().isNotEqualTo("Error inesperado, intentá de nuevo.");
+    }
+
+    @Test
+    void unknownRoute_respondsNotFound() throws Exception {
+        mockMvc.perform(get("/api/esta-ruta-no-existe"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.succes").value(false));
+    }
+
+    @Test
+    void unsupportedHttpMethod_respondsMethodNotAllowed() throws Exception {
+        mockMvc.perform(put("/api/payments/monthly")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.succes").value(false));
     }
 
     // AC-0001-12: una excepción con message null igual responde con un message no vacío.

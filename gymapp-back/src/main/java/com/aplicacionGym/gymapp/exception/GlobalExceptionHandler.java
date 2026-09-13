@@ -4,10 +4,13 @@ import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -63,11 +66,37 @@ public class GlobalExceptionHandler {
                 .body(WebApiResponseBuilder.failure("No se pudo completar la operación por un conflicto con los datos existentes."));
     }
 
+    // Un id no numérico en la ruta (GET /api/clients/abc). Sin esto cae en el handler de Exception
+    // y responde 500, cuando es un error del cliente.
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<WebApiResponse> handleTypeMismatchException(TypeMismatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(WebApiResponseBuilder.failure("Uno de los valores de la solicitud no tiene el formato esperado."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<WebApiResponse> handleUnexpectedException(Exception ex) {
+        // Las excepciones estándar de Spring MVC (ruta inexistente, método no soportado, parámetro
+        // faltante...) traen su propio status. Respetarlo: el @ExceptionHandler(Exception.class) las
+        // intercepta antes que el resolver por defecto de Spring y las volvía 500.
+        if (ex instanceof ErrorResponse errorResponse) {
+            HttpStatusCode status = errorResponse.getStatusCode();
+            return ResponseEntity.status(status)
+                    .body(WebApiResponseBuilder.failure(mensajePorStatus(status)));
+        }
         logger.error("Error inesperado", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(WebApiResponseBuilder.failure(MENSAJE_INESPERADO));
+    }
+
+    private String mensajePorStatus(HttpStatusCode status) {
+        return switch (status.value()) {
+            case 400 -> "Solicitud inválida.";
+            case 404 -> "Recurso no encontrado.";
+            case 405 -> "Método HTTP no permitido para esta ruta.";
+            case 415 -> "Tipo de contenido no soportado.";
+            default -> status.is4xxClientError() ? "Solicitud inválida." : MENSAJE_INESPERADO;
+        };
     }
 
     private String mensajeOPorDefecto(String mensaje, String porDefecto) {

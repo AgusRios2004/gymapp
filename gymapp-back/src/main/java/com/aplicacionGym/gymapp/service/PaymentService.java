@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PaymentService {
@@ -110,11 +112,14 @@ public class PaymentService {
                                 "Producto no encontrado con id: " + productDetailRequestDTO.getIdProduct())))
                 .toList();
 
-        // Validar el stock de todos los ítems antes de descontar ninguno.
+        // Validar el stock de todos los ítems antes de descontar ninguno. Se suma por producto: dos
+        // líneas del mismo producto compiten por el mismo stock.
+        Map<Long, Integer> cantidadPorProducto = new HashMap<>();
         for (int i = 0; i < products.size(); i++) {
-            Product product = products.get(i);
-            int quantity = dto.getProducts().get(i).getQuantity();
-            if (product.getStock() < quantity) {
+            cantidadPorProducto.merge(products.get(i).getId(), dto.getProducts().get(i).getQuantity(), Integer::sum);
+        }
+        for (Product product : products) {
+            if (product.getStock() < cantidadPorProducto.get(product.getId())) {
                 throw new BusinessRuleException("Stock insuficiente para el producto: " + product.getProductName());
             }
         }
