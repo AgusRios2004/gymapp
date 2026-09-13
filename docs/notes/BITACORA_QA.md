@@ -183,3 +183,33 @@ La Sesión 01 fue QA de pantalla. Al contrastar contra el código, tres bugs est
 - **Compuerta dentro del sandbox:** `verify.sh` pasa en la imagen `sandcastle:gymapp` sin MySQL (79 s). **Pero el install en frío tardó 609 s**, contra el timeout de 300 s de `onSandboxReady` en `main.mts`: Sandcastle se habría caído en la primera fase. Se precachean `~/.m2` y `~/.npm` en la imagen (`npm run sandcastle:image`).
 - **Con la caché en la imagen:** install **9 s** (antes 609 s) y `verify.sh` completo en 49 s dentro del sandbox. El build de la imagen falló tres veces antes de eso: no era la red (primer diagnóstico, equivocado) sino un `rm` sobre un directorio que `COPY` había creado como root.
 
+---
+
+### 🤖 Piloto de Sandcastle sobre la spec 0001 (T-35)
+
+**Resultado:** el pipeline corrió de punta a punta en el intento 5 y **la revisión bloqueó el merge** con 2 hallazgos de severidad alta. La compuerta humana (decidir qué hacer con los hallazgos) queda pendiente.
+
+| Fase (intento 5) | Duración | Resultado |
+|:---|:---:|:---|
+| Planner | ~2 min | Eligió la 0001, rama `sandcastle/spec-0001` |
+| Test-author | ~12 min | 13 tests rojos, los 13 AC citados, fallan por la razón correcta |
+| Implementer | ~13 min | +761/−68 en 13 archivos; `verify.sh` verde en el sandbox |
+| Reviewer | ~6 min | 5 hallazgos: 2 alta, 2 media, 1 baja → no se mergea |
+
+**Hallazgos del reviewer** (todos con escenario de falla concreto):
+- 🔴 `ClientService.updateClient` hace `setEmail` incondicional: editar un cliente desde el modal (que no manda `email`) **borra el email en base**. Rompe AC-0001-03.
+- 🔴 `@Size(min=8,max=8)` sobre el DNI se evalúa antes del `trim`: `" 12345678 "` da 400 aunque la spec lo acepta. Caso de borde sin test.
+- 🟠 El `@ExceptionHandler(Exception.class)` convierte 400/404/405 estándar de Spring (id no numérico, ruta inexistente, método no soportado) en 500.
+- 🟠 La validación de stock es por línea: dos ítems del mismo producto que juntos superan el stock pasan y dejan **stock negativo**.
+- 🟡 El test de AC-0001-13 solo verifica que el mensaje no esté vacío, no que esté en español.
+
+**Fricción encontrada (5 intentos, 4 fallidos por el pipeline, no por el código):**
+1. `commands.test` compuesto sin agrupar + `| tail` en el prompt → `PromptError`. Arreglado en `harness.config.yml`.
+2. Respaldo de rama dentro de `sandcastle/spec-*` → el planner la tomó como planificada. Los respaldos van en `respaldo/`.
+3. `verify.sh` (~50 s) dentro de una expansión de shell del prompt → timeout fijo de 30 s de sandcastle 0.12.0. Arreglado en commons `5fca80c` (salida por `sandbox.exec`).
+4. Límite de uso del plan de Claude a mitad de corrida (`session limit`). Cinco corridas completas en una noche lo agotaron.
+
+**Deudas para commons:** no hay forma de reanudar una spec desde la revisión (una corrida cortada después de implementar obliga a repetir todo), y el pipeline no tiene vuelta de corrección: los hallazgos de la revisión vuelven al humano, no al implementer.
+
+Ramas conservadas: `respaldo/spec-0001-intento-{1,3,4}` y `sandcastle/spec-0001` (intento 5, la revisada).
+
