@@ -27,3 +27,4 @@ mysql-data/
 .claude/settings.local.json
 .sandcastle/.env
 __pycache__/
+.sandcastle/deps/

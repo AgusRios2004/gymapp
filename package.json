@@ -9,6 +9,7 @@
     "zod": "^4.6.4"
   },
   "scripts": {
-    "sandcastle": "tsx .sandcastle/main.mts"
+    "sandcastle": "tsx .sandcastle/main.mts",
+    "sandcastle:image": "rm -rf .sandcastle/deps && mkdir -p .sandcastle/deps/back .sandcastle/deps/front && cp -r gymapp-back/pom.xml gymapp-back/mvnw gymapp-back/.mvn .sandcastle/deps/back/ && cp gym-frontend/package.json gym-frontend/package-lock.json .sandcastle/deps/front/ && sandcastle docker build-image"
   }
 }

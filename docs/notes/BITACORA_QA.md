@@ -181,4 +181,5 @@ La Sesión 01 fue QA de pantalla. Al contrastar contra el código, tres bugs est
 - **Tests del backend sin MySQL (T-32):** perfil de test con H2 + `app.seed.enabled=false`. Verificado con `DB_URL` apuntando a un puerto muerto: el contexto levanta contra H2 y los seeders no corren.
 - **Vitest en el frontend (T-33):** vitest + Testing Library, test de humo sobre `EmptyState`, sumado a `commands.test`.
 - **Compuerta dentro del sandbox:** `verify.sh` pasa en la imagen `sandcastle:gymapp` sin MySQL (79 s). **Pero el install en frío tardó 609 s**, contra el timeout de 300 s de `onSandboxReady` en `main.mts`: Sandcastle se habría caído en la primera fase. Se precachean `~/.m2` y `~/.npm` en la imagen (`npm run sandcastle:image`).
+- **Con la caché en la imagen:** install **9 s** (antes 609 s) y `verify.sh` completo en 49 s dentro del sandbox. El build de la imagen falló tres veces antes de eso: no era la red (primer diagnóstico, equivocado) sino un `rm` sobre un directorio que `COPY` había creado como root.
 

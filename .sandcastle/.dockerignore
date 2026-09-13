@@ -1,0 +1,5 @@
+# Contexto de build de la imagen de Sandcastle (npm run sandcastle:image).
+# Solo entra lo que el Dockerfile copia: los manifiestos de dependencias que
+# el script deja en deps/. Nunca el .env, ni logs, ni worktrees.
+*
+!deps/
