@@ -17,3 +17,7 @@ target/
 .vscode/
 .DS_Store
 mysql-data/
+
+# Sandcastle (orquestación de agentes)
+.sandcastle/logs/
+.sandcastle/worktrees/
