@@ -41,7 +41,8 @@ docs/
 │   ├── README.md            ← formato y convención de numeración
 │   ├── 0001-color-de-marca-emerald.md
 │   ├── 0002-tema-visual-light-mode.md
-│   └── 0003-clases-multidia-elementcollection.md
+│   ├── 0003-clases-multidia-elementcollection.md
+│   └── 0004-capacidad-de-planificacion.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
@@ -90,7 +91,7 @@ docs/
 
 > El nombre del archivo conserva la fecha `06-09-2026` (día en que se escribió el sprint). El período real arranca el 07/09 — ver la tabla de fechas dentro del documento.
 >
-> **Capacidad del proyecto:** ~2 hs/día entre semana, ~4 hs los findes. Toda fecha de sprint se calcula sobre ~12,5 hs/semana efectivas — detalle en [`ROADMAP.md`](./ROADMAP.md).
+> **Capacidad del proyecto:** ~2 hs/día entre semana, ~4 hs los findes. Toda fecha de sprint se calcula sobre ~12,5 hs/semana efectivas — detalle en [`ROADMAP.md`](./ROADMAP.md), el porqué en [ADR-0004](./adr/0004-capacidad-de-planificacion.md).
 
 ---
 
@@ -138,7 +139,8 @@ gymapp/
 │   │   ├── README.md
 │   │   ├── 0001-color-de-marca-emerald.md
 │   │   ├── 0002-tema-visual-light-mode.md
-│   │   └── 0003-clases-multidia-elementcollection.md
+│   │   ├── 0003-clases-multidia-elementcollection.md
+│   │   └── 0004-capacidad-de-planificacion.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/

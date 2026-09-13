@@ -35,6 +35,8 @@ GymApp es un **proyecto de pasatiempo**. La capacidad real (declarada el 06/09/2
 
 Cualquier fecha de este roadmap sale de dividir el esfuerzo estimado por esas 12,5 hs/semana. **No planificar sobre días hábiles completos ni sobre 5 hs/día** — así se estimó Sprint 1 la primera vez y quedaba en 2 semanas cuando en realidad son 4.
 
+> Por qué se fijó este número y qué alternativas se descartaron: [ADR-0004](./adr/0004-capacidad-de-planificacion.md).
+
 ---
 
 ## ⚠️ Nota sobre numeración de Sprints
