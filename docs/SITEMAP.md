@@ -1,7 +1,7 @@
 # 🗺️ SITEMAP — Índice General de Documentación GymApp
 
 > Punto de entrada único para toda la documentación del proyecto.
-> **Última actualización:** 06/09/2026 (saneamiento de docs + recalendarización Sprint 1)
+> **Última actualización:** 13/09/2026 (Sprint 1 partido, Sprint 2 creado — ADR-0006)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Capa | Estado | Descripción |
 |:---|:---:|:---|
-| **Capa 1 — Admin** | 🟡 En refactor | Funcional con bugs y deuda UX. Sprint 1 en curso (07/09 → 04/10). |
+| **Capa 1 — Admin** | 🟡 En refactor | Funcional con bugs y deuda UX. Sprint 1 en curso (07/09 → 04/10), Sprint 2 (05/10 → 18/10) cierra la capa. |
 | **Capa 2 — Entrenador** | ⬜ Pendiente | Arranca cuando Capa 1 pase QA sin bugs críticos. Incluirá LLM. |
 | **Capa 3 — Alumno** | ⬜ Pendiente | Después de Capa 2. |
 
@@ -43,14 +43,16 @@ docs/
 │   ├── 0002-tema-visual-light-mode.md
 │   ├── 0003-clases-multidia-elementcollection.md
 │   ├── 0004-capacidad-de-planificacion.md
-│   └── 0005-harness-commons-y-sandcastle-spec-driven.md
+│   ├── 0005-harness-commons-y-sandcastle-spec-driven.md
+│   └── 0006-partir-sprint-1-diseno-a-sprint-2.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
 │   └── PRD_REFACTOR.md
 ├── sprints/                ← planificación de sprints
 │   ├── README.md           ← convención de nomenclatura
-│   └── 06-09-2026-sprint-1-refactor-core-admin.md
+│   ├── 06-09-2026-sprint-1-refactor-core-admin.md
+│   └── 05-10-2026-sprint-2-diseno-light-mode.md
 └── archive/                ← docs históricos, ya no reflejan el estado actual
     ├── GEMINI.md
     ├── INFORME_CUMPLIMIENTO_HOJA_DE_RUTA.md
@@ -88,7 +90,8 @@ docs/
 
 | Sprint | Período | Objetivo | Estado |
 |:---:|:---|:---|:---:|
-| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — bugs críticos + UX + light mode | 🔵 En curso |
+| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — Fase 0 (pipeline de agentes) + bugs críticos + UX base | 🔵 En curso |
+| [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) | 05/10 → 18/10/2026 | Diseño light mode + UX restante — cierra Capa 1 | ⬜ Pendiente |
 
 > El nombre del archivo conserva la fecha `06-09-2026` (día en que se escribió el sprint). El período real arranca el 07/09 — ver la tabla de fechas dentro del documento.
 >
@@ -145,14 +148,16 @@ gymapp/
 │   │   ├── 0002-tema-visual-light-mode.md
 │   │   ├── 0003-clases-multidia-elementcollection.md
 │   │   ├── 0004-capacidad-de-planificacion.md
-│   │   └── 0005-harness-commons-y-sandcastle-spec-driven.md
+│   │   ├── 0005-harness-commons-y-sandcastle-spec-driven.md
+│   │   └── 0006-partir-sprint-1-diseno-a-sprint-2.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/
 │   │   └── PRD_REFACTOR.md
 │   ├── sprints/
 │   │   ├── README.md
-│   │   └── 06-09-2026-sprint-1-refactor-core-admin.md
+│   │   ├── 06-09-2026-sprint-1-refactor-core-admin.md
+│   │   └── 05-10-2026-sprint-2-diseno-light-mode.md
 │   └── archive/                       ← docs históricos, no vigentes
 │       ├── GEMINI.md
 │       ├── INFORME_CUMPLIMIENTO_HOJA_DE_RUTA.md

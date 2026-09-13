@@ -33,11 +33,11 @@ Fuente de verdad del diseño: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 Vista completa de meses/capas en [`docs/ROADMAP.md`](docs/ROADMAP.md). Resumen — 3 capas (ver [`docs/prd/PRD_REFACTOR.md`](docs/prd/PRD_REFACTOR.md)):
 
-1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 en curso (07/09 → 04/10/2026). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
+1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 en curso (07/09 → 04/10/2026: bugs críticos + pipeline de agentes), después Sprint 2 (05/10 → 18/10/2026: diseño + UX). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
 2. **Capa 2 — Entrenador**: rutinas inteligentes + LLM. Pendiente.
 3. **Capa 3 — Alumno**: consumo de su plan. Pendiente.
 
-Sprint activo: [`docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md`](docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md)
+Sprint activo: [`docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md`](docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md) · Siguiente: [`docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md`](docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md)
 
 Reglas globales de arquitectura del refactor (repetidas de `PRD_REFACTOR.md`, no dupliques lógica — leé el original si hay dudas):
 - Errores: el backend siempre devuelve `message` descriptivo; el frontend lo muestra literal en un toast.
