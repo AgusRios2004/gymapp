@@ -49,3 +49,4 @@ Qué implica esta decisión hacia adelante.
 | [0002](./0002-tema-visual-light-mode.md) | Tema visual único: light mode | Activa |
 | [0003](./0003-clases-multidia-elementcollection.md) | Clases con múltiples días: `@ElementCollection` | Activa |
 | [0004](./0004-capacidad-de-planificacion.md) | Capacidad de planificación: ~12,5 hs/semana, no días hábiles | Activa |
+| [0005](./0005-harness-commons-y-sandcastle-spec-driven.md) | Harness de commons y Sandcastle `spec-driven` en vez del loop propio | Activa |

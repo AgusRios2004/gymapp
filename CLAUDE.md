@@ -56,8 +56,17 @@ Reglas globales de arquitectura del refactor (repetidas de `PRD_REFACTOR.md`, no
 5. Frontend: seguí `gym-frontend/GEMINI.md` (estructura de carpetas, TypeScript estricto, RHF+Zod, servicios centralizados en `src/services/`).
 6. Si dudás por qué algo se decidió así (color, estructura de datos, convención), revisá `docs/adr/` antes de asumir que es un error.
 
+## Harness y Sandcastle
+
+El repo tiene instalado el harness de [`~/WorkSpace/commons`](../commons/README.md) (ver [ADR-0005](docs/adr/0005-harness-commons-y-sandcastle-spec-driven.md)):
+
+- **Compuerta:** `bash .harness/scripts/verify.sh` corre lint + typecheck + tests + cobertura de specs. Los comandos salen de `harness.config.yml`; no los repitas en otro lado.
+- **Specs:** el trabajo autónomo toma specs `aprobada` de `specs/` (convención en `specs/README.md`), no tareas sueltas del sprint.
+- **Sandcastle:** `.sandcastle/` es el rol `spec-driven` de commons (`npm run sandcastle`). Scripts y prompts se actualizan desde commons, no se parchean acá.
+
 ## Al terminar
 
+- Corré `bash .harness/scripts/verify.sh` y no des la tarea por cerrada si falla.
 - Actualizá el estado de la tarea (⬜/🔵/✅/🔴) en el doc de sprint correspondiente.
 - Si agregaste un doc nuevo, sumalo a `docs/SITEMAP.md` (es el índice único — no dejar docs huérfanos).
 - Si tomaste una decisión de arquitectura que alguien podría volver a preguntar en unos meses, escribila como ADR en `docs/adr/` (ver `docs/adr/README.md` para el formato) — no alcanza con dejarla mencionada en el sprint.

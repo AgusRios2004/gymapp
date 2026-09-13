@@ -42,7 +42,8 @@ docs/
 │   ├── 0001-color-de-marca-emerald.md
 │   ├── 0002-tema-visual-light-mode.md
 │   ├── 0003-clases-multidia-elementcollection.md
-│   └── 0004-capacidad-de-planificacion.md
+│   ├── 0004-capacidad-de-planificacion.md
+│   └── 0005-harness-commons-y-sandcastle-spec-driven.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
@@ -104,6 +105,9 @@ docs/
 | [`../gymapp-back/GEMINI.md`](../gymapp-back/GEMINI.md) | Backend: Java 21, Spring Boot, JPA, JWT, DTOs, GlobalExceptionHandler. |
 | [`../gym-frontend/GEMINI.md`](../gym-frontend/GEMINI.md) | Frontend: React 19, TypeScript, TailwindCSS, TanStack Query, Zod. |
 | [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) | Tokens de color, componentes UI. Modo: 100% light/white. |
+| [`../AGENTS.md`](../AGENTS.md) | Contexto del harness: cómo correr la compuerta, límites duros, dónde buscar. Lo leen los agentes de Sandcastle. |
+| [`../harness.config.yml`](../harness.config.yml) | Comandos de install/lint/typecheck/test que usan hooks, CI y Sandcastle. |
+| [`../specs/README.md`](../specs/README.md) | Convención de specs, estados y AC-IDs. |
 | [`../.agents/skills/gym-theme-guardian/SKILL.md`](../.agents/skills/gym-theme-guardian/SKILL.md) | Skill que carga un agente de IDE/Antigravity automáticamente al maquetar UI — debe decir lo mismo que `DESIGN_SYSTEM.md`. |
 
 ---
@@ -140,7 +144,8 @@ gymapp/
 │   │   ├── 0001-color-de-marca-emerald.md
 │   │   ├── 0002-tema-visual-light-mode.md
 │   │   ├── 0003-clases-multidia-elementcollection.md
-│   │   └── 0004-capacidad-de-planificacion.md
+│   │   ├── 0004-capacidad-de-planificacion.md
+│   │   └── 0005-harness-commons-y-sandcastle-spec-driven.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/
@@ -154,6 +159,12 @@ gymapp/
 │       ├── 2026-29-07-be-perfil-objetivo-entrenamiento.md
 │       ├── 2026-29-07-fe-perfil-objetivo-entrenamiento.md
 │       └── 2026-29-07-be-fe-testing-e2e-suite.md
+├── AGENTS.md                          ← contexto para agentes del harness (comandos, límites, router)
+├── harness.config.yml                 ← único archivo propio del harness de commons (ADR-0005)
+├── specs/                             ← specs con AC-IDs que consume Sandcastle
+├── .harness/scripts/                  ← compuerta vendoreada desde commons (verify.sh)
+├── .sandcastle/                       ← rol spec-driven de commons + Dockerfile Java/Node
+├── .claude/                           ← hooks del harness; skills linkeadas a commons
 ├── .agents/
 │   └── skills/gym-theme-guardian/SKILL.md   ← reglas de tema para agentes de IDE
 ├── gymapp-back/                       ← Spring Boot (Java 21)
