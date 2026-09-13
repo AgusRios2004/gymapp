@@ -34,13 +34,13 @@ Para AC-0001-11 hace falta un endpoint que tire una excepción no mapeada. No ag
 **Toca:** `dto/request/ClientRequestDTO.java`, `controller/ClientController.java`, `mapper/ClientMapper.java`, `service/ClientService.java`, `src/test/java/.../controller/ClientControllerValidationTest.java`
 **Depende de:** T1
 **Tamaño:** M
-**Cubre:** AC-0001-01, AC-0001-02, AC-0001-03, AC-0001-04, BUG-15
+**Cubre:** AC-0001-01, AC-0001-02, AC-0001-03, AC-0001-04, AC-0001-13, BUG-15
 
 - Mensajes de `ClientRequestDTO` en español. `phone`: el mensaje dice el mínimo real (BUG-15).
 - Sumar al DTO los campos que manda hoy el formulario y el DTO no declara (`email`, `active`, más los que falten al comparar contra `ClientSchema` del frontend). **Antes de escribir código**, listar esa diferencia en el commit: un campo olvidado se descarta sin error y rompe la edición en silencio.
 - `createClient` y `updateClient` reciben `@Valid @RequestBody ClientRequestDTO`. La conversión DTO → entidad va en `ClientMapper`, no en el controller.
 - Traducir el mensaje de DNI duplicado de `ClientService`.
-- **No cambiar** los largos de `name` y `lastName` hasta que se responda la pregunta abierta 3 de la spec.
+- `name` y `lastName`: `@Size(min = 2, max = 15)`, con mensaje en español (AC-0001-13).
 
 ---
 

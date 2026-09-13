@@ -1,7 +1,7 @@
 ---
 id: 0001
 titulo: Errores del backend legibles y en español
-estado: propuesta            # draft | propuesta | aprobada | implementada | archivada
+estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: [ADR-0005]
@@ -42,7 +42,7 @@ Cubre las tareas T-01, T-02, T-05 y T-06 del [Sprint 1](../docs/sprints/06-09-20
 - **Asistencia de un cliente con la cuota vencida:** 409, y el mensaje incluye la fecha de vencimiento.
 - **Venta con stock insuficiente:** 409 y **no** se descuenta stock de ningún producto del pedido, incluidos los que sí tenían stock.
 - **Excepción con `message` null:** igual se responde con un `message` no vacío.
-- **Nombres cortos:** `ClientRequestDTO` pide `name` y `lastName` de 4 a 15 caracteres, pero el frontend acepta desde 1. Al activar `@Valid`, un alta de "Ana Gil" que hoy funciona pasaría a dar 400. Ver pregunta abierta 3.
+- **Nombres cortos:** `name` y `lastName` aceptan desde **2** caracteres (decisión del 13/09/2026). Hoy el DTO pide 4, lo que rechazaría "Ana" o "Gil" al activar `@Valid`. Un solo carácter se sigue rechazando.
 
 ## Criterios de aceptación
 
@@ -60,6 +60,7 @@ Cubre las tareas T-01, T-02, T-05 y T-06 del [Sprint 1](../docs/sprints/06-09-20
 | AC-0001-10 | `POST /api/payments/product` donde un ítem pide más que su stock responde 409, y el stock de **todos** los productos del pedido queda igual que antes del request. |  |
 | AC-0001-11 | Una excepción no mapeada lanzada desde un service responde 500 con `message` exactamente `"Error inesperado, intentá de nuevo."` y el cuerpo no contiene el mensaje original de la excepción. |  |
 | AC-0001-12 | Ninguna respuesta de error de los casos anteriores tiene `message` null, vacío o en inglés (los tests verifican el texto esperado, no solo el status). |  |
+| AC-0001-13 | `POST /api/clients` con `name` "Ana" y `lastName` "Gil" (y el resto válido) responde 200; con `name` "A" responde 400 y `data.name` tiene un mensaje en español. |  |
 
 ## Fuera de alcance
 
@@ -77,10 +78,10 @@ Cubre las tareas T-01, T-02, T-05 y T-06 del [Sprint 1](../docs/sprints/06-09-20
 - Para no cambiar el contrato de clientes (AC-0001-03), a `ClientRequestDTO` le van a faltar campos que hoy manda el frontend (`email`, `active` y lo que haya en `ClientFormData`). Se asume que agregarlos al DTO es parte de esta spec.
 - Los tests de controller levantan el contexto con H2 (perfil de test de T-32). Con `@WebMvcTest` hay que resolver el filtro JWT; con `@SpringBootTest` + `MockMvc` + `@WithMockUser` no.
 
-**Preguntas abiertas para aprobar:**
-1. ¿409 o 422 para reglas de negocio?
-2. ¿El `message` de validación junta todos los errores en una frase o alcanza con el primero + el mapa en `data`? La spec pide todos, que es lo más útil para un toast pero puede quedar largo.
-3. ¿Qué largo mínimo tienen nombre y apellido? Hoy el DTO dice 4, lo que rechaza nombres reales como "Ana" o "Gil". Propuesta: mínimo 2. Si se acepta, se suma un criterio que lo verifique.
+**Decisiones de aprobación (13/09/2026, Agustín):**
+1. Reglas de negocio → **409**.
+2. El `message` de validación **nombra todos** los campos inválidos; `data` lleva el mapa `campo → mensaje`.
+3. `name` y `lastName`: mínimo **2** caracteres (AC-0001-13).
 
 **Qué es lo más probable que salga mal:**
 - **AC-0001-03.** Pasar de la entidad `Client` a `ClientRequestDTO` en el controller es el cambio con más riesgo de romper en silencio el alta o la edición desde el frontend: un campo que el DTO no declara se descarta sin error. Por eso ese criterio exige hacer el round-trip con el payload real de `clientService.ts`, no con uno inventado.

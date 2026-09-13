@@ -70,8 +70,8 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-31 | Mergear el harness + Sandcastle `spec-driven` a `main` | — | — | — | ✅ |
 | T-32 | Perfil de test del backend con H2: `./mvnw test` no usa la MySQL local ni corre los `DataLoader` | `pom.xml`, `src/test/resources/`, `config/*DataLoader.java` | 2 hs | — | ✅ |
 | T-33 | Vitest mínimo en el frontend + sumarlo a `commands.test` | `gym-frontend/package.json`, `vite.config.ts`, `harness.config.yml` | 1,5 hs | — | ✅ |
-| T-34 | Credenciales de Claude en `.sandcastle/.env` (**lo hace el dev**) | `.sandcastle/.env` | 15 min | — | ⬜ |
-| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | 🔵 spec en `propuesta` |
+| T-34 | Credenciales de Claude en `.sandcastle/.env` (**lo hace el dev**) | `.sandcastle/.env` | 15 min | — | ✅ |
+| T-35 | Spec 0001 aprobada + primera corrida de Sandcastle, anotando tiempo, costo y fricción | `specs/0001-*.md` | 2,25 hs | T-32, T-34 | 🔵 spec aprobada, corriendo |
 
 ### 🔴 Backlog
 
@@ -123,7 +123,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 
 | Spec | Tareas | Cómo se ejecuta | Estado |
 |:---:|:---|:---|:---:|
-| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) | 🔵 propuesta |
+| 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) | 🔵 aprobada |
 | 0002 — Venta de producto con profesor desde JWT | T-03, T-11, T-12 | Sandcastle BE + interactivo FE | ⬜ |
 | 0003 — Clases multi-día | T-07, T-14 | Sandcastle BE + interactivo FE | ⬜ |
 | 0004 — Activar/desactivar cliente | T-08, T-25 | A decidir tras el piloto | ⬜ |
