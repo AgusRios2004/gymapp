@@ -17,7 +17,12 @@ project:
 # Comandos reales del proyecto. Los hooks y el CI ejecutan exactamente esto.
 commands:
   install: "(cd gymapp-back && ./mvnw -q -B dependency:go-offline) && (cd gym-frontend && npm ci --prefer-offline --no-audit --no-fund)"
-  test: "(cd gymapp-back && ./mvnw -q -B test) && (cd gym-frontend && npm test)"
+  # Agrupado entero entre "( ... )" con espacio (no "((", que en bash es
+  # aritmética). Sin el grupo externo, un "| tail" que le agregue quien lo
+  # invoca (implement-prompt.md de Sandcastle) se pega solo a la parte del
+  # front, y con los tests del back en rojo el prompt aborta. Pasó en la
+  # primera corrida de la spec 0001 (13/09/2026).
+  test: "( (cd gymapp-back && ./mvnw -q -B test) && (cd gym-frontend && npm test) )"
   lint: "cd gym-frontend && npm run lint"
   format: ""
   typecheck: "cd gym-frontend && npx tsc -b --noEmit"
