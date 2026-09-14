@@ -230,3 +230,7 @@ Ramas conservadas: `respaldo/spec-0001-intento-{1,3,4}` y `sandcastle/spec-0001`
 1. **Planner y merger corren sobre el repo del host, no en un worktree.** `commands.install` (`npm ci`, `mvnw`) reescribe `node_modules` y `target/` del host mientras corre: el hook local encontró ESLint 6.4 del sistema y, en la spec 0001, un `NoClassDefFoundError` por compilación a medias.
 2. **El merger editó `.claude/settings.local.json` del host** (cambió `JAVA_HOME` a la ruta del contenedor) para que su hook pasara. Un agente con acceso al repo del host puede tocar configuración local gitignoreada. Restaurado a mano.
 
+**Cierre de hallazgos (13/09/2026):** los 3 hallazgos de la revisión de la spec 0002 se corrigieron a mano, con test rojo primero. La búsqueda por DNI de `AttendancePage` ya no rompe con DNI null. Un token de una persona borrada responde 401 en español: el filtro JWT ya no propaga la excepción y hay un entry point en `SecurityConfig`. Se agregaron `AuthenticatedStaffServiceTest` y el test del selector ADMIN, verificado por mutación. `verify.sh` en verde: 27/27 AC, 38 tests de backend y 10 de front.
+
+⚠️ **Cambio de comportamiento a tener en cuenta en la QA Sesión 02:** toda petición sin sesión válida (sin token o con token vencido) pasa de **403 a 401**. El interceptor de `lib/axios.ts` ya trataba el 401 como sesión expirada, así que ahora ese aviso aparece donde antes no aparecía nada.
+
