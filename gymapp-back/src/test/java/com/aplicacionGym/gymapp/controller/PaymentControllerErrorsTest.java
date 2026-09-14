@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -28,16 +27,19 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests rojos de la spec 0001: pagos - plan duplicado como 409, y stock sin descuentos parciales.
+ *
+ * Se autentican con un Professor real en H2 (spec 0002: la identidad sale del token, no de
+ * @WithMockUser sobre un usuario sin Person detrás).
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 class PaymentControllerErrorsTest {
 
     @Autowired
@@ -77,6 +79,8 @@ class PaymentControllerErrorsTest {
         professor.setLastName("Ibarra");
         professor.setDni(dni);
         professor.setPhone("1188990011");
+        professor.setEmail(dni + "@profesores.test");
+        professor.setPassword("x");
         professor.setActive(true);
         return professorRepository.save(professor);
     }
@@ -123,6 +127,7 @@ class PaymentControllerErrorsTest {
         body.put("date", LocalDate.now().toString());
 
         MvcResult result = mockMvc.perform(post("/api/payments/monthly")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())
@@ -159,6 +164,7 @@ class PaymentControllerErrorsTest {
         body.put("products", List.of(firstItem, secondItem));
 
         mockMvc.perform(post("/api/payments/product")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())
@@ -194,6 +200,7 @@ class PaymentControllerErrorsTest {
         body.put("products", List.of(firstLine, secondLine));
 
         mockMvc.perform(post("/api/payments/product")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())

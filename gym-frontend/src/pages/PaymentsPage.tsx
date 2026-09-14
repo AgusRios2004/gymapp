@@ -19,7 +19,7 @@ export default function PaymentsPage() {
   
   // Data for the form
   const [selectedClient, setSelectedClient] = useState<string>('');
-  const [selectedProfessor, setSelectedProfessor] = useState<string>(user?.id.toString() || '');
+  const [selectedProfessor, setSelectedProfessor] = useState<string>('');
   const [selectedMonthlyType, setSelectedMonthlyType] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
@@ -58,21 +58,21 @@ export default function PaymentsPage() {
 
   const resetForm = () => {
     setSelectedClient('');
-    setSelectedProfessor(user?.id.toString() || '');
+    setSelectedProfessor('');
     setSelectedMonthlyType('');
     setPaymentDate(new Date().toISOString().split('T')[0]);
   };
 
   const handleCreatePayment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedClient || !selectedProfessor || !selectedMonthlyType) {
+    if (!selectedClient || !selectedMonthlyType || (user?.role === 'ADMIN' && !selectedProfessor)) {
       toast.warning("Por favor completa todos los campos");
       return;
     }
 
     const request: MonthlyPaymentRequest = {
       idClient: Number(selectedClient),
-      idProfessor: Number(selectedProfessor),
+      ...(user?.role === 'ADMIN' ? { idProfessor: Number(selectedProfessor) } : {}),
       idMonthlyType: Number(selectedMonthlyType),
       date: paymentDate
     };

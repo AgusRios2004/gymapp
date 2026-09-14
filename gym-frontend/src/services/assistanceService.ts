@@ -4,7 +4,6 @@ import type { ApiResponse } from '../types/api.types';
 
 export interface AssistanceRequest {
     idClient: number;
-    idProfessor: number;
     date: string;
     inputHour: string;
 }

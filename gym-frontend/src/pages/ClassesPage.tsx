@@ -6,7 +6,6 @@ import { getClasses, createClass, deleteClass, updateClass, getStudentsByClass, 
 import { getRoutines } from '../services/routineService';
 import { createClient, getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
-import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import type { GroupClass, Professor, Client, Assistance } from '../types';
 import { AxiosError } from 'axios';
@@ -22,7 +21,6 @@ const TRANSLATIONS: Record<string, string> = {
 };
 
 export default function ClassesPage() {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split('T')[0];
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -184,7 +182,6 @@ export default function ClassesPage() {
         
         return registerAssistance({
             idClient: clientId,
-            idProfessor: user?.id || 0,
             date: today,
             inputHour: inputHour
         });

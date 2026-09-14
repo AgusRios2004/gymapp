@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -25,16 +24,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests rojos de la spec 0001: las reglas de membresía en asistencias responden 409, no 500.
+ *
+ * Se autentican con un Professor real en H2 (spec 0002: la identidad sale del token, no de
+ * @WithMockUser sobre un usuario sin Person detrás).
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 class AssistanceControllerErrorsTest {
 
     @Autowired
@@ -71,6 +73,8 @@ class AssistanceControllerErrorsTest {
         professor.setLastName("Molina");
         professor.setDni(dni);
         professor.setPhone("1166778899");
+        professor.setEmail(dni + "@profesores.test");
+        professor.setPassword("x");
         professor.setActive(true);
         return professorRepository.save(professor);
     }
@@ -96,6 +100,7 @@ class AssistanceControllerErrorsTest {
         body.put("inputHour", "09:00:00");
 
         MvcResult result = mockMvc.perform(post("/api/assistance")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())
@@ -134,6 +139,7 @@ class AssistanceControllerErrorsTest {
         body.put("inputHour", "09:00:00");
 
         MvcResult result = mockMvc.perform(post("/api/assistance")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isConflict())

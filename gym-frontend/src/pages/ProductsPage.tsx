@@ -15,6 +15,7 @@ import {
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../services/productService';
 import { createProductPayment, getAllPayments } from '../services/paymentService';
 import { getAllClientsList } from '../services/clientService';
+import { getProfessors } from '../services/professorService';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -42,6 +43,7 @@ export default function ProductsPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [cart, setCart] = useState<Array<{ product: Product, quantity: number }>>([]);
   const [clientSearch, setClientSearch] = useState('');
+  const [selectedProfessor, setSelectedProfessor] = useState('');
 
   // Queries
   const { data: products = [], isLoading: isLoadingProducts } = useQuery({
@@ -53,6 +55,12 @@ export default function ProductsPage() {
     queryKey: ['clients', 'active'],
     queryFn: () => getAllClientsList(true),
     enabled: activeTab === 'pos'
+  });
+
+  const { data: professors = [] } = useQuery({
+    queryKey: ['professors', 'active'],
+    queryFn: () => getProfessors(true),
+    enabled: activeTab === 'pos' && user?.role === 'ADMIN'
   });
 
   const { data: allPayments = [] } = useQuery({
@@ -151,8 +159,11 @@ export default function ProductsPage() {
     setCart(prev => prev.filter(item => item.product.id !== productId));
   };
 
+  const isAdmin = user?.role === 'ADMIN';
+  const canConfirmSale = !!selectedClient && cart.length > 0 && (!isAdmin || !!selectedProfessor);
+
   const handleConfirmSale = () => {
-    if (!selectedClient || cart.length === 0) return;
+    if (!canConfirmSale || !selectedClient) return;
 
     const products: ProductDetailRequest[] = cart.map(item => ({
       idProduct: item.product.id,
@@ -161,7 +172,7 @@ export default function ProductsPage() {
 
     saleMutation.mutate({
       idClient: selectedClient.id,
-      idProfessor: user?.id || 0,
+      ...(isAdmin ? { idProfessor: Number(selectedProfessor) } : {}),
       date: new Date().toISOString().split('T')[0],
       products
     });
@@ -173,9 +184,9 @@ export default function ProductsPage() {
     p.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredClients = clients.filter(c => 
+  const filteredClients = clients.filter(c =>
     `${c.name} ${c.lastName}`.toLowerCase().includes(clientSearch.toLowerCase()) ||
-    c.dni.includes(clientSearch)
+    (c.dni ?? '').includes(clientSearch)
   ).slice(0, 5);
 
   const productSales = allPayments.filter((p: Payment) => p.paymentProducts && p.paymentProducts.length > 0);
@@ -331,6 +342,22 @@ export default function ProductsPage() {
                       </div>
                    </div>
 
+                   {isAdmin && (
+                     <div>
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Profesor</label>
+                        <select
+                          className="w-full p-3 bg-gray-50 rounded-2xl border-0 focus:ring-2 focus:ring-blue-500 font-medium text-gray-700"
+                          value={selectedProfessor}
+                          onChange={e => setSelectedProfessor(e.target.value)}
+                        >
+                          <option value="">Seleccionar profesor...</option>
+                          {professors.map(p => (
+                            <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>
+                          ))}
+                        </select>
+                     </div>
+                   )}
+
                    <div className="border-t border-gray-100 pt-4">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 block">Carrito</label>
                       {cart.length === 0 ? (
@@ -357,10 +384,10 @@ export default function ProductsPage() {
                          <span>TOTAL</span>
                          <span>${totalSale.toLocaleString()}</span>
                       </div>
-                      <Button 
-                        onClick={handleConfirmSale} 
+                      <Button
+                        onClick={handleConfirmSale}
                         className="w-full rounded-2xl py-4 shadow-lg shadow-blue-500/20"
-                        disabled={!selectedClient || cart.length === 0 || saleMutation.isPending}
+                        disabled={!canConfirmSale || saleMutation.isPending}
                         isLoading={saleMutation.isPending}
                       >
                          Confirmar Venta

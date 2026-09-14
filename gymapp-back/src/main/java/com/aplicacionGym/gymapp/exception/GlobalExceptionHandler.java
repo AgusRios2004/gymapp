@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<WebApiResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(WebApiResponseBuilder.failure(mensajeOPorDefecto(ex.getMessage(), "Recurso no encontrado.")));
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseEntity<WebApiResponse> handleUnauthenticatedException(UnauthenticatedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(WebApiResponseBuilder.failure(mensajeOPorDefecto(ex.getMessage(), "No hay una sesión autenticada.")));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<WebApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(WebApiResponseBuilder.failure(mensajeOPorDefecto(ex.getMessage(), "No tenés permiso para realizar esta acción.")));
     }
 
     @ExceptionHandler(BusinessRuleException.class)

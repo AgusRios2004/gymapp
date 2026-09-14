@@ -115,7 +115,7 @@ export interface Payment {
 
 export interface MonthlyPaymentRequest {
     idClient: number;
-    idProfessor: number;
+    idProfessor?: number;
     idMonthlyType: number;
     date: string;
 }
@@ -127,7 +127,7 @@ export interface ProductDetailRequest {
 
 export interface ProductPaymentRequest {
     idClient: number;
-    idProfessor: number;
+    idProfessor?: number;
     products: ProductDetailRequest[];
     date: string;
 }

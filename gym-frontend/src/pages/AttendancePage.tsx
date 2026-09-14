@@ -59,7 +59,6 @@ export default function AttendancePage() {
 
     mutation.mutate({
       idClient: clientId,
-      idProfessor: user.id,
       date: today,
       inputHour
     });
