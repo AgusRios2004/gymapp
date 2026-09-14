@@ -90,7 +90,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 
 | ID | Tarea | Archivos | Est. | Depende de | Spec | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
-| T-03 | Fix venta de producto — `Professor not found` — resolver profesor desde JWT | `PaymentService.java`, `PaymentController.java` | 3 hs | T-02 | 0002 | ⬜ |
+| T-03 | Fix venta de producto — `Professor not found` — resolver profesor desde JWT | `PaymentService.java`, `PaymentController.java` | 3 hs | T-02 | 0002 || ✅ |
 | T-05 | Asistencias: error descriptivo si cliente no tiene cuota activa | `AssistanceService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-06 | Pagos: error descriptivo si cliente ya tiene suscripción activa | `PaymentService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-07 | Clases: migrar `dayOfWeek: String` → `daysOfWeek: List<String>` (BE) | `GroupClass.java`, `GroupClassService.java`, `GroupClassController.java`, `GroupClassRepository.java` | 3 hs | — | 0003 | ⬜ |
@@ -106,8 +106,8 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 
 | ID | Tarea | Archivos | Est. | Depende de | Spec | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
-| T-11 | Fix bug venta de producto — cliente seleccionado no se muestra | `PaymentsPage.tsx` o `ProductsPage.tsx` | 2 hs | T-03 | 0002 | ⬜ |
-| T-12 | Profesor auto-asignado desde sesión en pagos y asistencias (solo ADMIN puede cambiar) | `PaymentsPage.tsx`, `AttendancePage.tsx`, `AuthContext.tsx` | 2 hs | T-03 | 0002 | ⬜ |
+| T-11 | Fix bug venta de producto — cliente seleccionado no se muestra | `PaymentsPage.tsx` o `ProductsPage.tsx` | 2 hs | T-03 | 0002 || ✅ |
+| T-12 | Profesor auto-asignado desde sesión en pagos y asistencias (solo ADMIN puede cambiar) | `PaymentsPage.tsx`, `AttendancePage.tsx`, `AuthContext.tsx` | 2 hs | T-03 | 0002 || ✅ |
 | T-15 | Crear `SearchableSelect.tsx` — combobox con buscador, genérico y tipado | `components/ui/SearchableSelect.tsx` | 3 hs | — | 0005 | ⬜ |
 | T-16 | Reemplazar select de cliente en pagos con `SearchableSelect` (DNI + nombre) | `PaymentsPage.tsx` | 1 h | T-15 | 0005 | ⬜ |
 | T-25 | Toggle activo/inactivo inline en fila de tabla de clientes | `ClientsPage.tsx` | 1 h | T-08 | 0004 | ⬜ |
@@ -124,7 +124,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 | Spec | Tareas | Cómo se ejecuta | Estado |
 |:---:|:---|:---|:---:|
 | 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) + corrección manual de hallazgos | ✅ implementada |
-| [0002 — Cobros y asistencias con el staff de la sesión](../../specs/0002-cobros-con-staff-desde-la-sesion.md) | T-03, T-11, T-12 | Sandcastle BE + interactivo FE | 🔵 aprobada (rama `docs/spec-0002-aprobada`, se mergea al lanzar Sandcastle) |
+| [0002 — Cobros y asistencias con el staff de la sesión](../../specs/0002-cobros-con-staff-desde-la-sesion.md) | T-03, T-11, T-12 | Sandcastle (completa, BE + FE) | ✅ implementada |
 | 0003 — Clases multi-día | T-07, T-14 | Sandcastle BE + interactivo FE | ⬜ |
 | 0004 — Activar/desactivar cliente | T-08, T-25 | A decidir tras el piloto | ⬜ |
 | 0005 — `SearchableSelect` | T-15, T-16 | Interactivo | ⬜ |

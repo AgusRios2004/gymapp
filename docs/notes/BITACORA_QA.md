@@ -215,3 +215,18 @@ Ramas conservadas: `respaldo/spec-0001-intento-{1,3,4}` y `sandcastle/spec-0001`
 
 **Cierre (13/09/2026):** los 5 hallazgos se corrigieron a mano sobre `sandcastle/spec-0001`, con un test rojo por hallazgo antes de cada arreglo (6 tests nuevos). `verify.sh` completo en verde: 13/13 AC con test, 21 tests de backend. Spec 0001 → `implementada`, mergeada a `main`. Cierra T-01, T-02, T-05, T-06 y T-35.
 
+---
+
+### 🤖 Sandcastle sobre la spec 0002 (13/09/2026)
+
+**Resultado:** primera spec que corre **de punta a punta y mergea sola**, en un solo intento (21:08 → 21:58, ~50 min). Planner ~2 min, test-author ~23 min, implementer ~14 min, reviewer ~8 min y merger. 27/27 AC con test en `main`, 34 tests de backend y 7 de front.
+
+**Hallazgos de la revisión** (3, severidad media, no bloquearon; pendientes de decisión):
+- 🟠 `AttendancePage` sigue con `c.dni.includes` sin guarda: con un cliente de DNI null, escribir en el buscador rompe la vista y no se puede marcar asistencia. El arreglo se aplicó solo en `ProductsPage`.
+- 🟠 Token válido de una persona borrada responde 500, no el 401 de la spec: `UsernameNotFoundException` nace en `JwtAuthenticationFilter`, antes del `@RestControllerAdvice`. Falta además el `AuthenticatedStaffServiceTest` de T1.
+- 🟠 El test de AC-0002-12 no verifica que el ADMIN vea el selector de profesor: si se borra, el ADMIN no puede cobrar cuotas y el test sigue verde.
+
+**Fricción nueva (para commons):**
+1. **Planner y merger corren sobre el repo del host, no en un worktree.** `commands.install` (`npm ci`, `mvnw`) reescribe `node_modules` y `target/` del host mientras corre: el hook local encontró ESLint 6.4 del sistema y, en la spec 0001, un `NoClassDefFoundError` por compilación a medias.
+2. **El merger editó `.claude/settings.local.json` del host** (cambió `JAVA_HOME` a la ruta del contenedor) para que su hook pasara. Un agente con acceso al repo del host puede tocar configuración local gitignoreada. Restaurado a mano.
+
