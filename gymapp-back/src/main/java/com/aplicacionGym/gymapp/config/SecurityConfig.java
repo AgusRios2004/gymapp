@@ -1,6 +1,11 @@
 package com.aplicacionGym.gymapp.config;
 
+import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
 import com.aplicacionGym.gymapp.security.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +25,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -37,6 +45,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated())
+                // Sin sesión válida (sin token, token vencido o de una persona borrada) → 401 con
+                // WebApiResponse en español. Sin esto Spring responde 403 vacío, y el front no lo
+                // distingue de "no tenés permiso".
+                .exceptionHandling(e -> e.authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                    objectMapper.writeValue(response.getOutputStream(),
+                            WebApiResponseBuilder.failure("Tu sesión no es válida. Iniciá sesión de nuevo."));
+                }))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

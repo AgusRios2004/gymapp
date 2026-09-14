@@ -67,7 +67,7 @@ export default function AttendancePage() {
   const filteredClients = searchTerm.trim().length > 0 
     ? clients.filter((c: Client) => 
         `${c.name} ${c.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.dni.includes(searchTerm)
+        (c.dni ?? '').includes(searchTerm)
       ).slice(0, 6)
     : [];
 

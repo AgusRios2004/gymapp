@@ -91,6 +91,25 @@ describe('PaymentsPage - selector de profesor por rol (AC-0002-12)', () => {
     expect(createMonthlyPayment).not.toHaveBeenCalled();
   });
 
+  // Hallazgo del reviewer: el test de arriba solo verifica que no se envíe el pago. Si el bloque
+  // del selector desapareciera, seguiría verde y el ADMIN no podría cobrar ninguna cuota.
+  it('con ADMIN muestra el selector de profesor, sin valor elegido y con los profesores activos', async () => {
+    mockUser({ id: 777, role: 'ADMIN' });
+    const user = userEvent.setup();
+    renderPaymentsPage();
+
+    await user.click(screen.getByRole('button', { name: /Registrar Pago/i }));
+
+    const dialog = screen.getByRole('dialog');
+    const professorLabel = await within(dialog).findByText('Profesor que cobra');
+    const professorSelect = professorLabel.parentElement!.querySelector('select');
+    expect(professorSelect).not.toBeNull();
+    expect(professorSelect!.value).toBe('');
+    expect(
+      await within(professorSelect!).findByRole('option', { name: `${ACTIVE_PROFESSOR.name} ${ACTIVE_PROFESSOR.lastName}` }),
+    ).toBeInTheDocument();
+  });
+
   it('con PROFESSOR no muestra selector de profesor', async () => {
     mockUser({ id: 5, role: 'PROFESSOR' });
     const user = userEvent.setup();
