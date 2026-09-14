@@ -125,8 +125,8 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 |:---:|:---|:---|:---:|
 | 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) + corrección manual de hallazgos | ✅ implementada |
 | [0002 — Cobros y asistencias con el staff de la sesión](../../specs/0002-cobros-con-staff-desde-la-sesion.md) | T-03, T-11, T-12 | Sandcastle (completa, BE + FE) | ✅ implementada |
-| 0003 — Clases multi-día | T-07, T-14 | Sandcastle BE + interactivo FE | ⬜ |
-| 0004 — Activar/desactivar cliente | T-08, T-25 | A decidir tras el piloto | ⬜ |
+| [0003 — Clases multi-día](../../specs/0003-clases-multi-dia.md) | T-07, T-14 | Sandcastle BE + FE | 🔵 propuesta |
+| [0004 — Activar/desactivar cliente](../../specs/0004-activar-desactivar-cliente.md) | T-08, T-25 | Sandcastle BE + FE | 🔵 propuesta |
 | 0005 — `SearchableSelect` | T-15, T-16 | Interactivo | ⬜ |
 
 ---
