@@ -1,7 +1,7 @@
 ---
 id: 0002
 titulo: Cobros y asistencias con el staff tomado de la sesión
-estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
+estado: implementada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: []
