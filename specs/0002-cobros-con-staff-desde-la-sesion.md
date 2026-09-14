@@ -1,7 +1,7 @@
 ---
 id: 0002
 titulo: Cobros y asistencias con el staff tomado de la sesión
-estado: propuesta            # draft | propuesta | aprobada | implementada | archivada
+estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: []
@@ -33,7 +33,7 @@ Además:
 
 1. `POST /api/payments/product` y `POST /api/payments/monthly`:
    - **PROFESSOR:** el pago queda a nombre del profesor autenticado. `idProfessor` del body es opcional y se ignora.
-   - **ADMIN:** `idProfessor` es obligatorio y tiene que ser un `Professor` existente. Si falta → 400. Si no existe o no es profesor → 404. En los dos casos no se persiste nada ni se descuenta stock.
+   - **ADMIN:** `idProfessor` es obligatorio y tiene que ser un `Professor` existente y **activo**. Si falta → 400. Si no existe o no es profesor → 404. Si está inactivo → 409 (regla de negocio, misma convención que la spec 0001). En ningún caso se persiste nada ni se descuenta stock.
 2. `POST /api/assistance`: `staff` es la persona autenticada. `idProfessor` del body se ignora.
 3. **Punto de venta** (`ProductsPage`, pestaña POS):
    - PROFESSOR: no ve selector de profesor.
@@ -47,7 +47,8 @@ Además:
 ## Casos de borde
 
 - **ADMIN manda su propio id como `idProfessor`:** 404, porque no es profesor. Es exactamente el BUG-05 de hoy.
-- **Usuario autenticado que no es ADMIN ni PROFESSOR** (rol `USER`): hoy no existe login de alumno. Si llega uno, pagos y asistencias responden 403.
+- **Usuario autenticado que no es ADMIN ni PROFESSOR** (rol `USER`): hoy no existe login de alumno. Si llega uno, pagos y asistencias responden 403 (decisión del 13/09/2026).
+- **ADMIN elige un profesor inactivo:** 409 y no se registra el cobro (decisión del 13/09/2026).
 - **Token válido de una persona borrada después del login:** 401. No puede terminar en 500 ni en un pago sin profesor.
 - **Búsqueda de cliente con clientes sin DNI:** hay clientes con `dni` null, creados antes de la spec 0001. La búsqueda no rompe y los muestra por nombre.
 - **ADMIN cambia de profesor después de agregar productos al carrito:** el carrito se conserva.
@@ -69,6 +70,8 @@ Además:
 | AC-0002-10 | `ProductsPage` renderizada con un usuario ADMIN muestra el selector de profesor. "Confirmar venta" está deshabilitado hasta elegir cliente, profesor y un producto, y la llamada al servicio lleva el `idProfessor` elegido. |  |
 | AC-0002-11 | En `ProductsPage`, con una lista de clientes que incluye uno con `dni: null`, buscar por nombre y hacer click en un cliente deja su nombre y apellido en el campo de cliente. |  |
 | AC-0002-12 | `PaymentsPage` renderizada con un usuario ADMIN muestra el selector de profesor sin valor elegido, y con un usuario PROFESSOR no lo muestra. |  |
+| AC-0002-13 | Autenticado como ADMIN, `POST /api/payments/product` y `POST /api/payments/monthly` con `idProfessor` de un profesor **inactivo** responden 409 con `message` en español, no se persiste ningún pago y el stock no cambia. |  |
+| AC-0002-14 | Autenticado como una persona que no es ADMIN ni PROFESSOR (un `Client` con email), `POST /api/payments/product` y `POST /api/assistance` responden 403 y no persisten nada. |  |
 
 ## Fuera de alcance
 
@@ -77,7 +80,6 @@ Además:
 - **`SearchableSelect` para el selector de profesor** (spec 0005): acá se usa el `<select>` actual. Cuando exista el componente, se reemplaza.
 - **Cobros a nombre del ADMIN:** descartado por decisión de negocio. Requeriría cambiar `Payment.professor` y el esquema.
 - **`GET /api/payments/{idProfessor}` y `GET /api/payments/{idClient}`:** tienen la misma ruta y chocan entre sí. Es un bug real pero ajeno a esta spec; se anota para una spec de consultas de pagos.
-- **Validar que el profesor elegido por el ADMIN esté activo:** no se definió la regla (ver preguntas abiertas).
 - **Corregir `AuthService.login`**, que responde 500 con credenciales inválidas y compara contraseñas en texto plano: deuda de seguridad aparte.
 
 ## Notas de handoff
@@ -88,9 +90,9 @@ Además:
 - Los tests de backend se autentican con `@WithMockUser(username = <email>, roles = ...)` sobre una `Person` guardada en H2 con ese email. El resolver de identidad busca por email, así que el mock alcanza.
 - Los tests de front mockean los servicios (`vi.mock`) y el contexto de auth. No levantan backend.
 
-**Preguntas abiertas para aprobar:**
-1. Si el ADMIN elige un profesor **inactivo**, ¿se permite el cobro o se rechaza? Hoy la spec no lo valida (fuera de alcance). Si se rechaza, se suma un criterio.
-2. Para el rol `USER` (no hay login de alumno hoy) la spec responde 403. ¿Está bien, o preferís dejarlo sin definir hasta la Capa 3?
+**Decisiones de aprobación (13/09/2026, Agustín):**
+1. ADMIN elige un profesor inactivo → **se rechaza** con 409 (AC-0002-13). Se usa 409 por la convención de la spec 0001 para reglas de negocio.
+2. Usuario que no es ADMIN ni PROFESSOR → **403** en pagos y asistencias (AC-0002-14).
 
 **Qué es lo más probable que salga mal:**
 - **T-11 puede no reproducirse.** Leyendo el código actual, la selección de cliente en el POS parece correcta. La hipótesis más firme es que `c.dni.includes(...)` revienta con clientes de DNI null y deja la lista vacía (AC-0002-11). Si el bug de la QA Sesión 01 era otro (se reportó antes de la paginación del 02/08), el test igual documenta el comportamiento y la tarea cierra sin cambio de código. **No inventar un arreglo para que el test tenga algo que arreglar.**

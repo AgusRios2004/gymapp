@@ -48,19 +48,19 @@ Cubre las tareas T-01, T-02, T-05 y T-06 del [Sprint 1](../docs/sprints/06-09-20
 
 | ID | Criterio | Test |
 |:---|:---|:---|
-| AC-0001-01 | `POST /api/clients` con `dni` vacío responde 400, `succes: false`, y `data.dni` es un mensaje en español que dice que el DNI es obligatorio. || `ClientControllerValidationTest` |
-| AC-0001-02 | `POST /api/clients` con `dni` de 7 caracteres y `phone` de 5 responde 400 y `data` tiene **ambas** claves, `dni` y `phone`. El mensaje de `phone` menciona el mínimo real de 10. || `ClientControllerValidationTest` |
-| AC-0001-03 | `POST /api/clients` con el payload completo que arma hoy el formulario (`ClientSchema` en `types/schema.type.ts`: `name`, `lastName`, `dni`, `phone`, `email`, `active`) y un DNI válido responde 200 y persiste esos campos: un `GET /api/clients/{id}` posterior los devuelve iguales. || `ClientControllerValidationTest` |
-| AC-0001-04 | `PUT /api/clients/{id}` con `dni` de 9 caracteres responde 400 y el cliente en base no cambia. || `ClientControllerValidationTest` |
-| AC-0001-05 | Un `POST` con JSON mal formado a cualquier endpoint de escritura responde 400 con `message` en español y sin el texto `JSON parse error` ni nombres de clases Java. || `GlobalExceptionHandlerTest` |
-| AC-0001-06 | `GET /api/clients/{id}` con un id inexistente responde 404 con `succes: false` y `message` en español que incluye el id. || `GlobalExceptionHandlerTest` |
-| AC-0001-07 | `POST /api/assistance` para un cliente sin ningún pago de cuota responde 409 con `message` en español. || `AssistanceControllerErrorsTest` |
-| AC-0001-08 | `POST /api/assistance` para un cliente cuya última cuota venció ayer responde 409 y `message` contiene la fecha de vencimiento. || `AssistanceControllerErrorsTest` |
-| AC-0001-09 | `POST /api/payments/monthly` del mismo plan que el cliente tiene vigente responde 409 y `message` contiene la fecha de vencimiento del plan actual. || `PaymentControllerErrorsTest` |
-| AC-0001-10 | `POST /api/payments/product` donde un ítem pide más que su stock responde 409, y el stock de **todos** los productos del pedido queda igual que antes del request. || `PaymentControllerErrorsTest` |
-| AC-0001-11 | Una excepción no mapeada lanzada desde un service responde 500 con `message` exactamente `"Error inesperado, intentá de nuevo."` y el cuerpo no contiene el mensaje original de la excepción. || `GlobalExceptionHandlerTest` |
-| AC-0001-12 | Ninguna respuesta de error de los casos anteriores tiene `message` null, vacío o en inglés (los tests verifican el texto esperado, no solo el status). || `GlobalExceptionHandlerTest` |
-| AC-0001-13 | `POST /api/clients` con `name` "Ana" y `lastName` "Gil" (y el resto válido) responde 200; con `name` "A" responde 400 y `data.name` tiene un mensaje en español. || `ClientControllerValidationTest` |
+| AC-0001-01 | `POST /api/clients` con `dni` vacío responde 400, `succes: false`, y `data.dni` es un mensaje en español que dice que el DNI es obligatorio. | `ClientControllerValidationTest` |
+| AC-0001-02 | `POST /api/clients` con `dni` de 7 caracteres y `phone` de 5 responde 400 y `data` tiene **ambas** claves, `dni` y `phone`. El mensaje de `phone` menciona el mínimo real de 10. | `ClientControllerValidationTest` |
+| AC-0001-03 | `POST /api/clients` con el payload completo que arma hoy el formulario (`ClientSchema` en `types/schema.type.ts`: `name`, `lastName`, `dni`, `phone`, `email`, `active`) y un DNI válido responde 200 y persiste esos campos: un `GET /api/clients/{id}` posterior los devuelve iguales. | `ClientControllerValidationTest` |
+| AC-0001-04 | `PUT /api/clients/{id}` con `dni` de 9 caracteres responde 400 y el cliente en base no cambia. | `ClientControllerValidationTest` |
+| AC-0001-05 | Un `POST` con JSON mal formado a cualquier endpoint de escritura responde 400 con `message` en español y sin el texto `JSON parse error` ni nombres de clases Java. | `GlobalExceptionHandlerTest` |
+| AC-0001-06 | `GET /api/clients/{id}` con un id inexistente responde 404 con `succes: false` y `message` en español que incluye el id. | `GlobalExceptionHandlerTest` |
+| AC-0001-07 | `POST /api/assistance` para un cliente sin ningún pago de cuota responde 409 con `message` en español. | `AssistanceControllerErrorsTest` |
+| AC-0001-08 | `POST /api/assistance` para un cliente cuya última cuota venció ayer responde 409 y `message` contiene la fecha de vencimiento. | `AssistanceControllerErrorsTest` |
+| AC-0001-09 | `POST /api/payments/monthly` del mismo plan que el cliente tiene vigente responde 409 y `message` contiene la fecha de vencimiento del plan actual. | `PaymentControllerErrorsTest` |
+| AC-0001-10 | `POST /api/payments/product` donde un ítem pide más que su stock responde 409, y el stock de **todos** los productos del pedido queda igual que antes del request. | `PaymentControllerErrorsTest` |
+| AC-0001-11 | Una excepción no mapeada lanzada desde un service responde 500 con `message` exactamente `"Error inesperado, intentá de nuevo."` y el cuerpo no contiene el mensaje original de la excepción. | `GlobalExceptionHandlerTest` |
+| AC-0001-12 | Ninguna respuesta de error de los casos anteriores tiene `message` null, vacío o en inglés (los tests verifican el texto esperado, no solo el status). | `GlobalExceptionHandlerTest` |
+| AC-0001-13 | `POST /api/clients` con `name` "Ana" y `lastName` "Gil" (y el resto válido) responde 200; con `name` "A" responde 400 y `data.name` tiene un mensaje en español. | `ClientControllerValidationTest` |
 
 ## Fuera de alcance
 

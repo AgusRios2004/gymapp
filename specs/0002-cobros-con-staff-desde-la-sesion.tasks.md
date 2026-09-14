@@ -11,7 +11,7 @@ Tamaño relativo (S/M), no horas. T1–T3 son backend (`gymapp-back/`, tests con
 **Toca:** `security/AuthenticatedStaffService.java` (nuevo), `src/test/java/.../security/AuthenticatedStaffServiceTest.java` (nuevo)
 **Depende de:** ninguna
 **Tamaño:** S
-**Cubre:** base de AC-0002-01 a AC-0002-08, sin AC propio
+**Cubre:** AC-0002-14 (el 403 lo resuelve este servicio) y la base de AC-0002-01 a AC-0002-08
 
 - Un servicio que lee el `username` (email) del `SecurityContextHolder` y devuelve la `Person` con ese email, más dos consultas: `esAdmin()` / `esProfesor()`, por tipo de entidad, igual que `CustomUserDetailsService`.
 - Sin autenticación, o con un email que no existe en base → excepción que el `GlobalExceptionHandler` mapee a **401**. Rol que no es ADMIN ni PROFESSOR → **403**. Si hace falta, sumar esos dos mapeos al handler, con mensaje en español.
@@ -24,10 +24,10 @@ Tamaño relativo (S/M), no horas. T1–T3 son backend (`gymapp-back/`, tests con
 **Toca:** `service/PaymentService.java`, `controller/PaymentController.java` (si cambia la firma), `src/test/java/.../controller/PaymentStaffFromSessionTest.java` (nuevo), `src/test/java/.../controller/PaymentControllerErrorsTest.java` (ajuste)
 **Depende de:** T1
 **Tamaño:** M
-**Cubre:** AC-0002-01, 02, 03, 04, 05, 06, 07
+**Cubre:** AC-0002-01, 02, 03, 04, 05, 06, 07, 13
 
-- Un único método privado decide el profesor: PROFESSOR → la persona del token (casteada a `Professor`) e ignora el body. ADMIN → `idProfessor` obligatorio (400 si falta) y buscado en `ProfessorRepository` (404 si no está).
-- Lo usan `createProductPayment` y `createMonthlyPayment`. La decisión va **antes** de tocar stock o persistir nada (AC-0002-04 y 05 lo verifican).
+- Un único método privado decide el profesor: PROFESSOR → la persona del token (casteada a `Professor`) e ignora el body. ADMIN → `idProfessor` obligatorio (400 si falta), buscado en `ProfessorRepository` (404 si no está) y **activo** (`BusinessRuleException` → 409 si no lo está).
+- Lo usan `createProductPayment` y `createMonthlyPayment`. La decisión va **antes** de tocar stock o persistir nada (AC-0002-04, 05 y 13 lo verifican).
 - Mensajes en español: 400 "Elegí el profesor que cobra." (o equivalente), y el 404 incluye el id.
 - `PaymentControllerErrorsTest` (spec 0001) pasa a autenticarse con una `Person` real en H2. **No cambiar lo que verifica**, solo cómo se autentica.
 - Para AC-0002-02 y 06, el `idProfessor` del body tiene que ser **otro profesor existente**, no un id inventado. Si no, el test no distingue "ignora el body" de "responde 404".
@@ -39,7 +39,7 @@ Tamaño relativo (S/M), no horas. T1–T3 son backend (`gymapp-back/`, tests con
 **Toca:** `service/AssistanceService.java`, `src/test/java/.../controller/AssistanceStaffFromSessionTest.java` (nuevo), `src/test/java/.../controller/AssistanceControllerErrorsTest.java` (ajuste)
 **Depende de:** T1
 **Tamaño:** S
-**Cubre:** AC-0002-08
+**Cubre:** AC-0002-08 y la mitad de asistencias de AC-0002-14
 
 - `registerAssistance` toma `staff` de T1 y deja de leer `dto.getIdProfessor()`. El chequeo `"idClient y idProfessor no pueden ser null"` pasa a exigir solo `idClient`.
 - `AssistanceControllerErrorsTest` (spec 0001): mismo ajuste de autenticación que en T2, sin cambiar lo que verifica.
