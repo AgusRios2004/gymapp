@@ -11,9 +11,10 @@ import com.aplicacionGym.gymapp.mapper.AssistanceMapper;
 import com.aplicacionGym.gymapp.entity.Payment;
 import com.aplicacionGym.gymapp.repository.AssistanceRepository;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
-import com.aplicacionGym.gymapp.repository.PersonRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
+import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,13 +29,18 @@ public class AssistanceService {
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private PersonRepository personRepository;
-    @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private AuthenticatedStaffService authenticatedStaffService;
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
-        if (dto.getIdClient() == null || dto.getIdProfessor() == null) {
-            throw new IllegalArgumentException("El ID del cliente y el ID del profesor no pueden ser nulos.");
+        if (dto.getIdClient() == null) {
+            throw new IllegalArgumentException("El ID del cliente no puede ser nulo.");
+        }
+
+        Person staff = authenticatedStaffService.getAuthenticatedPerson();
+        if (!authenticatedStaffService.esAdmin(staff) && !authenticatedStaffService.esProfesor(staff)) {
+            throw new AccessDeniedException("No tenés permiso para registrar asistencias.");
         }
 
         Client client = clientRepository.findById(dto.getIdClient())
@@ -48,10 +54,6 @@ public class AssistanceService {
         if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now())) {
             throw new BusinessRuleException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
         }
-
-        Person staff = personRepository.findById(dto.getIdProfessor())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Profesional no encontrado con id: " + dto.getIdProfessor()));
 
         Assistance assistance = AssistanceMapper.toEntity(client, staff, dto);
         @SuppressWarnings("null")

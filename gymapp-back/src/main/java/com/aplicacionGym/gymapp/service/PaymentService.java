@@ -9,7 +9,9 @@ import com.aplicacionGym.gymapp.exception.BusinessRuleException;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.PaymentMapper;
 import com.aplicacionGym.gymapp.repository.*;
+import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,16 +35,41 @@ public class PaymentService {
     private MonthlyTypeRepository monthlyTypeRepository;
     @Autowired
     private PaymentProductRepository paymentProductRepository;
+    @Autowired
+    private AuthenticatedStaffService authenticatedStaffService;
+
+    // PROFESSOR: siempre cobra él mismo, el idProfessor del body se ignora. ADMIN: elige el
+    // profesor, obligatorio y tiene que existir y estar activo. Cualquier otro rol no puede cobrar.
+    private Professor resolveProfessor(Long idProfessorFromBody) {
+        Person person = authenticatedStaffService.getAuthenticatedPerson();
+
+        if (authenticatedStaffService.esProfesor(person)) {
+            return (Professor) person;
+        }
+
+        if (authenticatedStaffService.esAdmin(person)) {
+            if (idProfessorFromBody == null) {
+                throw new IllegalArgumentException("Elegí el profesor que cobra.");
+            }
+            Professor professor = professorRepository.findById(idProfessorFromBody)
+                    .orElseThrow(() -> new ResourceNotFoundException("Profesor no encontrado con id: " + idProfessorFromBody));
+            if (!professor.isActive()) {
+                throw new BusinessRuleException("El profesor elegido está inactivo.");
+            }
+            return professor;
+        }
+
+        throw new AccessDeniedException("No tenés permiso para registrar cobros.");
+    }
 
     public PaymentResponseDTO createMonthlyPayment(MonthlyPaymentRequestDTO dto) {
+        Professor professor = resolveProfessor(dto.getIdProfessor());
+
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
-        
+
         MonthlyType newType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + dto.getIdMonthlyType()));
-
-        Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(() -> new ResourceNotFoundException("Profesor no encontrado con id: " + dto.getIdProfessor()));
 
         // Logic check: Does the client already have an active monthly payment?
         java.util.Optional<Payment> activePaymentOpt = paymentRepository
@@ -94,12 +121,11 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponseDTO createProductPayment(ProductPaymentRequestDTO dto) {
+        Professor professor = resolveProfessor(dto.getIdProfessor());
+
         Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
-        Professor professor = professorRepository.findById(dto.getIdProfessor())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Profesor no encontrado con id: " + dto.getIdProfessor()));
 
         payment.setClient(client);
         payment.setProfessor(professor);
