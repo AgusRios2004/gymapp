@@ -1,7 +1,7 @@
 ---
 id: 0003
 titulo: Clases grupales en varios días de la semana
-estado: propuesta            # draft | propuesta | aprobada | implementada | archivada
+estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: [ADR-0003]
@@ -74,8 +74,8 @@ Cubre las tareas T-07 y T-14 del [Sprint 1](../docs/sprints/06-09-2026-sprint-1-
 - La migración es un `ApplicationRunner` (o equivalente) que corre también en tests; como en tests no hay clases viejas, no hace nada salvo en los tests que la ejercitan.
 - El front deja de usar `dayOfWeek` en todos lados (`types/index.ts`, `ClassesPage.tsx`).
 
-**Preguntas abiertas para aprobar:**
-1. Ninguna de negocio. Revisar solo que el orden lunes → domingo (AC-0003-01/04) coincida con cómo querés ver los días.
+**Decisiones de aprobación (14/09/2026, Agustín):**
+1. Los días se devuelven y se muestran en orden **lunes → domingo** (AC-0003-01/04), sin importar el orden de carga.
 
 **Qué es lo más probable que salga mal:**
 - **La migración en la MySQL real.** `ddl-auto=update` crea la tabla nueva de días pero nunca borra la columna vieja; si el runner falla a mitad (por ejemplo, por una clase con datos raros), las clases quedan sin días en la vista. Por eso AC-0003-07/08 exigen idempotencia y el caso de `dayOfWeek` null no puede romper el arranque. **Hacer un backup de la base antes de levantar el backend con este cambio.**
