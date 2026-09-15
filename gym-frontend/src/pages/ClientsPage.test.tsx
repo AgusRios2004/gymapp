@@ -4,10 +4,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import ClientsPage from './ClientsPage';
-import { getClients, setClientStatus } from '../services/clientService';
+import { getClients } from '../services/clientService';
+import * as clientServiceModule from '../services/clientService';
 import type { Client, PageResponse } from '../types';
 
 vi.mock('../services/clientService');
+
+// setClientStatus todavía no existe en clientService (es el contrato que agrega T3): el cast
+// evita que `tsc -b` falle por un export inexistente. En runtime el valor es undefined y el test
+// falla ahí, que es la razón correcta para este test rojo.
+const { setClientStatus } = clientServiceModule as unknown as typeof clientServiceModule & {
+  setClientStatus: (id: number, active: boolean) => Promise<Client>;
+};
 
 const CLIENT_ACTIVE: Client = {
   id: 1,
