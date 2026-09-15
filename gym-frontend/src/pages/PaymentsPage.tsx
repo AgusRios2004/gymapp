@@ -8,9 +8,26 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
-import type { MonthlyPaymentRequest } from '../types/index';
+import type { Client, MonthlyPaymentRequest } from '../types/index';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
+import { normalizeSearch } from '../utils/search';
+
+const getClientLabel = (client: Client) =>
+  `${client.name} ${client.lastName}${client.dni ? ` · DNI ${client.dni}` : ''}${client.isDebtor ? ' ⚠️ (DEUDOR)' : ''}`;
+
+// Busca por nombre/apellido normalizados o por DNI sin puntos ni espacios; no usa getLabel porque
+// incluye "DEUDOR", que rompería la búsqueda por ese texto.
+const clientSearchBy = (client: Client, query: string) => {
+  if (normalizeSearch(`${client.name} ${client.lastName}`).includes(normalizeSearch(query))) {
+    return true;
+  }
+  if (!client.dni) return false;
+  const digitsQuery = query.replace(/[.\s]/g, '');
+  return client.dni.replace(/[.\s]/g, '').includes(digitsQuery);
+};
+
 export default function PaymentsPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -18,7 +35,7 @@ export default function PaymentsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Data for the form
-  const [selectedClient, setSelectedClient] = useState<string>('');
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedProfessor, setSelectedProfessor] = useState<string>('');
   const [selectedMonthlyType, setSelectedMonthlyType] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -57,7 +74,7 @@ export default function PaymentsPage() {
   });
 
   const resetForm = () => {
-    setSelectedClient('');
+    setSelectedClient(null);
     setSelectedProfessor('');
     setSelectedMonthlyType('');
     setPaymentDate(new Date().toISOString().split('T')[0]);
@@ -71,7 +88,7 @@ export default function PaymentsPage() {
     }
 
     const request: MonthlyPaymentRequest = {
-      idClient: Number(selectedClient),
+      idClient: selectedClient.id,
       ...(user?.role === 'ADMIN' ? { idProfessor: Number(selectedProfessor) } : {}),
       idMonthlyType: Number(selectedMonthlyType),
       date: paymentDate
@@ -174,21 +191,16 @@ export default function PaymentsPage() {
         title="Registrar Pago Mensual"
       >
         <form onSubmit={handleCreatePayment} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-            <select 
-              className="w-full p-2 border rounded-lg"
-              value={selectedClient}
-              onChange={(e) => setSelectedClient(e.target.value)}
-            >
-              <option value="">Seleccionar cliente...</option>
-              {clients.map(c => (
-                <option key={c.id} value={c.id}>
-                    {c.name} {c.lastName} {c.isDebtor ? '⚠️ (DEUDOR)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableSelect<Client>
+            label="Cliente"
+            placeholder="Buscar por nombre, apellido o DNI..."
+            options={clients}
+            value={selectedClient}
+            onChange={setSelectedClient}
+            getKey={(c) => c.id}
+            getLabel={getClientLabel}
+            searchBy={clientSearchBy}
+          />
 
           {user?.role === 'ADMIN' && (
             <div>
