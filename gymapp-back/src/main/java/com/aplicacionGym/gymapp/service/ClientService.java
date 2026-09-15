@@ -7,6 +7,7 @@ import com.aplicacionGym.gymapp.entity.Client;
 import com.aplicacionGym.gymapp.entity.GroupClass;
 import com.aplicacionGym.gymapp.entity.PaymentProduct;
 import com.aplicacionGym.gymapp.entity.Routine;
+import com.aplicacionGym.gymapp.entity.Person;
 import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.ClientMapper;
 import com.aplicacionGym.gymapp.mapper.RoutineMapper;
@@ -14,9 +15,11 @@ import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.PaymentProductRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.repository.RoutineRepository;
+import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
 import com.aplicacionGym.gymapp.entity.Payment;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +39,8 @@ public class ClientService {
     private PaymentRepository paymentRepository;
     @Autowired
     private com.aplicacionGym.gymapp.repository.GroupClassRepository groupClassRepository;
+    @Autowired
+    private AuthenticatedStaffService authenticatedStaffService;
 
     public ClientResponseDTO assignClass(Long idClient, Long idClass) {
         Objects.requireNonNull(idClient, "idClient cannot be null");
@@ -203,6 +208,30 @@ public class ClientService {
 
         client.setActive(false);
         clientRepository.save(client);
+    }
+
+    public ClientResponseDTO setStatus(Long id, Boolean active) {
+        Objects.requireNonNull(id, "ID cannot be null");
+
+        Person staff = authenticatedStaffService.getAuthenticatedPerson();
+        if (!authenticatedStaffService.esAdmin(staff) && !authenticatedStaffService.esProfesor(staff)) {
+            throw new AccessDeniedException("No tenés permiso para activar o desactivar clientes.");
+        }
+
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+
+        if (client.isActive() == active) {
+            return ClientMapper.toDTO(client);
+        }
+
+        client.setActive(active);
+        if (!active) {
+            client.setActiveClass(null);
+        }
+        clientRepository.save(client);
+
+        return ClientMapper.toDTO(client);
     }
 
     public ClientResponseDTO assignRoutine(Long idClient, Long idRoutine, boolean setAsActive) {

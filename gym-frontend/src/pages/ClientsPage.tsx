@@ -7,7 +7,9 @@ import type { Client } from '../types/index';
 import { ClientItem } from '../components/clients/ClientItem';
 import ClientModal from '../components/clients/ClientModal';
 import AssignRoutineModal from '../components/routines/AssignRoutineModal';
-import { getClients, createClient, updateClient, assignRoutine } from '../services/clientService';
+import { getClients, createClient, updateClient, assignRoutine, setClientStatus } from '../services/clientService';
+import type { AxiosError } from 'axios';
+import type { ApiResponse } from '../types/api.types';
 import { ClientSchema, AssignRoutineSchema } from '../types/schema.type'; 
 import Button from '../components/ui/Button';
 
@@ -32,6 +34,7 @@ export default function ClientsPage() {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientFormData | null>(null);
   const [selectedClientForRoutine, setSelectedClientForRoutine] = useState<Client | null>(null);
+  const [updatingStatusId, setUpdatingStatusId] = useState<number | null>(null);
 
   // La query pasa página, tamaño, término de búsqueda y filtros al backend
   const { data: pageData, isLoading, isError } = useQuery({
@@ -86,6 +89,31 @@ export default function ClientsPage() {
       toast.error("Error al asignar la rutina");
     }
   });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, active }: { id: number; active: boolean }) => setClientStatus(id, active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+    },
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "No se pudo actualizar el estado del cliente";
+      toast.error(`❌ ${message}`);
+    },
+    onSettled: () => {
+      setUpdatingStatusId(null);
+    },
+  });
+
+  const handleToggleStatus = (client: Client) => {
+    if (client.active) {
+      const confirmed = window.confirm(
+        `¿Desactivar a ${client.name} ${client.lastName}? Se le va a quitar la clase asignada.`
+      );
+      if (!confirmed) return;
+    }
+    setUpdatingStatusId(client.id);
+    statusMutation.mutate({ id: client.id, active: !client.active });
+  };
 
   const handleNewClient = () => {
     setEditingClient(null);
@@ -217,11 +245,13 @@ export default function ClientsPage() {
           <div className="grid gap-3">
             {clients.length > 0 ? (
               clients.map((cliente: Client) => (
-                <ClientItem 
-                  key={cliente.id} 
-                  client={cliente} 
+                <ClientItem
+                  key={cliente.id}
+                  client={cliente}
                   onEdit={() => handleEditClient(cliente)}
                   onAssignRoutine={() => handleOpenAssignModal(cliente)}
+                  onToggleStatus={handleToggleStatus}
+                  isUpdatingStatus={updatingStatusId === cliente.id}
                 />
               ))
             ) : (
