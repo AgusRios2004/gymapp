@@ -8,6 +8,8 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
+import type { AxiosError } from 'axios';
+import type { ApiResponse } from '../types/api.types';
 import type { Client, MonthlyPaymentRequest } from '../types/index';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
@@ -68,8 +70,9 @@ export default function PaymentsPage() {
       setIsModalOpen(false);
       resetForm();
     },
-    onError: () => {
-      toast.error("❌ Error al registrar el pago");
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al registrar el pago";
+      toast.error(`❌ ${message}`);
     }
   });
 

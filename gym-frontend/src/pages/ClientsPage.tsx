@@ -58,9 +58,9 @@ export default function ClientsPage() {
       toast.success("✅ Alumno registrado correctamente");
       handleCloseModal();
     },
-    onError: (error) => {
-      console.error("Error al crear el cliente:", error);
-      toast.error("Error al crear el cliente");
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al crear el cliente";
+      toast.error(`❌ ${message}`);
     }
   });
 
@@ -71,9 +71,9 @@ export default function ClientsPage() {
       toast.success("✅ Datos actualizados");
       handleCloseModal();
     },
-    onError: (error) => {
-      console.error("Error al actualizar el cliente:", error);
-      toast.error("Error al actualizar el cliente");
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al actualizar el cliente";
+      toast.error(`❌ ${message}`);
     }
   });
 
@@ -84,9 +84,9 @@ export default function ClientsPage() {
       toast.success("✅ Rutina asignada correctamente");
       handleCloseAssignModal();
     },
-    onError: (error) => {
-      console.error("Error al asignar rutina:", error);
-      toast.error("Error al asignar la rutina");
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al asignar la rutina";
+      toast.error(`❌ ${message}`);
     }
   });
 

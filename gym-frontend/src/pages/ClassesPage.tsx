@@ -179,7 +179,10 @@ export default function ClassesPage() {
         setIsClientModalOpen(false);
         setClientForm({ name: '', lastName: '', dni: '', phone: '', email: '', activeClassId: '' });
     },
-    onError: () => toast.error("❌ Error al crear alumno")
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al crear alumno";
+      toast.error(`❌ ${message}`);
+    }
   });
 
   const assistanceMutation = useMutation({

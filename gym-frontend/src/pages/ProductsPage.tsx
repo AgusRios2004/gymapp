@@ -22,6 +22,8 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
+import type { AxiosError } from 'axios';
+import type { ApiResponse } from '../types/api.types';
 import type { Product, Client, ProductDetailRequest, Payment } from '../types';
 
 export default function ProductsPage() {
@@ -99,9 +101,9 @@ export default function ProductsPage() {
       setCart([]);
       setSelectedClient(null);
     },
-    onError: (error: unknown) => {
-      const errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message || "Venta fallida";
-      toast.error(`❌ Error: ${errorMessage}`);
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Venta fallida";
+      toast.error(`❌ ${message}`);
     }
   });
 

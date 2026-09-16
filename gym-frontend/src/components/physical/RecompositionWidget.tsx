@@ -3,6 +3,8 @@ import { Target, Scale, Activity, Flame, Edit2, Check } from 'lucide-react';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import type { AxiosError } from 'axios';
+import type { ApiResponse } from '../../types/api.types';
 import { updateClient } from '../../services/clientService';
 import type { Client } from '../../types';
 import Button from '../ui/Button';
@@ -46,7 +48,10 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
       toast.success("🎯 Metas de recomposición corporal actualizadas");
       setIsEditModalOpen(false);
     },
-    onError: () => toast.error("❌ Error al guardar metas de recomposición")
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      const message = error.response?.data?.message || "Error al guardar metas de recomposición";
+      toast.error(`❌ ${message}`);
+    }
   });
 
   // Calculate BMI
