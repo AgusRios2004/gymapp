@@ -128,12 +128,11 @@ describe('PaymentsPage - selector de profesor por rol (AC-0002-12)', () => {
     await user.click(screen.getByRole('button', { name: /Registrar Pago/i }));
 
     const dialog = screen.getByRole('dialog');
-    const professorLabel = await within(dialog).findByText('Profesor que cobra');
-    const professorSelect = professorLabel.parentElement!.querySelector('select');
-    expect(professorSelect).not.toBeNull();
-    expect(professorSelect!.value).toBe('');
+    const professorCombobox = await within(dialog).findByRole('combobox', { name: 'Profesor que cobra' });
+    expect(professorCombobox).toHaveValue('');
+    await user.click(professorCombobox);
     expect(
-      await within(professorSelect!).findByRole('option', { name: `${ACTIVE_PROFESSOR.name} ${ACTIVE_PROFESSOR.lastName}` }),
+      await within(dialog).findByRole('option', { name: `${ACTIVE_PROFESSOR.name} ${ACTIVE_PROFESSOR.lastName}` }),
     ).toBeInTheDocument();
   });
 

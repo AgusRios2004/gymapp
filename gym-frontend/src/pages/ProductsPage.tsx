@@ -21,10 +21,11 @@ import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
-import type { Product, Client, ProductDetailRequest, Payment } from '../types';
+import type { Product, Client, ProductDetailRequest, Payment, Professor } from '../types';
 
 export default function ProductsPage() {
   const { user } = useAuth();
@@ -45,7 +46,7 @@ export default function ProductsPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [cart, setCart] = useState<Array<{ product: Product, quantity: number }>>([]);
   const [clientSearch, setClientSearch] = useState('');
-  const [selectedProfessor, setSelectedProfessor] = useState('');
+  const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
 
   // Queries
   const { data: products = [], isLoading: isLoadingProducts } = useQuery({
@@ -174,7 +175,7 @@ export default function ProductsPage() {
 
     saleMutation.mutate({
       idClient: selectedClient.id,
-      ...(isAdmin ? { idProfessor: Number(selectedProfessor) } : {}),
+      ...(isAdmin && selectedProfessor ? { idProfessor: selectedProfessor.id } : {}),
       date: new Date().toISOString().split('T')[0],
       products
     });
@@ -345,19 +346,15 @@ export default function ProductsPage() {
                    </div>
 
                    {isAdmin && (
-                     <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Profesor</label>
-                        <select
-                          className="w-full p-3 bg-gray-50 rounded-2xl border-0 focus:ring-2 focus:ring-blue-500 font-medium text-gray-700"
-                          value={selectedProfessor}
-                          onChange={e => setSelectedProfessor(e.target.value)}
-                        >
-                          <option value="">Seleccionar profesor...</option>
-                          {professors.map(p => (
-                            <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>
-                          ))}
-                        </select>
-                     </div>
+                     <SearchableSelect<Professor>
+                       label="Profesor"
+                       placeholder="Buscar profesor..."
+                       options={professors}
+                       value={selectedProfessor}
+                       onChange={setSelectedProfessor}
+                       getKey={(p) => p.id}
+                       getLabel={(p) => `${p.name} ${p.lastName}`}
+                     />
                    )}
 
                    <div className="border-t border-gray-100 pt-4">

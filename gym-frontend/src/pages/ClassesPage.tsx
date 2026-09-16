@@ -7,12 +7,13 @@ import { getRoutines } from '../services/routineService';
 import { createClient, getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
 import { toast } from 'react-toastify';
-import type { GroupClass, Professor, Client, Assistance } from '../types';
+import type { GroupClass, Professor, Client, Assistance, Routine } from '../types';
 import { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 const TRANSLATIONS: Record<string, string> = {
@@ -397,17 +398,15 @@ export default function ClassesPage() {
               </div>
               <Input label="Email" type="email" value={clientForm.email} onChange={e => setClientForm({...clientForm, email: e.target.value})} />
               
-              <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Inscribir en Clase</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={clientForm.activeClassId}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setClientForm({...clientForm, activeClassId: e.target.value})}
-                  >
-                    <option value="">No inscribir a ninguna clase...</option>
-                    {classes.map((c: GroupClass) => <option key={c.id} value={c.id}>{c.className} ({c.daysOfWeek.map(d => TRANSLATIONS[d]).join(', ')} {c.startTime})</option>)}
-                  </select>
-              </div>
+              <SearchableSelect<GroupClass>
+                label="Inscribir en Clase"
+                placeholder="No inscribir a ninguna clase..."
+                options={classes}
+                value={classes.find((c: GroupClass) => String(c.id) === clientForm.activeClassId) ?? null}
+                onChange={(c) => setClientForm({...clientForm, activeClassId: c ? String(c.id) : ''})}
+                getKey={(c) => c.id}
+                getLabel={(c) => `${c.className} (${c.daysOfWeek.map(d => TRANSLATIONS[d]).join(', ')} ${c.startTime})`}
+              />
 
               <div className="flex gap-3 pt-6">
                   <Button variant="outline" type="button" className="flex-1" onClick={() => setIsClientModalOpen(false)}>Cancelar</Button>
@@ -472,6 +471,10 @@ export default function ClassesPage() {
              toast.warning("Elegí al menos un día para la clase");
              return;
            }
+           if (!form.professorId) {
+             toast.warning("Seleccioná un profesor");
+             return;
+           }
            createMutation.mutate({
              ...form,
              capacity: Number(form.capacity)
@@ -497,30 +500,25 @@ export default function ClassesPage() {
                <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
             </div>
 
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 required
-                 value={form.professorId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
-               >
-                 <option value="">Seleccionar profesor...</option>
-                 {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
-               </select>
-            </div>
+            <SearchableSelect<Professor>
+              label="Profesor"
+              placeholder="Buscar profesor..."
+              options={professors}
+              value={professors.find((p: Professor) => String(p.id) === form.professorId) ?? null}
+              onChange={(p) => setForm({...form, professorId: p ? String(p.id) : ''})}
+              getKey={(p) => p.id}
+              getLabel={(p) => `${p.name} ${p.lastName}`}
+            />
 
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
-               <select
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 value={form.routineId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
-               >
-                 <option value="">Sin rutina asignada</option>
-                 {routines.filter((r) => r.active).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-               </select>
-            </div>
+            <SearchableSelect<Routine>
+              label="Rutina (Opcional)"
+              placeholder="Sin rutina asignada"
+              options={routines.filter((r) => r.active)}
+              value={routines.find((r) => String(r.id) === form.routineId) ?? null}
+              onChange={(r) => setForm({...form, routineId: r ? String(r.id) : ''})}
+              getKey={(r) => r.id}
+              getLabel={(r) => r.name}
+            />
 
             <div className="flex gap-3 pt-6">
                <Button variant="outline" type="button" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
@@ -534,6 +532,10 @@ export default function ClassesPage() {
            e.preventDefault();
            if (form.daysOfWeek.length === 0) {
              toast.warning("Elegí al menos un día para la clase");
+             return;
+           }
+           if (!form.professorId) {
+             toast.warning("Seleccioná un profesor");
              return;
            }
            if(editingClassId) {
@@ -566,30 +568,25 @@ export default function ClassesPage() {
                <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
             </div>
 
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 required
-                 value={form.professorId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, professorId: e.target.value})}
-               >
-                 <option value="">Seleccionar profesor...</option>
-                 {professors.map((p: Professor) => <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>)}
-               </select>
-            </div>
+            <SearchableSelect<Professor>
+              label="Profesor"
+              placeholder="Buscar profesor..."
+              options={professors}
+              value={professors.find((p: Professor) => String(p.id) === form.professorId) ?? null}
+              onChange={(p) => setForm({...form, professorId: p ? String(p.id) : ''})}
+              getKey={(p) => p.id}
+              getLabel={(p) => `${p.name} ${p.lastName}`}
+            />
 
-            <div>
-               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
-               <select 
-                 className="w-full p-2 border rounded-lg bg-gray-50"
-                 value={form.routineId}
-                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
-               >
-                 <option value="">Sin rutina asignada</option>
-                 {routines.filter((r) => r.active).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-               </select>
-            </div>
+            <SearchableSelect<Routine>
+              label="Rutina (Opcional)"
+              placeholder="Sin rutina asignada"
+              options={routines.filter((r) => r.active)}
+              value={routines.find((r) => String(r.id) === form.routineId) ?? null}
+              onChange={(r) => setForm({...form, routineId: r ? String(r.id) : ''})}
+              getKey={(r) => r.id}
+              getLabel={(r) => r.name}
+            />
 
             <div className="flex gap-3 pt-6">
                <Button variant="outline" type="button" className="flex-1" onClick={() => { setIsEditModalOpen(false); setEditingClassId(null); }}>Cancelar</Button>

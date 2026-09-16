@@ -10,7 +10,7 @@ import { Badge } from '../components/ui/Badge';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
-import type { Client, MonthlyPaymentRequest } from '../types/index';
+import type { Client, MonthlyPaymentRequest, Professor } from '../types/index';
 import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
@@ -38,7 +38,7 @@ export default function PaymentsPage() {
   
   // Data for the form
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [selectedProfessor, setSelectedProfessor] = useState<string>('');
+  const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
   const [selectedMonthlyType, setSelectedMonthlyType] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
@@ -78,7 +78,7 @@ export default function PaymentsPage() {
 
   const resetForm = () => {
     setSelectedClient(null);
-    setSelectedProfessor('');
+    setSelectedProfessor(null);
     setSelectedMonthlyType('');
     setPaymentDate(new Date().toISOString().split('T')[0]);
   };
@@ -92,7 +92,7 @@ export default function PaymentsPage() {
 
     const request: MonthlyPaymentRequest = {
       idClient: selectedClient.id,
-      ...(user?.role === 'ADMIN' ? { idProfessor: Number(selectedProfessor) } : {}),
+      ...(user?.role === 'ADMIN' && selectedProfessor ? { idProfessor: selectedProfessor.id } : {}),
       idMonthlyType: Number(selectedMonthlyType),
       date: paymentDate
     };
@@ -206,19 +206,15 @@ export default function PaymentsPage() {
           />
 
           {user?.role === 'ADMIN' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profesor que cobra</label>
-              <select 
-                className="w-full p-2 border rounded-lg"
-                value={selectedProfessor}
-                onChange={(e) => setSelectedProfessor(e.target.value)}
-              >
-                <option value="">Seleccionar profesor...</option>
-                {professors.map(p => (
-                  <option key={p.id} value={p.id}>{p.name} {p.lastName}</option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect<Professor>
+              label="Profesor que cobra"
+              placeholder="Buscar profesor..."
+              options={professors}
+              value={selectedProfessor}
+              onChange={setSelectedProfessor}
+              getKey={(p) => p.id}
+              getLabel={(p) => `${p.name} ${p.lastName}`}
+            />
           )}
 
           <div>

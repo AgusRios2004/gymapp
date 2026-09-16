@@ -116,7 +116,7 @@ describe('ProductsPage - POS como ADMIN (AC-0002-10)', () => {
 
     await goToPosTab(user);
 
-    const professorSelect = await screen.findByRole('combobox');
+    const professorCombobox = await screen.findByRole('combobox', { name: 'Profesor' });
 
     await user.click(await screen.findByRole('button', { name: /Proteina/i }));
     await user.type(screen.getByPlaceholderText('Buscar cliente...'), 'Marina');
@@ -124,7 +124,8 @@ describe('ProductsPage - POS como ADMIN (AC-0002-10)', () => {
 
     expect(screen.getByRole('button', { name: /Confirmar Venta/i })).toBeDisabled();
 
-    await user.selectOptions(professorSelect, String(ACTIVE_PROFESSOR.id));
+    await user.click(professorCombobox);
+    await user.click(screen.getByRole('option', { name: `${ACTIVE_PROFESSOR.name} ${ACTIVE_PROFESSOR.lastName}` }));
 
     expect(screen.getByRole('button', { name: /Confirmar Venta/i })).toBeEnabled();
 

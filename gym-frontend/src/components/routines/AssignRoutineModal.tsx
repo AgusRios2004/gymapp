@@ -11,6 +11,7 @@ import type { Client, Routine, AssignRoutineRequest } from '../../types/index';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { DAYS_OF_WEEK } from '../../constants/time';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { SearchableSelect } from '../ui/SearchableSelect';
 
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
@@ -28,10 +29,9 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   client,
 }) => {
   const queryClient = useQueryClient();
-  const [selectedRoutineId, setSelectedRoutineId] = useState<number | null>(null);
+  const [selectedRoutine, setSelectedRoutine] = useState<Routine | null>(null);
   // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY")
   const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
-  const [searchTerm, setSearchTerm] = useState('');
   const [notes, setNotes] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [errors, setErrors] = useState<string[]>([]);
@@ -53,23 +53,13 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   if (isOpen !== prevReset.isOpen || client !== prevReset.client) {
     setPrevReset({ isOpen, client });
     if (isOpen) {
-      setSelectedRoutineId(null);
+      setSelectedRoutine(null);
       setScheduleMap({});
-      setSearchTerm('');
       setNotes('');
       setStartDate(new Date().toISOString().split('T')[0]);
       setErrors([]);
     }
   }
-
-  // Obtener la rutina seleccionada completa para ver sus días
-  const selectedRoutine = routines.find((r: Routine) => r.id === selectedRoutineId);
-
-  // Filtrar rutinas para el buscador (mantenemos la seleccionada visible aunque no coincida con el filtro)
-  const filteredRoutines = routines.filter((r: Routine) => 
-    r.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    r.id === selectedRoutineId
-  );
 
   // Mutación para asignar la rutina
   const mutation = useMutation({
@@ -82,11 +72,10 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
         onClose();
       } else {
         // Resetear formulario para permitir agregar otra inmediatamente
-        setSelectedRoutineId(null);
+        setSelectedRoutine(null);
         setScheduleMap({});
         setNotes('');
         setErrors([]);
-        setSearchTerm('');
       }
     },
     onError: (error: Error) => {
@@ -98,7 +87,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const handleSave = (closeAfterSave: boolean) => {
     shouldCloseRef.current = closeAfterSave;
 
-    if (!client || !selectedRoutineId) {
+    if (!client || !selectedRoutine) {
       setErrors(["Debes seleccionar una rutina."]);
       return;
     }
@@ -110,7 +99,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 
     const payload = {
       clientId: client.id,
-      routineTemplateId: selectedRoutineId,
+      routineTemplateId: selectedRoutine.id,
       schedule,
       notes,
       startDate,
@@ -153,33 +142,19 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 
         <div className="p-6 space-y-6 overflow-y-auto">
           
-          <div className="space-y-2">
-            <Input
-              label="Seleccionar Plantilla"
-              placeholder="Buscar por nombre..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={mutation.isPending}
-              className="mb-2"
-            />
-            
-            <select
-              className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              value={selectedRoutineId || ''}
-              onChange={(e) => {
-                setSelectedRoutineId(Number(e.target.value));
-                setScheduleMap({});
-              }}
-              disabled={mutation.isPending}
-            >
-              <option value="">-- Selecciona una rutina --</option>
-              {filteredRoutines.map((routine: Routine) => (
-                <option key={routine.id} value={routine.id}>
-                  {routine.name} ({routine.goal})
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableSelect<Routine>
+            label="Seleccionar Plantilla"
+            placeholder="Buscar por nombre..."
+            options={routines}
+            value={selectedRoutine}
+            onChange={(routine) => {
+              setSelectedRoutine(routine);
+              setScheduleMap({});
+            }}
+            getKey={(r) => r.id}
+            getLabel={(r) => `${r.name} (${r.goal})`}
+            disabled={mutation.isPending}
+          />
 
           {/* Mapeo de Días */}
           {selectedRoutine && selectedRoutine.days && (

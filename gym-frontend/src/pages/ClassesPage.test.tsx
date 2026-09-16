@@ -112,13 +112,10 @@ describe('ClassesPage - selector de clase al asignar un alumno (AC-0003-12)', ()
     const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByText('Registro Rápido de Alumno')).toBeInTheDocument();
 
-    const classOption = (await waitFor(() => {
-      const options = within(dialog).getAllByRole('option');
-      const found = options.find((option) => option.textContent?.includes('Funcional'));
-      expect(found).toBeDefined();
-      return found;
-    }))!;
+    const classCombobox = await within(dialog).findByRole('combobox', { name: 'Inscribir en Clase' });
+    await user.click(classCombobox);
 
+    const classOption = within(dialog).getByRole('option', { name: /Funcional/ });
     expect(classOption.textContent).toContain('Lunes');
     expect(classOption.textContent).toContain('Miércoles');
   });
@@ -129,21 +126,11 @@ describe('ClassesPage - selector de clase al asignar un alumno (AC-0003-12)', ()
 // el día es un único <select> (siempre tiene un valor), así que no hay forma de "no elegir día", y
 // no hay checkboxes por día para elegir varios.
 describe('ClassesPage - formulario de nueva clase con varios días (AC-0003-10)', () => {
-  function getProfessorSelect(dialog: HTMLElement) {
-    // No se busca por posición: hoy el <select> de día ocupa el primer combobox del formulario, y
-    // T4 lo reemplaza por checkboxes, corriendo el orden. Se ubica por el contenido de sus opciones.
-    const professorSelect = within(dialog)
-      .getAllByRole('combobox')
-      .find((select) => within(select).queryByText(`${PROFESSOR.name} ${PROFESSOR.lastName}`));
-    if (!professorSelect) {
-      throw new Error('No se encontró el select de profesor en el formulario');
-    }
-    return professorSelect;
-  }
-
   async function fillCommonFields(user: ReturnType<typeof userEvent.setup>, dialog: HTMLElement) {
     await user.type(within(dialog).getByRole('textbox'), 'Funcional');
-    await user.selectOptions(getProfessorSelect(dialog), String(PROFESSOR.id));
+    const professorCombobox = await within(dialog).findByRole('combobox', { name: 'Profesor' });
+    await user.click(professorCombobox);
+    await user.click(within(dialog).getByRole('option', { name: `${PROFESSOR.name} ${PROFESSOR.lastName}` }));
   }
 
   it('sin ningún día elegido no llama a createClass', async () => {
