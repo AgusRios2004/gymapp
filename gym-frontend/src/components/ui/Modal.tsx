@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Button from './Button';
 import { X } from 'lucide-react';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -20,23 +21,16 @@ const Modal: React.FC<ModalProps> = ({
   children,
   footer,
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
+  useEscapeKey(isOpen, onClose);
 
+  useEffect(() => {
     if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
-
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

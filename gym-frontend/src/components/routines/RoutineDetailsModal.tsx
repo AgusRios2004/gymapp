@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import type { Routine } from '../../types/index';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface RoutineDetailsModalProps {
   isOpen: boolean;
@@ -9,6 +10,8 @@ interface RoutineDetailsModalProps {
 }
 
 const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClose, routine }) => {
+  useEscapeKey(isOpen && !!routine, onClose);
+
   if (!isOpen || !routine) return null;
 
   // Debug: Ver en consola qué datos llegan realmente (F12 -> Console)

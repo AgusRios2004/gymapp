@@ -14,6 +14,7 @@ import type { Routine } from '../../types/index';
 import type { z } from 'zod';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 type RoutineFormData = z.infer<typeof RoutineSchema>;
 
@@ -185,6 +186,8 @@ useEffect(() => {
       deleteMutation.mutate(routine.id);
     }
   };
+
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,7 @@ import { z } from 'zod';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { ClientSchema } from '../../types/schema.type';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 // 1. Inferimos el TIPO a partir del ESQUEMA (valor)
 type ClientFormData = z.infer<typeof ClientSchema>;
@@ -72,21 +73,7 @@ const ClientModal: React.FC<ClientModalProps> = ({
   }, [onClose]);
 
   // Lógica de cierre con la tecla ESC
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleCloseAttempt();
-      }
-    };
-
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleCloseAttempt]);
+  useEscapeKey(isOpen, handleCloseAttempt);
 
   if (!isOpen) return null;
 

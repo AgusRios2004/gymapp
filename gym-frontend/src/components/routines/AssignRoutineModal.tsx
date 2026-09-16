@@ -10,6 +10,7 @@ import { AssignRoutineSchema } from '../../types/schema.type';
 import type { Client, Routine, AssignRoutineRequest } from '../../types/index';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { DAYS_OF_WEEK } from '../../constants/time';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
@@ -131,6 +132,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     // Enviamos los datos. Aseguramos que startDate vaya en el payload final.
     mutation.mutate(result.data);
   };
+
+  useEscapeKey(isOpen && !!client, onClose);
 
   if (!isOpen || !client) return null;
 

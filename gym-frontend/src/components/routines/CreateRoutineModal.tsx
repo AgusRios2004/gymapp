@@ -11,6 +11,7 @@ import { getExercises, createExercise, type Exercise } from '../../services/exer
 import CreateExerciseModal from '../exercises/CreateExerciseModal';
 import { toast } from 'react-toastify';
 import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 interface CreateRoutineModalProps {
   isOpen: boolean;
@@ -160,6 +161,8 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
 
     mutate(payload as unknown as Partial<Routine>); // Cast necesario para el DTO
   };
+
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 
