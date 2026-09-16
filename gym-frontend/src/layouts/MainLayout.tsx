@@ -7,11 +7,11 @@ const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
+    <div className="flex min-h-screen bg-white text-slate-900 font-sans">
       {/* Mobile Hamburger Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-zinc-900/90 backdrop-blur-md rounded-xl shadow-industrial border border-zinc-800 text-amber-400 active:scale-95 transition-all"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-white/90 backdrop-blur-md rounded-xl shadow-sm border border-slate-200 text-emerald-600 active:scale-95 transition-all"
         aria-label="Abrir menú"
       >
         {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}

@@ -194,7 +194,7 @@ export default function ProductsPage() {
   const productSales = allPayments.filter((p: Payment) => p.paymentProducts && p.paymentProducts.length > 0);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex p-1 bg-gray-100 rounded-2xl w-full md:w-auto overflow-x-auto">
           <button 

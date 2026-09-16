@@ -160,7 +160,7 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-20"> 
+    <div className="space-y-6 pb-20"> 
       
       {/* HEADER + BOTÓN ACCIÓN */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm">

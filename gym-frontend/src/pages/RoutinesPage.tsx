@@ -10,6 +10,7 @@ import RoutineDetailsModal from '../components/routines/RoutineDetailsModal';
 import EditRoutineModal from '../components/routines/EditRoutineModal';
 import { getRoutines, deleteRoutine } from '../services/routineService';
 import type { Routine } from '../types/index';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 const RoutinesPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -43,10 +44,12 @@ const RoutinesPage: React.FC = () => {
     routine.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEscapeKey(!!routineToDelete, () => setRoutineToDelete(null));
+
   console.log('RoutinesPage render', routines);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-6 space-y-8">
       {/* Encabezado */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
