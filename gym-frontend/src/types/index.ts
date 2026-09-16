@@ -183,7 +183,7 @@ export interface GroupClass {
     id: number;
     className: string;
     professor: Professor;
-    dayOfWeek: string;
+    daysOfWeek: string[];
     startTime: string;
     endTime: string;
     capacity: number;

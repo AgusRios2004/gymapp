@@ -67,8 +67,11 @@ function getDayColumn(dayLabel: string) {
   return heading.parentElement!.parentElement as HTMLElement;
 }
 
-function getClassCard(className: string) {
-  const heading = screen.getByRole('heading', { level: 4, name: className });
+// Scopeado a una columna de día: una clase multi-día (AC-0003-09) aparece en más de una
+// columna, así que buscar el heading en todo el documento es ambiguo.
+function getClassCard(className: string, dayLabel: string) {
+  const column = getDayColumn(dayLabel);
+  const heading = within(column).getByRole('heading', { level: 4, name: className });
   return heading.parentElement!.parentElement!.parentElement as HTMLElement;
 }
 
@@ -187,7 +190,7 @@ describe('ClassesPage - formulario de edición precarga los días (AC-0003-11)',
     const user = userEvent.setup();
     renderClassesPage();
 
-    const card = await waitFor(() => getClassCard('Spinning'));
+    const card = await waitFor(() => getClassCard('Spinning', 'Viernes'));
     const [editButton] = within(card).getAllByRole('button');
     await user.click(editButton);
 
