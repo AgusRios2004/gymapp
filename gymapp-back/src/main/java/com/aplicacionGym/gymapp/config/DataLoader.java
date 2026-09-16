@@ -162,12 +162,12 @@ public class DataLoader implements CommandLineRunner {
 
         // 4. Clases Grupales
         GroupClass crossfit = new GroupClass();
-        crossfit.setClassName("Crossfit"); crossfit.setCapacity(20); crossfit.setDayOfWeek("MONDAY");
+        crossfit.setClassName("Crossfit"); crossfit.setCapacity(20); crossfit.setDaysOfWeek(List.of("MONDAY"));
         crossfit.setStartTime("10:00"); crossfit.setEndTime("11:00"); crossfit.setProfessor(marcos);
         crossfit = groupClassRepository.save(crossfit);
 
         GroupClass yoga = new GroupClass();
-        yoga.setClassName("Yoga"); yoga.setCapacity(15); yoga.setDayOfWeek("WEDNESDAY");
+        yoga.setClassName("Yoga"); yoga.setCapacity(15); yoga.setDaysOfWeek(List.of("WEDNESDAY"));
         yoga.setStartTime("18:00"); yoga.setEndTime("19:00"); yoga.setProfessor(sofia);
         yoga = groupClassRepository.save(yoga);
 

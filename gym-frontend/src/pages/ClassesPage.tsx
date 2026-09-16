@@ -35,11 +35,18 @@ export default function ClassesPage() {
     className: '',
     professorId: '',
     routineId: '',
-    dayOfWeek: 'MONDAY',
+    daysOfWeek: [] as string[],
     startTime: '10:00',
     endTime: '11:00',
     capacity: '20'
   });
+
+  const toggleFormDay = (day: string) => {
+    setForm(f => ({
+      ...f,
+      daysOfWeek: f.daysOfWeek.includes(day) ? f.daysOfWeek.filter(d => d !== day) : [...f.daysOfWeek, day]
+    }));
+  };
 
   const [clientForm, setClientForm] = useState({
     name: '',
@@ -94,7 +101,7 @@ export default function ClassesPage() {
          className: '',
          professorId: '',
          routineId: '',
-         dayOfWeek: 'MONDAY',
+         daysOfWeek: [],
          startTime: '10:00',
          endTime: '11:00',
          capacity: '20'
@@ -125,7 +132,7 @@ export default function ClassesPage() {
          className: '',
          professorId: '',
          routineId: '',
-         dayOfWeek: 'MONDAY',
+         daysOfWeek: [],
          startTime: '10:00',
          endTime: '11:00',
          capacity: '20'
@@ -221,13 +228,13 @@ export default function ClassesPage() {
             </div>
             
             <div className="space-y-6 flex-1 p-5">
-               {classes.filter((c: GroupClass) => c.dayOfWeek === day).length === 0 ? (
+               {classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).length === 0 ? (
                  <div className="flex flex-col items-center justify-center py-12 opacity-30">
                     <CalendarDays size={48} className="text-gray-400 mb-2" />
                     <p className="text-sm italic">Sin clases programadas</p>
                  </div>
                ) : (
-                 classes.filter((c: GroupClass) => c.dayOfWeek === day).map((c: GroupClass) => {
+                 classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).map((c: GroupClass) => {
                     const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
                     const isFull = assignedStudentsCount >= c.capacity;
                     return (
@@ -247,7 +254,7 @@ export default function ClassesPage() {
                                       className: c.className,
                                       professorId: String(c.professor?.id || ''),
                                       routineId: String(c.routine?.id || ''),
-                                      dayOfWeek: c.dayOfWeek,
+                                      daysOfWeek: c.daysOfWeek,
                                       startTime: c.startTime,
                                       endTime: c.endTime,
                                       capacity: String(c.capacity)
@@ -395,7 +402,7 @@ export default function ClassesPage() {
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setClientForm({...clientForm, activeClassId: e.target.value})}
                   >
                     <option value="">No inscribir a ninguna clase...</option>
-                    {classes.map((c: GroupClass) => <option key={c.id} value={c.id}>{c.className} ({TRANSLATIONS[c.dayOfWeek]} {c.startTime})</option>)}
+                    {classes.map((c: GroupClass) => <option key={c.id} value={c.id}>{c.className} ({c.daysOfWeek.map(d => TRANSLATIONS[d]).join(', ')} {c.startTime})</option>)}
                   </select>
               </div>
 
@@ -456,37 +463,40 @@ export default function ClassesPage() {
       </Modal>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Programar Nueva Clase">
-         <form onSubmit={(e) => { 
-           e.preventDefault(); 
+         <form onSubmit={(e) => {
+           e.preventDefault();
+           if (form.daysOfWeek.length === 0) {
+             toast.warning("Elegí al menos un día para la clase");
+             return;
+           }
            createMutation.mutate({
              ...form,
              capacity: Number(form.capacity)
-           }); 
+           });
          }} className="space-y-4">
             <Input label="Nombre de la Clase" required value={form.className} onChange={e => setForm({...form, className: e.target.value})} />
-            
-            <div className="grid grid-cols-2 gap-4">
-               <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Día</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={form.dayOfWeek}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
-                  >
-                    {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
-                  </select>
+
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Días</label>
+               <div className="flex flex-wrap gap-2">
+                 {DAYS.map(day => (
+                   <label key={day} className="flex items-center gap-1.5 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 cursor-pointer">
+                     <input type="checkbox" checked={form.daysOfWeek.includes(day)} onChange={() => toggleFormDay(day)} />
+                     {TRANSLATIONS[day]}
+                   </label>
+                 ))}
                </div>
-               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
                <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
                <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
             </div>
 
             <div>
                <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select 
+               <select
                  className="w-full p-2 border rounded-lg bg-gray-50"
                  required
                  value={form.professorId}
@@ -499,7 +509,7 @@ export default function ClassesPage() {
 
             <div>
                <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Rutina (Opcional)</label>
-               <select 
+               <select
                  className="w-full p-2 border rounded-lg bg-gray-50"
                  value={form.routineId}
                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, routineId: e.target.value})}
@@ -517,8 +527,12 @@ export default function ClassesPage() {
       </Modal>
 
       <Modal isOpen={isEditModalOpen} onClose={() => { setIsEditModalOpen(false); setEditingClassId(null); }} title="Editar Clase">
-         <form onSubmit={(e) => { 
-           e.preventDefault(); 
+         <form onSubmit={(e) => {
+           e.preventDefault();
+           if (form.daysOfWeek.length === 0) {
+             toast.warning("Elegí al menos un día para la clase");
+             return;
+           }
            if(editingClassId) {
              updateMutation.mutate({
                id: editingClassId,
@@ -526,33 +540,32 @@ export default function ClassesPage() {
                  ...form,
                  capacity: Number(form.capacity)
                }
-             }); 
+             });
            }
          }} className="space-y-4">
             <Input label="Nombre de la Clase" required value={form.className} onChange={e => setForm({...form, className: e.target.value})} />
-            
-            <div className="grid grid-cols-2 gap-4">
-               <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Día</label>
-                  <select 
-                    className="w-full p-2 border rounded-lg bg-gray-50"
-                    value={form.dayOfWeek}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm({...form, dayOfWeek: e.target.value})}
-                  >
-                    {DAYS.map(day => <option key={day} value={day}>{TRANSLATIONS[day]}</option>)}
-                  </select>
+
+            <div>
+               <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Días</label>
+               <div className="flex flex-wrap gap-2">
+                 {DAYS.map(day => (
+                   <label key={day} className="flex items-center gap-1.5 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 cursor-pointer">
+                     <input type="checkbox" checked={form.daysOfWeek.includes(day)} onChange={() => toggleFormDay(day)} />
+                     {TRANSLATIONS[day]}
+                   </label>
+                 ))}
                </div>
-               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+               <Input label="Capacidad" type="number" required value={form.capacity} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, capacity: e.target.value})} />
                <Input label="Hora Inicio" type="time" required value={form.startTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, startTime: e.target.value})} />
                <Input label="Hora Fin" type="time" required value={form.endTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, endTime: e.target.value})} />
             </div>
 
             <div>
                <label className="text-xs font-bold text-gray-400 uppercase mb-1 block">Profesor</label>
-               <select 
+               <select
                  className="w-full p-2 border rounded-lg bg-gray-50"
                  required
                  value={form.professorId}
