@@ -120,13 +120,13 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
         </div>
 
         {/* Porcentaje Grasa Actual vs Meta */}
-        <div className="bg-slate-800/60 border border-slate-700/40 rounded-2xl p-4 space-y-1">
+        <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between text-slate-500 text-xs font-extrabold uppercase">
             <span>% GRASA CORPORAL</span>
-            <Flame size={14} className="text-amber-600" />
+            <Flame size={14} className="text-rose-500" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-amber-600 font-mono">{currentFat}%</span>
+            <span className="text-2xl font-black text-rose-500 font-mono">{currentFat}%</span>
             <span className="text-xs font-bold text-slate-500">/ Meta: {targetFat}%</span>
           </div>
           <p className="text-[11px] text-slate-400 font-medium">Est. Grasa: {fatMassKg} kg</p>

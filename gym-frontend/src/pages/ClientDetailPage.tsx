@@ -355,7 +355,7 @@ export default function ClientDetailPage() {
                       />
                       <Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#059669" strokeWidth={3} dot={{ r: 5, fill: '#059669' }} activeDot={{ r: 7 }} />
                       <Line type="monotone" dataKey="muscleMass" name="Masa Muscular (%)" stroke="#10b981" strokeWidth={3} dot={{ r: 5, fill: '#10b981' }} />
-                      <Line type="monotone" dataKey="fatPercentage" name="Grasa (%)" stroke="#f59e0b" strokeWidth={3} dot={{ r: 5, fill: '#f59e0b' }} />
+                      <Line type="monotone" dataKey="fatPercentage" name="Grasa (%)" stroke="#f43f5e" strokeWidth={3} dot={{ r: 5, fill: '#f43f5e' }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -399,7 +399,7 @@ export default function ClientDetailPage() {
                         </div>
                         <div className="text-center">
                           <p className="text-[10px] uppercase font-bold text-slate-400">Grasa</p>
-                          <p className="text-base font-black text-amber-600 font-mono">{record.fatPercentage}%</p>
+                          <p className="text-base font-black text-rose-500 font-mono">{record.fatPercentage}%</p>
                         </div>
                       </div>
                       {record.notes && (
