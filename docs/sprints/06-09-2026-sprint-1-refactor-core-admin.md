@@ -80,7 +80,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-01 | `ClientController` con `@Valid ClientRequestDTO` + mensajes en español (+ BUG-15). Ver corrección de BUG-03 del 13/09 | `ClientRequestDTO.java`, `ClientController.java`, `ClientMapper.java` | 1,5 hs | — | 0001 | ✅ |
 | T-02 | `GlobalExceptionHandler`: mapear todos los errores 4xx con mensajes en español | `GlobalExceptionHandler.java` | 4 hs | — | 0001 | ✅ |
 | T-08 | PATCH `/api/clients/{id}/status` — activar/desactivar cliente | `ClientController.java`, `ClientService.java` | 1 h | — | 0004 | ✅ |
-| T-13 | Dashboard: subir `totalProfessors` y `lowStockCount` a `MetricCard` (7 KPIs) | `DashboardPage.tsx` | 30 min | — | — | ⬜ |
+| T-13 | Dashboard: subir `totalProfessors` y `lowStockCount` a `MetricCard` (7 KPIs) | `DashboardPage.tsx` | 30 min | — | — | ✅ |
 
 **Estimación Semana 2: ~13 hs** — pasa el techo de 12,5 por la re-estimación de T-01 (13/09); se absorbe del buffer.
 
@@ -94,8 +94,8 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-05 | Asistencias: error descriptivo si cliente no tiene cuota activa | `AssistanceService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-06 | Pagos: error descriptivo si cliente ya tiene suscripción activa | `PaymentService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-07 | Clases: migrar `dayOfWeek: String` → `daysOfWeek: List<String>` (BE) | `GroupClass.java`, `GroupClassService.java`, `GroupClassController.java`, `GroupClassRepository.java` | 3 hs | — | 0003 | ✅ |
-| T-09 | Validación DNI obligatorio en formulario de cliente (deshabilitar submit) | `ClientModal.tsx` | 30 min | T-01 | — | ⬜ |
-| T-10 | Mostrar mensaje de error del backend en toast — leer `error.response.data.message` | `clientService.ts`, `paymentService.ts`, `assistanceService.ts` | 1,5 hs | T-02 | — | ⬜ |
+| T-09 | Validación DNI obligatorio en formulario de cliente (deshabilitar submit) | `ClientModal.tsx` | 30 min | T-01 | — | ✅ |
+| T-10 | Mostrar mensaje de error del backend en toast — leer `error.response.data.message` | `clientService.ts`, `paymentService.ts`, `assistanceService.ts` | 1,5 hs | T-02 | — | ✅ |
 | T-14 | Clases: UI para seleccionar múltiples días | `ClassesPage.tsx` | 2 hs | T-07 | 0003 | ✅ |
 
 **Estimación Semana 3: ~12 hs**
