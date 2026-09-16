@@ -150,12 +150,11 @@ export default function TrainingSchemeWidget() {
                   size="sm"
                   variant={isDone ? "primary" : "outline"}
                   onClick={() => toggleDayCompleted(day.dayCode)}
+                  leftIcon={isDone ? <CheckCircle2 size={14} /> : <PlayCircle size={14} />}
                   className={`w-full rounded-xl text-xs gap-2 ${
                     isDone ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "border-slate-700 text-slate-300 hover:bg-slate-700"
                   }`}
                 >
-
-                  {isDone ? <CheckCircle2 size={14} /> : <PlayCircle size={14} />}
                   {isDone ? 'Sesión Completada' : 'Marcar Sesión Hecha'}
                 </Button>
               </div>
