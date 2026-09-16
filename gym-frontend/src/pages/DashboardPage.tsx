@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle } from 'lucide-react';
+import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle, GraduationCap, PackageX } from 'lucide-react';
 import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../types/index';
 
@@ -76,41 +76,55 @@ export default function DashboardPage() {
         <p className="text-slate-500 text-sm mt-1 font-medium">Resumen del centro deportivo, estadísticas clave e indicadores de rendimiento</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-        <StatCard 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <StatCard
           title="Total Alumnos"
           value={stats.totalClients}
           icon={<Users size={24} />}
           color="bg-emerald-600"
           description="Socios registrados en el sistema"
         />
-        <StatCard 
+        <StatCard
           title="Alumnos Activos"
           value={stats.activeClients}
           icon={<UserCheck size={24} />}
           color="bg-teal-600"
           description="Socios con membresía al día"
         />
-        <StatCard 
+        <StatCard
+          title="Profesores"
+          value={stats.totalProfessors}
+          icon={<GraduationCap size={24} />}
+          color="bg-sky-600"
+          description="Profesores dados de alta"
+        />
+        <StatCard
           title="Rutinas"
           value={stats.totalRoutines}
           icon={<Dumbbell size={24} />}
           color="bg-slate-900"
           description="Planes de entrenamiento creados"
         />
-        <StatCard 
+        <StatCard
           title="Ingresos del Mes"
           value={`$${stats.monthlyRevenue.toLocaleString()}`}
           icon={<DollarSign size={24} />}
           color="bg-emerald-700"
           description="Recaudación mensual total"
         />
-        <StatCard 
+        <StatCard
           title="Deudores"
           value={stats.debtorsCount}
           icon={<AlertCircle size={24} />}
           color="bg-rose-600"
           description="Alumnos con pago vencido"
+        />
+        <StatCard
+          title="Stock Bajo"
+          value={stats.lowStockCount}
+          icon={<PackageX size={24} />}
+          color="bg-amber-600"
+          description="Productos con stock crítico"
         />
       </div>
 
