@@ -68,6 +68,10 @@ public class PaymentService {
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
 
+        if (!client.isActive()) {
+            throw new BusinessRuleException("El cliente está inactivo. Reactivalo para registrar su pago.");
+        }
+
         MonthlyType newType = monthlyTypeRepository.findById(dto.getIdMonthlyType())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + dto.getIdMonthlyType()));
 
@@ -126,6 +130,10 @@ public class PaymentService {
         Payment payment = new Payment();
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
+
+        if (!client.isActive()) {
+            throw new BusinessRuleException("El cliente está inactivo. Reactivalo para venderle productos.");
+        }
 
         payment.setClient(client);
         payment.setProfessor(professor);

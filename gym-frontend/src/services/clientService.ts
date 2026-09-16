@@ -60,3 +60,8 @@ export const assignRoutine = async (data: AssignRoutineFormData): Promise<void> 
     // Ajusta la URL si tu backend usa otra ruta, ej: `${path}/assign-routine`
     await api.post(`${path}/assign-routine`, data);
 };
+
+export const setClientStatus = async (id: number, active: boolean): Promise<Client> => {
+    const response = await api.patch<ApiResponse<Client>>(`${path}/${id}/status`, { active });
+    return response.data.data;
+};

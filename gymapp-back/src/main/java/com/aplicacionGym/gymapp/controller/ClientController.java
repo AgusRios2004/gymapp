@@ -1,6 +1,7 @@
 package com.aplicacionGym.gymapp.controller;
 
 import com.aplicacionGym.gymapp.dto.request.ClientRequestDTO;
+import com.aplicacionGym.gymapp.dto.request.ClientStatusRequestDTO;
 import com.aplicacionGym.gymapp.dto.response.ClientResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.RoutineResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
@@ -57,6 +58,12 @@ public class ClientController {
         Client updatedClient = ClientMapper.toEntity(dto);
         ClientResponseDTO client = clientService.updateClient(id, updatedClient);
         return ResponseEntity.ok(WebApiResponseBuilder.success("Cliente actualizado correctamente", client));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<WebApiResponse> setClientStatus(@PathVariable Long id, @Valid @RequestBody ClientStatusRequestDTO dto) {
+        ClientResponseDTO client = clientService.setStatus(id, dto.getActive());
+        return ResponseEntity.ok(WebApiResponseBuilder.success("Estado del cliente actualizado correctamente", client));
     }
 
     @DeleteMapping("/{id}")

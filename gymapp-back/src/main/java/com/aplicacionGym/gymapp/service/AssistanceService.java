@@ -46,6 +46,10 @@ public class AssistanceService {
         Client client = clientRepository.findById(dto.getIdClient())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + dto.getIdClient()));
 
+        if (!client.isActive()) {
+            throw new BusinessRuleException("El cliente está inactivo. Reactivalo para registrar su asistencia.");
+        }
+
         // CHECK: Latest monthly payment
         Payment latestPayment = paymentRepository
                 .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId())
