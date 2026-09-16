@@ -1,7 +1,7 @@
 ---
 id: 0003
 titulo: Clases grupales en varios días de la semana
-estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
+estado: implementada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: [ADR-0003]

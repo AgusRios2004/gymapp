@@ -93,10 +93,10 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-03 | Fix venta de producto — `Professor not found` — resolver profesor desde JWT | `PaymentService.java`, `PaymentController.java` | 3 hs | T-02 | 0002 || ✅ |
 | T-05 | Asistencias: error descriptivo si cliente no tiene cuota activa | `AssistanceService.java` | 1 h | T-02 | 0001 | ✅ |
 | T-06 | Pagos: error descriptivo si cliente ya tiene suscripción activa | `PaymentService.java` | 1 h | T-02 | 0001 | ✅ |
-| T-07 | Clases: migrar `dayOfWeek: String` → `daysOfWeek: List<String>` (BE) | `GroupClass.java`, `GroupClassService.java`, `GroupClassController.java`, `GroupClassRepository.java` | 3 hs | — | 0003 | ⬜ |
+| T-07 | Clases: migrar `dayOfWeek: String` → `daysOfWeek: List<String>` (BE) | `GroupClass.java`, `GroupClassService.java`, `GroupClassController.java`, `GroupClassRepository.java` | 3 hs | — | 0003 | ✅ |
 | T-09 | Validación DNI obligatorio en formulario de cliente (deshabilitar submit) | `ClientModal.tsx` | 30 min | T-01 | — | ⬜ |
 | T-10 | Mostrar mensaje de error del backend en toast — leer `error.response.data.message` | `clientService.ts`, `paymentService.ts`, `assistanceService.ts` | 1,5 hs | T-02 | — | ⬜ |
-| T-14 | Clases: UI para seleccionar múltiples días | `ClassesPage.tsx` | 2 hs | T-07 | 0003 | ⬜ |
+| T-14 | Clases: UI para seleccionar múltiples días | `ClassesPage.tsx` | 2 hs | T-07 | 0003 | ✅ |
 
 **Estimación Semana 3: ~12 hs**
 
@@ -125,7 +125,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 |:---:|:---|:---|:---:|
 | 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) + corrección manual de hallazgos | ✅ implementada |
 | [0002 — Cobros y asistencias con el staff de la sesión](../../specs/0002-cobros-con-staff-desde-la-sesion.md) | T-03, T-11, T-12 | Sandcastle (completa, BE + FE) | ✅ implementada |
-| [0003 — Clases multi-día](../../specs/0003-clases-multi-dia.md) | T-07, T-14 | Sandcastle BE + FE | 🔵 aprobada (14/09) |
+| [0003 — Clases multi-día](../../specs/0003-clases-multi-dia.md) | T-07, T-14 | Sandcastle BE + FE | ✅ implementada (15/09, T3/T4 y colisiones de test entre specs resueltas a mano — Sandcastle se cortó antes de terminar el frontend) |
 | [0004 — Activar/desactivar cliente](../../specs/0004-activar-desactivar-cliente.md) | T-08, T-25 | Sandcastle BE + FE | ✅ implementada (15/09, mergeada tras revisión manual — Sandcastle se cortó antes del reviewer) |
 | 0005 — `SearchableSelect` | T-15, T-16 | Interactivo | 🔵 T1+T2 completas en worktree `spec-0005`, compuerta verde, pendiente merge a `main` |
 
