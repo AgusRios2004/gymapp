@@ -1,7 +1,7 @@
 ---
 id: 0005
 titulo: SearchableSelect reutilizable y selector de cliente en pagos
-estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
+estado: implementada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 14/09/2026
 adrs_relacionados: [ADR-0001, ADR-0002]
