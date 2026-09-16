@@ -1,7 +1,7 @@
 ---
 id: 0004
 titulo: Activar y desactivar clientes desde la tabla
-estado: aprobada             # draft | propuesta | aprobada | implementada | archivada
+estado: implementada             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 13/09/2026
 adrs_relacionados: []

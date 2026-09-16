@@ -79,7 +79,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 |:---:|:---|:---|:---:|:---:|:---:|:---:|
 | T-01 | `ClientController` con `@Valid ClientRequestDTO` + mensajes en español (+ BUG-15). Ver corrección de BUG-03 del 13/09 | `ClientRequestDTO.java`, `ClientController.java`, `ClientMapper.java` | 1,5 hs | — | 0001 | ✅ |
 | T-02 | `GlobalExceptionHandler`: mapear todos los errores 4xx con mensajes en español | `GlobalExceptionHandler.java` | 4 hs | — | 0001 | ✅ |
-| T-08 | PATCH `/api/clients/{id}/status` — activar/desactivar cliente | `ClientController.java`, `ClientService.java` | 1 h | — | 0004 | ⬜ |
+| T-08 | PATCH `/api/clients/{id}/status` — activar/desactivar cliente | `ClientController.java`, `ClientService.java` | 1 h | — | 0004 | ✅ |
 | T-13 | Dashboard: subir `totalProfessors` y `lowStockCount` a `MetricCard` (7 KPIs) | `DashboardPage.tsx` | 30 min | — | — | ⬜ |
 
 **Estimación Semana 2: ~13 hs** — pasa el techo de 12,5 por la re-estimación de T-01 (13/09); se absorbe del buffer.
@@ -110,7 +110,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-12 | Profesor auto-asignado desde sesión en pagos y asistencias (solo ADMIN puede cambiar) | `PaymentsPage.tsx`, `AttendancePage.tsx`, `AuthContext.tsx` | 2 hs | T-03 | 0002 || ✅ |
 | T-15 | Crear `SearchableSelect.tsx` — combobox con buscador, genérico y tipado | `components/ui/SearchableSelect.tsx` | 3 hs | — | 0005 | 🔵 |
 | T-16 | Reemplazar select de cliente en pagos con `SearchableSelect` (DNI + nombre) | `PaymentsPage.tsx` | 1 h | T-15 | 0005 | 🔵 |
-| T-25 | Toggle activo/inactivo inline en fila de tabla de clientes | `ClientsPage.tsx` | 1 h | T-08 | 0004 | ⬜ |
+| T-25 | Toggle activo/inactivo inline en fila de tabla de clientes | `ClientsPage.tsx` | 1 h | T-08 | 0004 | ✅ |
 | — | QA Sesión 02 (sábado 03/10) | — | 2 hs | todo lo anterior | — | ⬜ |
 
 **Estimación Semana 4: ~11 hs**
@@ -126,7 +126,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 | 0001 — Errores del backend legibles | T-01, T-02, T-05, T-06 | Sandcastle (piloto, T-35) + corrección manual de hallazgos | ✅ implementada |
 | [0002 — Cobros y asistencias con el staff de la sesión](../../specs/0002-cobros-con-staff-desde-la-sesion.md) | T-03, T-11, T-12 | Sandcastle (completa, BE + FE) | ✅ implementada |
 | [0003 — Clases multi-día](../../specs/0003-clases-multi-dia.md) | T-07, T-14 | Sandcastle BE + FE | 🔵 aprobada (14/09) |
-| [0004 — Activar/desactivar cliente](../../specs/0004-activar-desactivar-cliente.md) | T-08, T-25 | Sandcastle BE + FE | 🔵 aprobada (14/09) |
+| [0004 — Activar/desactivar cliente](../../specs/0004-activar-desactivar-cliente.md) | T-08, T-25 | Sandcastle BE + FE | ✅ implementada (15/09, mergeada tras revisión manual — Sandcastle se cortó antes del reviewer) |
 | 0005 — `SearchableSelect` | T-15, T-16 | Interactivo | 🔵 T1+T2 completas en worktree `spec-0005`, compuerta verde, pendiente merge a `main` |
 
 ---
