@@ -2,7 +2,7 @@
 > **Período:** 05/10/2026 → 18/10/2026 (2 semanas)  
 > **Ramas:** una rama corta por bloque de trabajo → merge a `main`.  
 > **Origen:** Tareas de diseño y UX que salieron del [Sprint 1](./06-09-2026-sprint-1-refactor-core-admin.md) al partirlo el 13/09/2026 ([ADR-0006](../adr/0006-partir-sprint-1-diseno-a-sprint-2.md)).  
-> **Estado:** ⬜ Pendiente
+> **Estado:** 🔵 En curso — T-19, T-22 y T-23 adelantadas el 15/09/2026 (sobró capacidad del Sprint 1)
 
 ---
 
@@ -36,7 +36,7 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 |:---:|:---|:---|:---:|:---:|:---:|
 | T-17 | Reemplazar selects de profesores, rutinas y clases con `SearchableSelect` | varios | 1,5 hs | T-15 (Sprint 1) | ⬜ |
 | T-18 | Crear `ConfirmModal.tsx` — modal genérico de confirmación con variantes | `components/ui/ConfirmModal.tsx` | 2 hs | — | ⬜ |
-| T-19 | Crear hook `useEscapeKey(onClose)` y aplicarlo a todos los modales | `hooks/useEscapeKey.ts` + modales | 1,5 hs | — | ⬜ |
+| T-19 | Crear hook `useEscapeKey(onClose)` y aplicarlo a todos los modales | `hooks/useEscapeKey.ts` + modales | 1,5 hs | — | ✅ |
 | T-20 | Agregar `SearchableSelect` y `ConfirmModal` al `DesignSystemShowcasePage` | `DesignSystemShowcasePage.tsx` | 1 h | T-18 | ⬜ |
 
 ### 🎨 Diseño global — light mode + layout
@@ -44,8 +44,8 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | ID | Tarea | Archivos | Est. | Depende de | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|
 | T-21 | Grep masivo + fix de fondos oscuros y amber → `bg-white text-slate-900 border-slate-200` | 15 `.tsx` con fondos oscuros + 15 con amber | 4 hs | — | ⬜ |
-| T-22 | Layout 100% pantalla — `MainLayout.tsx` sin max-width restrictivo | `MainLayout.tsx` | 1 h | — | ⬜ |
-| T-23 | Toast centrado — `ToastContainer position="top-center"` | `main.tsx` | 15 min | — | ⬜ |
+| T-22 | Layout 100% pantalla — `MainLayout.tsx` sin max-width restrictivo | `MainLayout.tsx` | 1 h | — | ✅ |
+| T-23 | Toast centrado — `ToastContainer position="top-center"` | `main.tsx` | 15 min | — | ✅ |
 | T-24 | Botón "Nuevo Alumno" — layout inline con `flex items-center gap-2` | `ClientsPage.tsx` | 15 min | — | ⬜ |
 | T-26 | Card "GRASA CORPORAL" — rose para grasa, emerald para músculo, fondo blanco | `ClientDetailPage.tsx` | 30 min | — | ⬜ |
 | T-27 | Ejercicios agrupados por grupo muscular con header de sección | `ExercisesPage.tsx` | 1,5 hs | — | ⬜ |
@@ -53,7 +53,7 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | T-29 | Rutinas — cards con formato consistente | `RoutinesPage.tsx` | 1 h | — | ⬜ |
 | T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ⬜ |
 
-> **T-21:** empezar por `ui/Modal.tsx` y `layouts/MainLayout.tsx` — arreglan varias pantallas de una. Detalle del grep en el Sprint 1 original (historial de git) y en [`BITACORA_QA.md`](../notes/BITACORA_QA.md).
+> **T-21:** `layouts/MainLayout.tsx` ya se arregló de paso al adelantar T-22 (15/09/2026) — quedaba `bg-slate-950`/botón hamburguesa `zinc`+`amber` en el shell general, se pasó a light/emerald. Empezar T-21 por `ui/Modal.tsx` y el resto del grep. Detalle del grep original en el Sprint 1 (historial de git) y en [`BITACORA_QA.md`](../notes/BITACORA_QA.md).
 
 Lo del diseño va **sin spec**: es cosmético y se valida en la QA. T-18 y T-19 pueden llevar spec si se quieren delegar.
 
