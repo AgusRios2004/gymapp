@@ -107,7 +107,7 @@ class GroupClassDaysTest {
     // devuelve esa clase con exactamente esos tres días, en ese orden.
     @Test
     void createClass_withThreeDays_respondsOkAndGetReturnsSameThreeDaysInOrder() throws Exception {
-        Long professorId = saveProfessor("91400001").getId();
+        Long professorId = saveProfessor("91403001").getId();
 
         long id = createClassAndGetId(classPayload(List.of("MONDAY", "WEDNESDAY", "FRIDAY"), professorId));
 
@@ -119,7 +119,7 @@ class GroupClassDaysTest {
     // crea la clase.
     @Test
     void createClass_withMissingOrEmptyDaysOfWeek_respondsBadRequestAndDoesNotCreateClass() throws Exception {
-        Long professorId = saveProfessor("91400002").getId();
+        Long professorId = saveProfessor("91403002").getId();
         int countBefore = getAllClasses().size();
 
         Map<String, Object> withoutDaysOfWeek = classPayload(null, professorId);
@@ -145,7 +145,7 @@ class GroupClassDaysTest {
     // AC-0003-03: POST con daysOfWeek: ["MONDAY","LUNES"] responde 400 y message menciona LUNES.
     @Test
     void createClass_withInvalidDay_respondsBadRequestMentioningRejectedValue() throws Exception {
-        Long professorId = saveProfessor("91400003").getId();
+        Long professorId = saveProfessor("91403003").getId();
 
         MvcResult result = mockMvc.perform(post("/api/classes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -161,7 +161,7 @@ class GroupClassDaysTest {
     // ["MONDAY","FRIDAY"] (sin repetidos, en orden de semana).
     @Test
     void createClass_withRepeatedDays_dedupesAndOrdersByWeekday() throws Exception {
-        Long professorId = saveProfessor("91400004").getId();
+        Long professorId = saveProfessor("91403004").getId();
 
         long id = createClassAndGetId(classPayload(List.of("FRIDAY", "MONDAY", "MONDAY"), professorId));
 
@@ -173,7 +173,7 @@ class GroupClassDaysTest {
     // solo con ["TUESDAY"] (reemplaza, no suma).
     @Test
     void updateClass_withNewDays_replacesDaysInsteadOfAddingThem() throws Exception {
-        Long professorId = saveProfessor("91400005").getId();
+        Long professorId = saveProfessor("91403005").getId();
         long id = createClassAndGetId(classPayload(List.of("MONDAY", "WEDNESDAY"), professorId));
 
         mockMvc.perform(put("/api/classes/{id}", id)
@@ -189,7 +189,7 @@ class GroupClassDaysTest {
     // (hoy updateClass tira RuntimeException → 500).
     @Test
     void updateClass_withNonExistentId_respondsNotFoundMentioningId() throws Exception {
-        Long professorId = saveProfessor("91400006").getId();
+        Long professorId = saveProfessor("91403006").getId();
         long nonExistentId = 987_654_321L;
 
         MvcResult result = mockMvc.perform(put("/api/classes/{id}", nonExistentId)

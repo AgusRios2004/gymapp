@@ -94,7 +94,7 @@ class ClientStatusTest {
         GroupClass groupClass = new GroupClass();
         groupClass.setClassName(name);
         groupClass.setProfessor(professor);
-        groupClass.setDayOfWeek("MONDAY");
+        groupClass.setDaysOfWeek(java.util.List.of("MONDAY"));
         groupClass.setStartTime("10:00");
         groupClass.setEndTime("11:00");
         groupClass.setCapacity(10);
