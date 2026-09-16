@@ -171,13 +171,13 @@ export default function ClientsPage() {
           </p>
         </div>
         
-        <Button 
+        <Button
           onClick={handleNewClient}
-          size="lg" 
+          size="lg"
+          leftIcon={<Plus size={20} />}
           className="w-full sm:w-auto px-8 min-w-[200px] bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/25 active:scale-95 gap-2"
         >
-          <Plus size={20} />
-          <span>Nuevo Alumno</span>
+          Nuevo Alumno
         </Button>
       </div>
 
