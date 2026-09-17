@@ -48,7 +48,7 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | T-23 | Toast centrado — `ToastContainer position="top-center"` | `main.tsx` | 15 min | — | ✅ |
 | T-24 | Botón "Nuevo Alumno" — layout inline con `flex items-center gap-2` | `ClientsPage.tsx` | 15 min | — | ⬜ |
 | T-26 | Card "GRASA CORPORAL" — rose para grasa, emerald para músculo, fondo blanco | `ClientDetailPage.tsx` | 30 min | — | ⬜ |
-| T-27 | Ejercicios agrupados por grupo muscular con header de sección | `ExercisesPage.tsx` | 1,5 hs | — | ⬜ |
+| T-27 | Ejercicios agrupados por grupo muscular con header de sección | `ExercisesPage.tsx` | 1,5 hs | — | ✅ |
 | T-28 | Clases — cards con color por día, info resumida | `ClassesPage.tsx` | 2 hs | T-14 (Sprint 1) | ⬜ |
 | T-29 | Rutinas — cards con formato consistente | `RoutinesPage.tsx` | 1 h | — | ⬜ |
 | T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ⬜ |
