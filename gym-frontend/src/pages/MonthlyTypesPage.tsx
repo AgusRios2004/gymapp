@@ -158,7 +158,7 @@ export default function MonthlyTypesPage() {
                       <span>{plan.durationDays} días de acceso</span>
                    </div>
                    <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-3 rounded-2xl">
-                      <Settings2 size={16} className="text-amber-500" />
+                      <Settings2 size={16} className="text-slate-400" />
                       <span>Configuración personalizable</span>
                    </div>
                 </div>

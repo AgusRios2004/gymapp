@@ -89,7 +89,7 @@ export const ClientNutritionTab: React.FC<Props> = ({ clientId }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
           <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-2xl">
             <span className="text-[11px] text-slate-400 uppercase font-extrabold">Calorías Meta</span>
-            <p className="text-xl font-black text-amber-600 font-mono">{plan?.dailyCalories || 2200} kcal</p>
+            <p className="text-xl font-black text-rose-600 font-mono">{plan?.dailyCalories || 2200} kcal</p>
             <span className="text-[10px] text-slate-500 font-bold">Consumidas: {totalCalories} kcal</span>
           </div>
 

@@ -197,22 +197,20 @@ export default function AttendancePage() {
           </div>
 
           {/* Context Info Card */}
-          <div className="bg-gray-900 p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden">
              <div className="relative z-10 flex justify-between items-center">
                 <div>
-                    <h4 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-1">Registrado por</h4>
-                    <p className="text-xl font-bold">{user?.name} {user?.lastName}</p>
+                    <h4 className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">Registrado por</h4>
+                    <p className="text-xl font-bold text-slate-900">{user?.name} {user?.lastName}</p>
                     <div className="mt-4 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <span className="text-[10px] font-bold text-white/60 uppercase">Sistema en línea</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">Sistema en línea</span>
                     </div>
                 </div>
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
                     <CheckCircle2 size={32} />
                 </div>
              </div>
-             {/* Decorative blob */}
-             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-600 rounded-full blur-3xl opacity-30"></div>
           </div>
         </div>
 
@@ -221,7 +219,7 @@ export default function AttendancePage() {
           <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm min-h-[600px] flex flex-col">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
               <div className="flex items-center gap-3">
-                 <div className="p-3 bg-amber-50 text-amber-500 rounded-2xl">
+                 <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
                     <Clock size={24} />
                  </div>
                  <div>

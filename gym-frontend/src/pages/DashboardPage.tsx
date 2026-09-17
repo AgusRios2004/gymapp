@@ -102,7 +102,7 @@ export default function DashboardPage() {
           title="Rutinas"
           value={stats.totalRoutines}
           icon={<Dumbbell size={24} />}
-          color="bg-slate-900"
+          color="bg-violet-600"
           description="Planes de entrenamiento creados"
         />
         <StatCard
@@ -195,7 +195,7 @@ export default function DashboardPage() {
               <span className="font-extrabold text-slate-900 text-sm">Registrar Pago</span>
             </Link>
             <Link to="/routines" className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-colors border border-slate-200/80 group">
-              <div className="p-3 bg-slate-900 text-white rounded-xl shadow-md shadow-slate-900/20 group-hover:scale-105 transition-transform"><Dumbbell size={20} /></div>
+              <div className="p-3 bg-violet-600 text-white rounded-xl shadow-md shadow-violet-600/20 group-hover:scale-105 transition-transform"><Dumbbell size={20} /></div>
               <span className="font-extrabold text-slate-900 text-sm">Nueva Rutina</span>
             </Link>
             <button 

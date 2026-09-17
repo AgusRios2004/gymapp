@@ -27,20 +27,20 @@ export const DesignSystemShowcasePage: React.FC = () => {
   return (
     <div className="space-y-10 pb-16">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 p-8 shadow-industrial">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-50 via-white to-slate-50 border border-slate-200 p-8 shadow-sm">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-3">
           <div className="inline-flex items-center gap-2">
             <Badge variant="energy" icon={<Zap className="w-3.5 h-3.5" />}>
               Official Design Tokens
             </Badge>
-            <Badge variant="outline">v1.0.0 Industrial Dark</Badge>
+            <Badge variant="outline">v2.0 Light — Vitality Green</Badge>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tight text-white">
-            GymApp <span className="text-gradient-amber">Design System</span>
+          <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tight text-slate-900">
+            GymApp <span className="text-gradient-emerald">Design System</span>
           </h1>
-          <p className="text-zinc-400 max-w-2xl text-sm sm:text-base">
-            Guía de componentes semánticos, tokens de color industrial, métricas de alto rendimiento y micro-interacciones restringidas por el guardián de tema <code className="text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60 font-mono text-xs">gym-theme-guardian</code>.
+          <p className="text-slate-500 max-w-2xl text-sm sm:text-base">
+            Guía de componentes semánticos, tokens de color, métricas de alto rendimiento y micro-interacciones restringidas por el guardián de tema <code className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-mono text-xs">gym-theme-guardian</code>.
           </p>
         </div>
       </div>
@@ -48,48 +48,48 @@ export const DesignSystemShowcasePage: React.FC = () => {
       {/* 1. Color Palette Tokens */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-6 bg-amber-500 rounded-sm" />
-          <h2 className="text-2xl font-extrabold uppercase text-white">1. Paleta de Tokens Visuales</h2>
+          <div className="w-2 h-6 bg-emerald-600 rounded-sm" />
+          <h2 className="text-2xl font-extrabold uppercase text-slate-900">1. Paleta de Tokens Visuales</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-            <div className="h-16 w-full rounded-xl bg-amber-500 shadow-glow-amber flex items-end p-2">
-              <span className="text-zinc-950 font-black text-xs uppercase">Primary Amber</span>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
+            <div className="h-16 w-full rounded-xl bg-emerald-600 shadow-glow-emerald flex items-end p-2">
+              <span className="text-white font-black text-xs uppercase">Primary Emerald</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-white uppercase">Amber 500 (#f59e0b)</p>
-              <p className="text-[11px] text-zinc-400">Energía principal, CTAs, acentos</p>
+              <p className="text-xs font-bold text-slate-900 uppercase">Emerald 600 (#059669)</p>
+              <p className="text-[11px] text-slate-500">Marca "Vitality Green", CTAs, links activos</p>
             </div>
           </div>
 
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
             <div className="h-16 w-full rounded-xl bg-orange-600 shadow-glow-orange flex items-end p-2">
               <span className="text-white font-black text-xs uppercase">Secondary Orange</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-white uppercase">Orange 600 (#ea580c)</p>
-              <p className="text-[11px] text-zinc-400">Acento secundario y gradientes</p>
+              <p className="text-xs font-bold text-slate-900 uppercase">Orange 600 (#ea580c)</p>
+              <p className="text-[11px] text-slate-500">Acento secundario, uso puntual</p>
             </div>
           </div>
 
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
             <div className="h-16 w-full rounded-xl bg-rose-500 shadow-glow-rose flex items-end p-2">
               <span className="text-white font-black text-xs uppercase">Metric Rose</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-white uppercase">Rose 500 (#f43f5e)</p>
-              <p className="text-[11px] text-zinc-400">Calorías, ritmo cardíaco, alertas</p>
+              <p className="text-xs font-bold text-slate-900 uppercase">Rose 500 (#f43f5e)</p>
+              <p className="text-[11px] text-slate-500">Grasa corporal, calorías</p>
             </div>
           </div>
 
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-            <div className="h-16 w-full rounded-xl bg-emerald-500 shadow-glow-emerald flex items-end p-2">
-              <span className="text-zinc-950 font-black text-xs uppercase">Status Emerald</span>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
+            <div className="h-16 w-full rounded-xl bg-amber-500 shadow-glow-amber flex items-end p-2">
+              <span className="text-slate-950 font-black text-xs uppercase">Warning Amber</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-white uppercase">Emerald 500 (#10b981)</p>
-              <p className="text-[11px] text-zinc-400">Progreso completado, éxito</p>
+              <p className="text-xs font-bold text-slate-900 uppercase">Amber 500 (#f59e0b)</p>
+              <p className="text-[11px] text-slate-500">Solo advertencias — nunca color de marca</p>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ export const DesignSystemShowcasePage: React.FC = () => {
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-2 h-6 bg-rose-500 rounded-sm" />
-          <h2 className="text-2xl font-extrabold uppercase text-white">2. Métricas de Rendimiento</h2>
+          <h2 className="text-2xl font-extrabold uppercase text-slate-900">2. Métricas de Rendimiento</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -117,7 +117,7 @@ export const DesignSystemShowcasePage: React.FC = () => {
             title="Volumen Levantado"
             value="4,250"
             unit="kg"
-            accentColor="amber"
+            accentColor="orange"
             icon={<Dumbbell className="w-6 h-6" />}
             trend={{ value: '+8.2%', isPositive: true, label: 'esta semana' }}
             subtitle="Rutina: Fuerza Hipertrofia"
@@ -198,7 +198,7 @@ export const DesignSystemShowcasePage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase text-zinc-400">Variantes de Badges</p>
+              <p className="text-xs font-bold uppercase text-slate-500">Variantes de Badges</p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="energy" icon={<Flame className="w-3 h-3" />}>
                   Hipertrofia
@@ -218,8 +218,8 @@ export const DesignSystemShowcasePage: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-bold uppercase text-zinc-400">Barras de Progreso Energéticas</p>
-              <ProgressBar label="Progreso del Objetivo de Peso" value={78} color="amber" />
+              <p className="text-xs font-bold uppercase text-slate-500">Barras de Progreso</p>
+              <ProgressBar label="Progreso del Objetivo de Peso" value={78} color="orange" />
               <ProgressBar label="Cumplimiento Proteico Diaria" value={92} color="emerald" />
               <ProgressBar label="Límite Calorías Quemadas" value={45} color="rose" />
             </div>
@@ -232,19 +232,19 @@ export const DesignSystemShowcasePage: React.FC = () => {
         <Card variant="glass">
           <CardHeader>
             <CardTitle>Campos de Formulario</CardTitle>
-            <CardDescription>Entradas oscuras con bordes de foco iluminados en amber.</CardDescription>
+            <CardDescription>Entradas claras con bordes de foco emerald.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
               label="Buscar Alumno o Rutina"
               placeholder="Ej. Juan Pérez / Espalda & Biceps..."
-              leftIcon={<Search className="w-4 h-4 text-zinc-500" />}
+              leftIcon={<Search className="w-4 h-4 text-slate-400" />}
             />
             <Input
               label="Contraseña de Acceso"
               type="password"
               placeholder="••••••••"
-              leftIcon={<Lock className="w-4 h-4 text-zinc-500" />}
+              leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
             />
             <Input
               label="Campo con Error de Validación"
@@ -263,10 +263,10 @@ export const DesignSystemShowcasePage: React.FC = () => {
           <div>
             <CardHeader>
               <CardTitle>Modales e Interacciones</CardTitle>
-              <CardDescription>Ventanas emergentes con fondo industrial difuminado backdrop blur.</CardDescription>
+              <CardDescription>Ventanas emergentes con overlay difuminado (backdrop blur).</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-zinc-300">
+              <p className="text-sm text-slate-600">
                 Haz clic en el botón a continuación para abrir la demostración interactiva del modal con los tokens de diseño aplicados.
               </p>
               <Button
@@ -279,7 +279,7 @@ export const DesignSystemShowcasePage: React.FC = () => {
             </CardContent>
           </div>
           <CardFooter>
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-slate-500">
               Cumple al 100% las restricciones del guardián del tema.
             </span>
           </CardFooter>

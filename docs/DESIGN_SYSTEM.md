@@ -35,6 +35,21 @@ Este documento describe la arquitectura de diseño visual, tokens de diseño y c
 
 Uso recomendado en componentes: preferir clases directas de Tailwind consistentes con estos valores (`bg-emerald-600`, `text-slate-900`, `border-slate-200`, etc.) más que inventar tonos nuevos. Si un componente necesita un color que no está en esta tabla, agregalo primero a `tailwind.config.js` y después usalo — así el token vive en un solo lugar.
 
+### Paleta categórica — tipo de entrenamiento (no día de la semana)
+
+Decisión del 16/09/2026 ([ADR-0008](./adr/0008-paleta-categorica-tipo-entrenamiento.md)), aplicada en `TrainingSchemeWidget.tsx`: las cards de esquema de entrenamiento se colorean por **función** (qué tipo de sesión es), no por día — el día es texto neutro. Son colores estándar de Tailwind, no tokens custom en `tailwind.config.js`.
+
+| Categoría | Color | Clases de referencia |
+|:---|:---|:---|
+| Empuje | Blue | `bg-blue-50 border-blue-200` / badge `bg-blue-100 text-blue-700 border-blue-200` |
+| Tracción | Violet | `bg-violet-50 border-violet-200` / badge `bg-violet-100 text-violet-700 border-violet-200` |
+| Pierna | Orange (`gym.accent`) | `bg-orange-50 border-orange-200` / badge `bg-orange-100 text-orange-700 border-orange-200` |
+| Refuerzo | Teal | `bg-teal-50 border-teal-200` / badge `bg-teal-100 text-teal-700 border-teal-200` |
+| Descanso | Slate (neutral) | `bg-slate-50 border-slate-200` / badge `bg-slate-100 text-slate-600` |
+| Cardio (fijo, no varía por categoría) | Cyan | `bg-cyan-50 border-cyan-200 text-cyan-700`, ícono `text-cyan-600` |
+
+El estado "completado" sigue pisando todo con `emerald` (semántica de éxito). No aplica a `ClassesPage.tsx` (T-28) — ahí el color por día sigue vigente porque ahí sí importa el día de la clase.
+
 **Prohibido:** cualquier clase de fondo oscuro en contenedores principales o inputs (`bg-gray-900`, `bg-slate-950`, `bg-zinc-900`, `bg-zinc-950`, `text-white` como color de texto por defecto, `bg-*-950/80` en badges). Si encontrás alguna en el código, es deuda técnica del tema viejo — reportarla (ver `FE-04` en `prd/PRD_REFACTOR.md`).
 
 ---

@@ -425,21 +425,21 @@ export default function ClientDetailPage() {
 
         {activeTab === 'assistance' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Historial de Asistencia</h3>
+            <h3 className="text-xl font-black font-display uppercase tracking-tight text-slate-900">Historial de Asistencia</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {assistance.length === 0 ? (
-                <p className="col-span-full text-center py-8 text-zinc-500">No hay registros de asistencia</p>
+                <p className="col-span-full text-center py-8 text-slate-400">No hay registros de asistencia</p>
               ) : (
                 assistance.map((a, idx) => (
-                  <div key={idx} className="bg-zinc-900/80 border border-zinc-800/80 p-4 rounded-2xl flex items-center gap-4 shadow-industrial">
-                    <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-extrabold text-amber-400 uppercase">{new Date(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
-                      <span className="text-lg font-black text-white">{new Date(a.date).getDate()}</span>
+                  <div key={idx} className="bg-white border border-slate-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center">
+                      <span className="text-[10px] font-extrabold text-emerald-700 uppercase">{new Date(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
+                      <span className="text-lg font-black text-slate-900">{new Date(a.date).getDate()}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white capitalize">{new Date(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
-                      <p className="text-xs text-zinc-400 flex items-center gap-1">
-                        <Clock size={12} className="text-amber-400" /> {a.inputHour} hs
+                      <p className="text-sm font-bold text-slate-900 capitalize">{new Date(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <Clock size={12} className="text-slate-400" /> {a.inputHour} hs
                       </p>
                     </div>
                   </div>
@@ -451,11 +451,11 @@ export default function ClientDetailPage() {
 
         {activeTab === 'products' && (
           <div className="space-y-6">
-            <h3 className="text-xl font-black font-display uppercase tracking-tight text-white">Compras en el Gimnasio</h3>
-            <div className="bg-zinc-900/80 rounded-3xl border border-zinc-800/90 shadow-industrial p-6 overflow-x-auto">
+            <h3 className="text-xl font-black font-display uppercase tracking-tight text-slate-900">Compras en el Gimnasio</h3>
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="text-xs text-zinc-500 uppercase font-bold tracking-wider">
-                  <tr className="border-b border-zinc-800">
+                <thead className="text-xs text-slate-400 uppercase font-bold tracking-wider">
+                  <tr className="border-b border-slate-200">
                     <th className="pb-4 px-2">Producto</th>
                     <th className="pb-4">Fecha</th>
                     <th className="pb-4">Cant.</th>
@@ -463,17 +463,17 @@ export default function ClientDetailPage() {
                     <th className="pb-4">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60">
+                <tbody className="divide-y divide-slate-100">
                   {products.length === 0 ? (
-                    <tr><td colSpan={5} className="py-8 text-center text-zinc-500">No ha realizado compras</td></tr>
+                    <tr><td colSpan={5} className="py-8 text-center text-slate-400">No ha realizado compras</td></tr>
                   ) : (
                     products.map((p, idx) => (
-                      <tr key={idx} className="hover:bg-zinc-800/40 transition-colors">
-                        <td className="py-4 px-2 font-semibold text-zinc-100 text-xs">{p.nameProduct}</td>
-                        <td className="py-4 text-xs text-zinc-400">{new Date(p.date).toLocaleDateString()}</td>
-                        <td className="py-4 text-xs text-zinc-200">{p.quantity}</td>
-                        <td className="py-4 text-xs text-zinc-300 font-mono">${p.price.toLocaleString()}</td>
-                        <td className="py-4 font-black text-amber-400 font-mono text-sm">${(p.price * p.quantity).toLocaleString()}</td>
+                      <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-4 px-2 font-semibold text-slate-800 text-xs">{p.nameProduct}</td>
+                        <td className="py-4 text-xs text-slate-500">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="py-4 text-xs text-slate-700">{p.quantity}</td>
+                        <td className="py-4 text-xs text-slate-600 font-mono">${p.price.toLocaleString()}</td>
+                        <td className="py-4 font-black text-emerald-600 font-mono text-sm">${(p.price * p.quantity).toLocaleString()}</td>
                       </tr>
                     ))
                   )}

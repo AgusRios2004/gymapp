@@ -203,7 +203,7 @@ export default function ClientsPage() {
           <button
             onClick={() => { setFilterStatus('all'); setPage(0); }}
             className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
-              filterStatus === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              filterStatus === 'all' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Todos

@@ -105,7 +105,7 @@ const RoutinesPage: React.FC = () => {
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setRoutineToEdit(routine); }}
-                    className="p-2 text-gray-400 hover:text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"
+                    className="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
                     title="Editar rutina"
                   >
                     <Pencil size={18} />

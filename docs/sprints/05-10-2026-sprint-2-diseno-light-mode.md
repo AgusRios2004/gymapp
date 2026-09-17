@@ -43,7 +43,7 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 
 | ID | Tarea | Archivos | Est. | Depende de | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|
-| T-21 | Grep masivo + fix de fondos oscuros y amber → `bg-white text-slate-900 border-slate-200` | 15 `.tsx` con fondos oscuros + 15 con amber | 4 hs | — | ⬜ |
+| T-21 | Grep masivo + fix de fondos oscuros y amber → `bg-white text-slate-900 border-slate-200` | 15 `.tsx` con fondos oscuros + 15 con amber | 4 hs | — | ✅ |
 | T-22 | Layout 100% pantalla — `MainLayout.tsx` sin max-width restrictivo | `MainLayout.tsx` | 1 h | — | ✅ |
 | T-23 | Toast centrado — `ToastContainer position="top-center"` | `main.tsx` | 15 min | — | ✅ |
 | T-24 | Botón "Nuevo Alumno" — layout inline con `flex items-center gap-2` | `ClientsPage.tsx` | 15 min | — | ⬜ |
@@ -54,6 +54,8 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ⬜ |
 
 > **T-21:** `layouts/MainLayout.tsx` ya se arregló de paso al adelantar T-22 (15/09/2026) — quedaba `bg-slate-950`/botón hamburguesa `zinc`+`amber` en el shell general, se pasó a light/emerald. Empezar T-21 por `ui/Modal.tsx` y el resto del grep. Detalle del grep original en el Sprint 1 (historial de git) y en [`BITACORA_QA.md`](../notes/BITACORA_QA.md).
+>
+> **T-21 cerrada (16/09/2026):** los overlays de modales con fondo oscuro semi-transparente (`Modal.tsx`, `*RoutineModal.tsx`, `ClientModal.tsx`, `MainLayout.tsx` mobile) **no se tocaron** — son scrims intencionales, no "dark mode". `TrainingSchemeWidget.tsx` y la sección de historial de `ClientDetailPage.tsx` se rediseñaron por completo (mockup aprobado en Artifact) con una paleta categórica por tipo de entrenamiento en vez de por día — ver [ADR-0008](../adr/0008-paleta-categorica-tipo-entrenamiento.md). Resto de archivos: swap mecánico de clases, con algunos amber reclasificados (`ClientNutritionTab.tsx` calorías → rose, iconos decorativos en `AttendancePage.tsx`/`RoutinesPage.tsx`/`MonthlyTypesPage.tsx` → emerald/violet/slate) porque no eran warnings reales. `pages/DesignSystemShowcasePage.tsx` tenía toda la narrativa vieja "Industrial Dark / Amber primary" — reescrita para reflejar los tokens actuales.
 
 Lo del diseño va **sin spec**: es cosmético y se valida en la QA. T-18 y T-19 pueden llevar spec si se quieren delegar.
 
