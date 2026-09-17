@@ -28,7 +28,7 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 |:---:|:---|:---|:---:|
 | M-01 | Dos tablas sin `overflow-x-auto` (el contenedor usa `overflow-hidden`, el contenido se recorta en mobile) | `pages/ProductsPage.tsx` (líneas ~242 y ~401) | ✅ |
 | M-02 | Botones de acción de la card de clase (editar/borrar) con target táctil ~24-28px, por debajo del mínimo de 44px | `pages/ClassesPage.tsx` | ✅ |
-| M-03 | Grid de 3 columnas del form "Nuevo Registro Físico" no colapsa en mobile | `pages/ClientDetailPage.tsx` (línea ~497) | ⬜ |
+| M-03 | Grid de 3 columnas del form "Nuevo Registro Físico" no colapsa en mobile | `pages/ClientDetailPage.tsx` (línea ~497) | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 

@@ -494,7 +494,7 @@ export default function ClientDetailPage() {
              date: new Date().toISOString().split('T')[0]
            });
          }} className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                <Input label="Peso (kg)" type="number" step="0.1" required value={recordForm.weight} onChange={e => setRecordForm({...recordForm, weight: e.target.value})} />
                <Input label="Músculo (%)" type="number" step="0.1" required value={recordForm.muscleMass} onChange={e => setRecordForm({...recordForm, muscleMass: e.target.value})} />
                <Input label="Grasa (%)" type="number" step="0.1" required value={recordForm.fatPercentage} onChange={e => setRecordForm({...recordForm, fatPercentage: e.target.value})} />
