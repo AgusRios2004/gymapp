@@ -279,13 +279,13 @@ export default function ClassesPage() {
                                   setEditingClassId(c.id);
                                   setIsEditModalOpen(true);
                                }}
-                               className="p-1 text-slate-300 hover:text-blue-500 transition-colors"
+                               className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-blue-500 transition-colors"
                              >
                                <Edit size={15} />
                              </button>
                              <button
                                onClick={() => setClassToDelete(c)}
-                               className="p-1 text-slate-300 hover:text-red-500 transition-colors"
+                               className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"
                              >
                                <Trash2 size={15} />
                              </button>
