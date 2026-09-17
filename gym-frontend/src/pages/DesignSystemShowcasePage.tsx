@@ -7,6 +7,8 @@ import ProgressBar from '../components/ui/ProgressBar';
 import Input from '../components/ui/Input';
 import TextArea from '../components/ui/TextArea';
 import Modal from '../components/ui/Modal';
+import ConfirmModal from '../components/ui/ConfirmModal';
+import SearchableSelect from '../components/ui/SearchableSelect';
 import {
   Flame,
   Activity,
@@ -21,8 +23,25 @@ import {
   Lock,
 } from 'lucide-react';
 
+interface DemoExercise {
+  id: number;
+  label: string;
+}
+
+const DEMO_EXERCISES: DemoExercise[] = [
+  { id: 1, label: 'Press de Banca Plano' },
+  { id: 2, label: 'Sentadilla Libre' },
+  { id: 3, label: 'Jalón al Pecho' },
+  { id: 4, label: 'Peso Muerto Rumano' },
+  { id: 5, label: 'Press Militar' },
+  { id: 6, label: 'Remo con Barra' },
+];
+
 export const DesignSystemShowcasePage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDangerConfirmOpen, setIsDangerConfirmOpen] = useState(false);
+  const [isWarningConfirmOpen, setIsWarningConfirmOpen] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState<DemoExercise | null>(null);
 
   return (
     <div className="space-y-10 pb-16">
@@ -285,6 +304,77 @@ export const DesignSystemShowcasePage: React.FC = () => {
           </CardFooter>
         </Card>
       </section>
+
+      {/* 5. Selects buscables y modales de confirmación */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-6 bg-emerald-600 rounded-sm" />
+          <h2 className="text-2xl font-extrabold uppercase text-slate-900">5. Selects y Confirmaciones</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>SearchableSelect</CardTitle>
+              <CardDescription>Combobox con buscador, para listas de más de 10 ítems.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SearchableSelect<DemoExercise>
+                label="Ejercicio"
+                placeholder="Buscar ejercicio..."
+                options={DEMO_EXERCISES}
+                value={selectedExercise}
+                onChange={setSelectedExercise}
+                getLabel={(item) => item.label}
+                getKey={(item) => item.id}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>ConfirmModal</CardTitle>
+              <CardDescription>Modal de confirmación genérico, variantes danger y warning.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap items-center gap-3">
+              <Button
+                variant="danger"
+                onClick={() => setIsDangerConfirmOpen(true)}
+                leftIcon={<AlertTriangle className="w-4 h-4" />}
+              >
+                Eliminar Rutina
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsWarningConfirmOpen(true)}
+                leftIcon={<AlertTriangle className="w-4 h-4" />}
+              >
+                Desactivar Alumno
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <ConfirmModal
+        isOpen={isDangerConfirmOpen}
+        onClose={() => setIsDangerConfirmOpen(false)}
+        onConfirm={() => setIsDangerConfirmOpen(false)}
+        variant="danger"
+        title="Eliminar Rutina"
+        description="Esta acción no se puede deshacer. La rutina y sus ejercicios asociados se eliminarán permanentemente."
+        confirmText="Eliminar"
+      />
+
+      <ConfirmModal
+        isOpen={isWarningConfirmOpen}
+        onClose={() => setIsWarningConfirmOpen(false)}
+        onConfirm={() => setIsWarningConfirmOpen(false)}
+        variant="warning"
+        title="Desactivar Alumno"
+        description="El alumno dejará de figurar como activo. Podés reactivarlo en cualquier momento desde su ficha."
+        confirmText="Desactivar"
+      />
 
       {/* Sample Modal */}
       <Modal

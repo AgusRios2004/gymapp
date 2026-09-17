@@ -35,9 +35,9 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | ID | Tarea | Archivos | Est. | Depende de | Estado |
 |:---:|:---|:---|:---:|:---:|:---:|
 | T-17 | Reemplazar selects de profesores, rutinas y clases con `SearchableSelect` | varios | 1,5 hs | T-15 (Sprint 1) | ✅ |
-| T-18 | Crear `ConfirmModal.tsx` — modal genérico de confirmación con variantes | `components/ui/ConfirmModal.tsx` | 2 hs | — | ⬜ |
+| T-18 | Crear `ConfirmModal.tsx` — modal genérico de confirmación con variantes | `components/ui/ConfirmModal.tsx` | 2 hs | — | ✅ |
 | T-19 | Crear hook `useEscapeKey(onClose)` y aplicarlo a todos los modales | `hooks/useEscapeKey.ts` + modales | 1,5 hs | — | ✅ |
-| T-20 | Agregar `SearchableSelect` y `ConfirmModal` al `DesignSystemShowcasePage` | `DesignSystemShowcasePage.tsx` | 1 h | T-18 | ⬜ |
+| T-20 | Agregar `SearchableSelect` y `ConfirmModal` al `DesignSystemShowcasePage` | `DesignSystemShowcasePage.tsx` | 1 h | T-18 | ✅ |
 
 ### 🎨 Diseño global — light mode + layout
 

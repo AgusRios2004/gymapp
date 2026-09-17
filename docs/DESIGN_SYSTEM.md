@@ -70,8 +70,8 @@ Estado real por componente (06/09/2026) — todos viven en [`gym-frontend/src/co
 | **MetricCard** | `MetricCard.tsx` | ✅ Light | Corregido 06/09/2026 — usaba `Card variant="glass"` oscuro; color por defecto pasó a emerald. |
 | **EmptyState** *(nuevo — 06/09/2026)* | `EmptyState.tsx` | ✅ Light | Estado vacío/error estándar para listas y vistas sin datos. Variantes `empty` / `error`. |
 | **Skeleton / SkeletonRow** *(nuevo — 06/09/2026)* | `Skeleton.tsx` | ✅ Light | Placeholder de carga genérico, para usar mientras responde TanStack Query. |
-| **SearchableSelect** *(nuevo — Sprint 1)* | `SearchableSelect.tsx` | ⬜ Por crear | Combobox con buscador por texto/DNI, para listas de +10 ítems. |
-| **ConfirmModal** *(nuevo — Sprint 1)* | `ConfirmModal.tsx` | ⬜ Por crear | Modal de confirmación genérico (variantes `danger` / `warning`). |
+| **SearchableSelect** *(nuevo — Sprint 1)* | `SearchableSelect.tsx` | ✅ Light | Combobox con buscador por texto/DNI, para listas de +10 ítems. En uso en selects de profesor/rutina/clase (T-17). |
+| **ConfirmModal** *(nuevo — Sprint 2, T-18)* | `ConfirmModal.tsx` | ✅ Light | Modal de confirmación genérico (variantes `danger` / `warning`). Demo en `/design-system` (T-20). |
 
 ---
 
