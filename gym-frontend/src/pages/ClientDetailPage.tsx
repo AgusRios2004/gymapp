@@ -37,6 +37,7 @@ import { getPhysicalRecords, createPhysicalRecord, deletePhysicalRecord } from '
 import type { PhysicalRecord } from '../types';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
+import ConfirmModal from '../components/ui/ConfirmModal';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
 import AssignRoutineModal from '../components/routines/AssignRoutineModal';
@@ -54,6 +55,7 @@ export default function ClientDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabType>('general');
+  const [recordToDelete, setRecordToDelete] = useState<PhysicalRecord | null>(null);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [recordForm, setRecordForm] = useState({
     weight: '',
@@ -117,6 +119,7 @@ export default function ClientDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-physical', clientId] });
       toast.success("🗑️ Registro eliminado");
+      setRecordToDelete(null);
     },
     onError: () => toast.error("❌ Error al eliminar registro")
   });
@@ -374,12 +377,8 @@ export default function ClientDetailPage() {
                 ) : (
                   physicalRecords.map((record) => (
                     <div key={record.id} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 hover:shadow-md transition-all group relative">
-                      <button 
-                        onClick={() => {
-                          if(confirm('¿Estás seguro de eliminar este registro?')) {
-                            deleteRecordMutation.mutate(record.id);
-                          }
-                        }}
+                      <button
+                        onClick={() => setRecordToDelete(record)}
                         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Trash2 size={16} />
@@ -508,10 +507,21 @@ export default function ClientDetailPage() {
          </form>
       </Modal>
 
-      <AssignRoutineModal 
+      <AssignRoutineModal
         isOpen={isAssignRoutineModalOpen}
         onClose={() => setIsAssignRoutineModalOpen(false)}
         client={client}
+      />
+
+      <ConfirmModal
+        isOpen={!!recordToDelete}
+        onClose={() => setRecordToDelete(null)}
+        onConfirm={() => recordToDelete && deleteRecordMutation.mutate(recordToDelete.id)}
+        variant="danger"
+        title="¿Eliminar Registro?"
+        description="Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        isLoading={deleteRecordMutation.isPending}
       />
     </div>
   );

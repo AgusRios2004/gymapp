@@ -13,6 +13,7 @@ import type { ApiResponse } from '../types/api.types';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
+import ConfirmModal from '../components/ui/ConfirmModal';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
@@ -22,12 +23,14 @@ const TRANSLATIONS: Record<string, string> = {
 };
 
 // Color fijo por día (no semántico, solo para escanear el calendario de un vistazo).
+// Rose queda afuera de esta paleta: ya es el color semántico de "clase llena" (isFull) más
+// abajo, y un día en rose sería indistinguible del pill de cupo completo en su propia card.
 const DAY_STYLES: Record<string, { header: string; pill: string }> = {
   MONDAY: { header: 'bg-blue-600', pill: 'bg-blue-50 text-blue-700 border-blue-200' },
   TUESDAY: { header: 'bg-violet-600', pill: 'bg-violet-50 text-violet-700 border-violet-200' },
   WEDNESDAY: { header: 'bg-orange-600', pill: 'bg-orange-50 text-orange-700 border-orange-200' },
   THURSDAY: { header: 'bg-teal-600', pill: 'bg-teal-50 text-teal-700 border-teal-200' },
-  FRIDAY: { header: 'bg-rose-600', pill: 'bg-rose-50 text-rose-700 border-rose-200' },
+  FRIDAY: { header: 'bg-pink-600', pill: 'bg-pink-50 text-pink-700 border-pink-200' },
   SATURDAY: { header: 'bg-indigo-600', pill: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
 };
 
@@ -42,6 +45,8 @@ export default function ClassesPage() {
   const [selectedClientToAssign, setSelectedClientToAssign] = useState<string>('');
   const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [selectedClassForStudents, setSelectedClassForStudents] = useState<number | null>(null);
+  const [classToDelete, setClassToDelete] = useState<GroupClass | null>(null);
+  const [studentToUnassign, setStudentToUnassign] = useState<Client | null>(null);
   const [form, setForm] = useState({
     className: '',
     professorId: '',
@@ -129,6 +134,7 @@ export default function ClassesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success("🗑️ Clase eliminada");
+      setClassToDelete(null);
     }
   });
 
@@ -170,6 +176,7 @@ export default function ClassesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['class-students', selectedClassForStudents] });
       toast.success("👤 Alumno quitado de la clase");
+      setStudentToUnassign(null);
     },
     onError: () => toast.error("❌ Error al quitar alumno")
   });
@@ -277,7 +284,7 @@ export default function ClassesPage() {
                                <Edit size={15} />
                              </button>
                              <button
-                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }}
+                               onClick={() => setClassToDelete(c)}
                                className="p-1 text-slate-300 hover:text-red-500 transition-colors"
                              >
                                <Trash2 size={15} />
@@ -365,8 +372,8 @@ export default function ClassesPage() {
                     >
                       <UserCheck size={22} strokeWidth={2.5} />
                     </button>
-                    <button 
-                      onClick={() => { if(confirm("¿Quitar alumno de la clase?")) unassignMutation.mutate(student.id) }}
+                    <button
+                      onClick={() => setStudentToUnassign(student)}
                       className="p-2 text-red-500 hover:text-red-700 hover:scale-110 transition-all font-bold"
                       title="Quitar de la clase"
                     >
@@ -592,6 +599,28 @@ export default function ClassesPage() {
             </div>
          </form>
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!classToDelete}
+        onClose={() => setClassToDelete(null)}
+        onConfirm={() => classToDelete && deleteMutation.mutate(classToDelete.id)}
+        variant="danger"
+        title="¿Eliminar Clase?"
+        description={`Estás a punto de eliminar "${classToDelete?.className}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        isLoading={deleteMutation.isPending}
+      />
+
+      <ConfirmModal
+        isOpen={!!studentToUnassign}
+        onClose={() => setStudentToUnassign(null)}
+        onConfirm={() => studentToUnassign && unassignMutation.mutate(studentToUnassign.id)}
+        variant="danger"
+        title="¿Quitar Alumno de la Clase?"
+        description={`${studentToUnassign?.name} ${studentToUnassign?.lastName} dejará de estar inscrito en esta clase.`}
+        confirmText="Quitar"
+        isLoading={unassignMutation.isPending}
+      />
     </div>
   );
 }

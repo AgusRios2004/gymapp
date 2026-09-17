@@ -19,14 +19,12 @@ const VARIANT_STYLES = {
   danger: {
     iconBg: 'bg-rose-50 text-rose-600',
     Icon: Trash2,
-    confirmClassName: '',
     confirmVariant: 'danger' as const,
   },
   warning: {
     iconBg: 'bg-amber-50 text-amber-600',
     Icon: AlertTriangle,
-    confirmClassName: 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20 border border-amber-400/30',
-    confirmVariant: 'primary' as const,
+    confirmVariant: 'warning' as const,
   },
 };
 
@@ -41,12 +39,16 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   cancelText = 'Cancelar',
   isLoading = false,
 }) => {
-  const { iconBg, Icon, confirmClassName, confirmVariant } = VARIANT_STYLES[variant];
+  const { iconBg, Icon, confirmVariant } = VARIANT_STYLES[variant];
+
+  // Mientras hay una mutación en curso, el modal no se cierra por backdrop/X/Escape — solo
+  // el botón Cancelar (deshabilitado) o que la mutación termine.
+  const handleClose = isLoading ? () => {} : onClose;
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={title}
       footer={
         <>
@@ -55,7 +57,6 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </Button>
           <Button
             variant={confirmVariant}
-            className={confirmClassName}
             onClick={onConfirm}
             isLoading={isLoading}
           >

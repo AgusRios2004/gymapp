@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Plus, Search, Dumbbell } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Button from '../components/ui/Button';
@@ -52,10 +52,12 @@ export default function ExercisesPage() {
         createMutation.mutate(data);
     };
 
-    const filteredExercises = exercises.filter((ex: Exercise) => 
+    const filteredExercises = useMemo(() => exercises.filter((ex: Exercise) =>
         ex.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ex.muscleGroup.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    ), [exercises, searchTerm]);
+
+    const groupedExercises = useMemo(() => groupByMuscleGroup(filteredExercises), [filteredExercises]);
 
     return (
         <div className="space-y-6 pb-20">
@@ -112,7 +114,7 @@ export default function ExercisesPage() {
                     />
                 ) : (
                     <div className="space-y-8">
-                        {groupByMuscleGroup(filteredExercises).map(([muscleGroup, groupExercises]) => (
+                        {groupedExercises.map(([muscleGroup, groupExercises]) => (
                             <div key={muscleGroup} className="space-y-4">
                                 <h2 className="text-lg font-black uppercase tracking-tight text-slate-900 border-l-4 border-emerald-600 pl-3 flex items-center gap-2">
                                     {muscleGroup}
