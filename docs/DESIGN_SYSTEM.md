@@ -99,6 +99,23 @@ Regla fija en `gym-frontend/GEMINI.md`: ningún componente que liste o cargue da
 - **Loading:** `<Skeleton>` / `<SkeletonRow>` (`components/ui/Skeleton.tsx`) mientras responde TanStack Query.
 - **Empty / Error:** `<EmptyState>` (`components/ui/EmptyState.tsx`), con `variant="error"` cuando falló la carga (mostrar `error.message` del backend, ver regla de errores descriptivos del PRD).
 
+---
+
+## 📱 6.1 Mobile ([ADR-0009](./adr/0009-estandar-mobile.md))
+
+Reglas obligatorias para toda vista, nueva o existente:
+
+| Regla | Detalle |
+|:---|:---|
+| **Breakpoints** | Los de Tailwind por defecto: `sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px. Sin breakpoints custom. Sidebar colapsa a drawer por debajo de `lg` (`MainLayout.tsx`). |
+| **Sin scroll horizontal de página** | La página completa nunca debe necesitar scroll lateral. Un scroll horizontal *contenido* en un elemento puntual (tabla ancha, barra de tabs/filtros) sí está permitido. |
+| **Tablas** | Toda `<table>` va envuelta en un contenedor con `overflow-x-auto` — nunca solo `overflow-hidden`. Una vista de cards alternativa en mobile es una mejora, no un requisito. |
+| **Targets táctiles** | Mínimo 44×44px en cualquier botón/ícono clickeable. Un ícono de 15-16px con `p-1`/`p-1.5` no alcanza — usar `p-2.5`+ o `min-h-11 min-w-11`. |
+| **Formularios en modales** | Grids de 3+ columnas colapsan con `grid-cols-1 sm:grid-cols-3` (o el N que sea). Grids de 2 columnas con campos cortos pueden quedar fijos. |
+| **Modales** | Mantener el patrón de `Modal.tsx`: `max-h-[80vh] overflow-y-auto` en el contenido, backdrop con `p-4`. No reinventar por pantalla. |
+
+Plan de auditoría y corrección página por página: [`docs/sprints/16-09-2026-sprint-3-mobile-frontend.md`](./sprints/16-09-2026-sprint-3-mobile-frontend.md).
+
 ## 📌 7. Cómo evitar que esto se desincronice de nuevo
 
 Esta migración se atrasó porque cada archivo (`tailwind.config.js`, cada componente, los docs, el skill) tenía su propia versión de la paleta, sin un único lugar que mandara. Reglas para que no vuelva a pasar:

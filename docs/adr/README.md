@@ -53,3 +53,4 @@ Qué implica esta decisión hacia adelante.
 | [0006](./0006-partir-sprint-1-diseno-a-sprint-2.md) | Partir el Sprint 1: el diseño pasa a un Sprint 2 | Activa |
 | [0007](./0007-gate-interactivo-en-main-sin-spec-coverage.md) | Compuerta interactiva en `main` sin `spec_coverage` | Activa |
 | [0008](./0008-paleta-categorica-tipo-entrenamiento.md) | Paleta categórica por tipo de entrenamiento, no por día | Activa |
+| [0009](./0009-estandar-mobile.md) | Estándar mobile: breakpoints, touch targets ≥44px, sin scroll horizontal de página | Activa |

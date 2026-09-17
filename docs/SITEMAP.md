@@ -44,7 +44,10 @@ docs/
 │   ├── 0003-clases-multidia-elementcollection.md
 │   ├── 0004-capacidad-de-planificacion.md
 │   ├── 0005-harness-commons-y-sandcastle-spec-driven.md
-│   └── 0006-partir-sprint-1-diseno-a-sprint-2.md
+│   ├── 0006-partir-sprint-1-diseno-a-sprint-2.md
+│   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
+│   ├── 0008-paleta-categorica-tipo-entrenamiento.md
+│   └── 0009-estandar-mobile.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
@@ -52,7 +55,8 @@ docs/
 ├── sprints/                ← planificación de sprints
 │   ├── README.md           ← convención de nomenclatura
 │   ├── 06-09-2026-sprint-1-refactor-core-admin.md
-│   └── 05-10-2026-sprint-2-diseno-light-mode.md
+│   ├── 05-10-2026-sprint-2-diseno-light-mode.md
+│   └── 16-09-2026-sprint-3-mobile-frontend.md
 └── archive/                ← docs históricos, ya no reflejan el estado actual
     ├── GEMINI.md
     ├── INFORME_CUMPLIMIENTO_HOJA_DE_RUTA.md
@@ -90,8 +94,9 @@ docs/
 
 | Sprint | Período | Objetivo | Estado |
 |:---:|:---|:---|:---:|
-| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — Fase 0 (pipeline de agentes) + bugs críticos + UX base | 🔵 En curso |
-| [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) | 05/10 → 18/10/2026 | Diseño light mode + UX restante — cierra Capa 1 | ⬜ Pendiente |
+| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — Fase 0 (pipeline de agentes) + bugs críticos + UX base | ✅ Todas las tareas cerradas, falta QA Sesión 02 (03/10) |
+| [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) | 05/10 → 18/10/2026 | Diseño light mode + UX restante — cierra Capa 1 | ✅ Todas las tareas cerradas, falta QA Sesión 03 (17/10) |
+| [Sprint 3](./sprints/16-09-2026-sprint-3-mobile-frontend.md) | 16/09/2026 (adelantado, sin fecha fija) | Pasada completa de mobile + frontend contra [ADR-0009](./adr/0009-estandar-mobile.md) | 🔵 En curso |
 
 > El nombre del archivo conserva la fecha `06-09-2026` (día en que se escribió el sprint). El período real arranca el 07/09 — ver la tabla de fechas dentro del documento.
 >
@@ -149,7 +154,10 @@ gymapp/
 │   │   ├── 0003-clases-multidia-elementcollection.md
 │   │   ├── 0004-capacidad-de-planificacion.md
 │   │   ├── 0005-harness-commons-y-sandcastle-spec-driven.md
-│   │   └── 0006-partir-sprint-1-diseno-a-sprint-2.md
+│   │   ├── 0006-partir-sprint-1-diseno-a-sprint-2.md
+│   │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
+│   │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
+│   │   └── 0009-estandar-mobile.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/
@@ -157,7 +165,8 @@ gymapp/
 │   ├── sprints/
 │   │   ├── README.md
 │   │   ├── 06-09-2026-sprint-1-refactor-core-admin.md
-│   │   └── 05-10-2026-sprint-2-diseno-light-mode.md
+│   │   ├── 05-10-2026-sprint-2-diseno-light-mode.md
+│   │   └── 16-09-2026-sprint-3-mobile-frontend.md
 │   └── archive/                       ← docs históricos, no vigentes
 │       ├── GEMINI.md
 │       ├── INFORME_CUMPLIMIENTO_HOJA_DE_RUTA.md
