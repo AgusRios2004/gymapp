@@ -50,7 +50,7 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | T-26 | Card "GRASA CORPORAL" — rose para grasa, emerald para músculo, fondo blanco | `ClientDetailPage.tsx` | 30 min | — | ⬜ |
 | T-27 | Ejercicios agrupados por grupo muscular con header de sección | `ExercisesPage.tsx` | 1,5 hs | — | ✅ |
 | T-28 | Clases — cards con color por día, info resumida | `ClassesPage.tsx` | 2 hs | T-14 (Sprint 1) | ✅ |
-| T-29 | Rutinas — cards con formato consistente | `RoutinesPage.tsx` | 1 h | — | ⬜ |
+| T-29 | Rutinas — cards con formato consistente | `RoutinesPage.tsx` | 1 h | — | ✅ |
 | T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ⬜ |
 
 > **T-21:** `layouts/MainLayout.tsx` ya se arregló de paso al adelantar T-22 (15/09/2026) — quedaba `bg-slate-950`/botón hamburguesa `zinc`+`amber` en el shell general, se pasó a light/emerald. Empezar T-21 por `ui/Modal.tsx` y el resto del grep. Detalle del grep original en el Sprint 1 (historial de git) y en [`BITACORA_QA.md`](../notes/BITACORA_QA.md).

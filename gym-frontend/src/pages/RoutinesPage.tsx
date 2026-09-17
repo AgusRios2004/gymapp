@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Trash2, AlertTriangle, Eye, Pencil } from 'lucide-react';
+import { Trash2, Eye, Pencil, ClipboardList, CalendarDays } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import Badge from '../components/ui/Badge';
+import EmptyState from '../components/ui/EmptyState';
+import Skeleton from '../components/ui/Skeleton';
+import ConfirmModal from '../components/ui/ConfirmModal';
 import CreateRoutineModal from '../components/routines/CreateRoutineModal';
 import RoutineDetailsModal from '../components/routines/RoutineDetailsModal';
 import EditRoutineModal from '../components/routines/EditRoutineModal';
 import { getRoutines, deleteRoutine } from '../services/routineService';
 import type { Routine } from '../types/index';
-import { useEscapeKey } from '../hooks/useEscapeKey';
 
 const RoutinesPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -44,10 +46,6 @@ const RoutinesPage: React.FC = () => {
     routine.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEscapeKey(!!routineToDelete, () => setRoutineToDelete(null));
-
-  console.log('RoutinesPage render', routines);
-
   return (
     <div className="p-6 space-y-8">
       {/* Encabezado */}
@@ -56,17 +54,16 @@ const RoutinesPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Rutinas</h1>
           <p className="text-gray-500 mt-1">Gestiona las plantillas de entrenamiento</p>
         </div>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={() => setIsCreateModalOpen(true)}
-          className="shadow-lg shadow-blue-500/30"
         >
           + Nueva Rutina
         </Button>
       </div>
 
       {/* Barra de Búsqueda */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 max-w-2xl">
         <Input
           label="Buscar Rutina"
           placeholder="Escribe el nombre..."
@@ -77,76 +74,83 @@ const RoutinesPage: React.FC = () => {
 
       {/* Lista de Rutinas */}
       {isLoading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <Skeleton key={idx} className="h-56 w-full" shape="card" />
+          ))}
         </div>
       ) : isError ? (
-        <div className="text-center py-20 bg-red-50 rounded-3xl">
-          <p className="text-red-600 font-medium">Error al cargar las rutinas.</p>
-        </div>
+        <EmptyState
+          variant="error"
+          title="No pudimos cargar las rutinas"
+          description="Volvé a intentarlo en unos segundos."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredRoutines.map((routine: Routine) => (
-            <div 
-              key={routine.id} 
-              className="group bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            <div
+              key={routine.id}
+              className="group bg-white p-5 rounded-3xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className="bg-blue-50 p-3 rounded-2xl group-hover:bg-blue-100 transition-colors">
-                  <span className="text-2xl">📝</span>
+              <div className="flex justify-between items-start mb-3">
+                <div className="bg-emerald-50 p-2.5 rounded-2xl text-emerald-600">
+                  <ClipboardList size={22} />
                 </div>
                 <div className="flex gap-1">
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToView(routine); }}
-                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
                     title="Ver detalles"
                   >
-                    <Eye size={18} />
+                    <Eye size={16} />
                   </button>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToEdit(routine); }}
-                    className="p-2 text-gray-400 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
+                    className="p-2 text-slate-300 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
                     title="Editar rutina"
                   >
-                    <Pencil size={18} />
+                    <Pencil size={16} />
                   </button>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToDelete(routine); }}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     title="Eliminar rutina"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
-              
-              <div className="flex justify-between items-center mb-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                  routine.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                }`}>
-                  {routine.active ? 'ACTIVA' : 'INACTIVA'}
-                </span>
-              </div>
-              
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{routine.name}</h3>
-              <p className="text-gray-500 text-sm mb-6 line-clamp-2 min-h-[40px]">
+
+              <Badge variant={routine.active ? 'success' : 'neutral'} size="sm" className="w-fit mb-2">
+                {routine.active ? 'Activa' : 'Inactiva'}
+              </Badge>
+
+              <h3 className="text-lg font-black text-slate-900 mb-1">{routine.name}</h3>
+              <p className="text-slate-500 text-sm mb-4 line-clamp-2 min-h-[40px]">
                 {routine.goal}
               </p>
-              
-              <div className="flex items-center gap-4 text-sm text-gray-500 border-t border-gray-50 pt-4">
-                <span>📅 {routine.days?.length || 0} Días</span>
-                <span>•</span>
+
+              <div className="flex items-center gap-2 text-xs text-slate-400 border-t border-slate-100 pt-3 mt-auto">
+                <CalendarDays size={13} />
+                <span>{routine.days?.length || 0} días</span>
+                <span>·</span>
                 <span>{routine.isTemplate ? 'Plantilla' : 'Personalizada'}</span>
               </div>
             </div>
           ))}
-          
+
           {filteredRoutines.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-              <p className="text-gray-500 font-medium mb-2">No se encontraron rutinas</p>
-              <Button variant="secondary" onClick={() => setIsCreateModalOpen(true)} size="sm">
-                Crear la primera
-              </Button>
+            <div className="col-span-full">
+              <EmptyState
+                icon={<ClipboardList size={24} />}
+                title="No se encontraron rutinas"
+                description={searchTerm ? 'Probá con otro nombre.' : 'Creá la primera para empezar a asignarla a tus alumnos.'}
+                action={
+                  <Button variant="secondary" onClick={() => setIsCreateModalOpen(true)} size="sm">
+                    Crear la primera
+                  </Button>
+                }
+              />
             </div>
           )}
         </div>
@@ -170,37 +174,16 @@ const RoutinesPage: React.FC = () => {
       />
 
       {/* Modal de Confirmación de Eliminación */}
-      {routineToDelete && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 animate-in fade-in zoom-in duration-200">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <div className="bg-red-100 p-4 rounded-full text-red-600">
-                <AlertTriangle size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">¿Eliminar Rutina?</h3>
-              <p className="text-gray-500">
-                Estás a punto de eliminar <strong>"{routineToDelete.name}"</strong>. 
-                Esta acción no se puede deshacer.
-              </p>
-              
-              <div className="flex gap-3 w-full mt-4">
-                <Button variant="ghost" onClick={() => setRoutineToDelete(null)} className="flex-1">
-                  Cancelar
-                </Button>
-                <Button 
-                  variant="primary" 
-                  onClick={() => deleteMutation.mutate(routineToDelete.id)} 
-                  disabled={deleteMutation.isPending}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white border-transparent"
-                >
-                  {deleteMutation.isPending ? 'Eliminando...' : 'Sí, Eliminar'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      <ConfirmModal
+        isOpen={!!routineToDelete}
+        onClose={() => setRoutineToDelete(null)}
+        onConfirm={() => routineToDelete && deleteMutation.mutate(routineToDelete.id)}
+        variant="danger"
+        title="¿Eliminar Rutina?"
+        description={`Estás a punto de eliminar "${routineToDelete?.name}". Esta acción no se puede deshacer.`}
+        confirmText={deleteMutation.isPending ? 'Eliminando...' : 'Sí, Eliminar'}
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   );
 };
