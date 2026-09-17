@@ -17,8 +17,18 @@ import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 const TRANSLATIONS: Record<string, string> = {
-  MONDAY: "Lunes", TUESDAY: "Martes", WEDNESDAY: "Miércoles", 
+  MONDAY: "Lunes", TUESDAY: "Martes", WEDNESDAY: "Miércoles",
   THURSDAY: "Jueves", FRIDAY: "Viernes", SATURDAY: "Sábado"
+};
+
+// Color fijo por día (no semántico, solo para escanear el calendario de un vistazo).
+const DAY_STYLES: Record<string, { header: string; pill: string }> = {
+  MONDAY: { header: 'bg-blue-600', pill: 'bg-blue-50 text-blue-700 border-blue-200' },
+  TUESDAY: { header: 'bg-violet-600', pill: 'bg-violet-50 text-violet-700 border-violet-200' },
+  WEDNESDAY: { header: 'bg-orange-600', pill: 'bg-orange-50 text-orange-700 border-orange-200' },
+  THURSDAY: { header: 'bg-teal-600', pill: 'bg-teal-50 text-teal-700 border-teal-200' },
+  FRIDAY: { header: 'bg-rose-600', pill: 'bg-rose-50 text-rose-700 border-rose-200' },
+  SATURDAY: { header: 'bg-indigo-600', pill: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
 };
 
 export default function ClassesPage() {
@@ -227,11 +237,11 @@ export default function ClassesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {DAYS.map(day => (
           <div key={day} className="flex flex-col h-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="bg-blue-600 px-6 py-4 border-b border-blue-700">
+            <div className={`${DAY_STYLES[day].header} px-6 py-4`}>
                <h3 className="text-white font-black text-xl uppercase tracking-wider">{TRANSLATIONS[day]}</h3>
             </div>
-            
-            <div className="space-y-6 flex-1 p-5">
+
+            <div className="space-y-3 flex-1 p-4">
                {classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).length === 0 ? (
                  <div className="flex flex-col items-center justify-center py-12 opacity-30">
                     <CalendarDays size={48} className="text-gray-400 mb-2" />
@@ -242,17 +252,13 @@ export default function ClassesPage() {
                     const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
                     const isFull = assignedStudentsCount >= c.capacity;
                     return (
-                    <div key={c.id} className="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                       <div className="flex justify-between items-start mb-4">
-                          <div className="space-y-1">
-                            <h4 className="text-xl font-black text-gray-900 leading-tight">{c.className}</h4>
-                            <div className="flex items-center gap-2 text-blue-600 font-bold bg-blue-50 px-3 py-1 rounded-full w-fit">
-                               <Clock size={16} />
-                               <span className="text-sm">{c.startTime} - {c.endTime}</span>
-                            </div>
+                    <div key={c.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300 group">
+                       <div className="flex justify-between items-start gap-2">
+                          <div>
+                            <h4 className="text-base font-black text-slate-900 leading-tight">{c.className}</h4>
                           </div>
-                          <div className="flex gap-1">
-                             <button 
+                          <div className="flex gap-1 shrink-0">
+                             <button
                                onClick={() => {
                                   setForm({
                                       className: c.className,
@@ -265,65 +271,57 @@ export default function ClassesPage() {
                                   });
                                   setEditingClassId(c.id);
                                   setIsEditModalOpen(true);
-                               }} 
-                               className="p-2 text-gray-300 hover:text-blue-500 transition-colors"
+                               }}
+                               className="p-1 text-slate-300 hover:text-blue-500 transition-colors"
                              >
-                               <Edit size={18} />
+                               <Edit size={15} />
                              </button>
-                             <button 
-                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }} 
-                               className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                             <button
+                               onClick={() => { if(confirm("¿Eliminar clase?")) deleteMutation.mutate(c.id) }}
+                               className="p-1 text-slate-300 hover:text-red-500 transition-colors"
                              >
-                               <Trash2 size={18} />
+                               <Trash2 size={15} />
                              </button>
                           </div>
                        </div>
 
+                       <div className="flex flex-wrap gap-1.5 mt-2">
+                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${DAY_STYLES[day].pill}`}>
+                             <Clock size={11} /> {c.startTime} - {c.endTime}
+                          </span>
+                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${isFull ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
+                             <Users size={11} /> {assignedStudentsCount} / {c.capacity}
+                          </span>
+                       </div>
+
+                       <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-2">
+                          <UserIcon size={13} className="text-slate-400" />
+                          {c.professor?.name} {c.professor?.lastName}
+                       </p>
+
                        {c.routine && (
-                         <div className="mb-4">
-                           <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Rutina Asignada</span>
-                           <div className="bg-purple-50 text-purple-700 px-3 py-2 rounded-xl text-sm font-medium inline-block border border-purple-100">
-                              🏋️‍♀️ {c.routine.name}
-                           </div>
+                         <div className="mt-2 bg-violet-50 text-violet-700 border border-violet-200 rounded-lg px-2.5 py-1 text-[11px] font-semibold w-fit">
+                            🏋️ {c.routine.name}
                          </div>
                        )}
 
-                       <div className="space-y-3 mb-6">
-                          <div className="flex items-center gap-3 text-gray-600">
-                             <div className="bg-white p-2 rounded-xl shadow-sm">
-                                <UserIcon size={18} className="text-gray-500" />
-                             </div>
-                             <div>
-                                <p className="text-[10px] uppercase font-bold text-gray-400">Profesor</p>
-                                <p className="text-sm font-bold text-gray-700">{c.professor?.name} {c.professor?.lastName}</p>
-                             </div>
-                          </div>
-                          
-                          <div className={`flex items-center justify-between p-3 rounded-2xl border ${isFull ? 'bg-red-50/50 border-red-100/50 text-red-700' : 'bg-emerald-50/50 border-emerald-100/50 text-emerald-700'}`}>
-                             <div className="flex items-center gap-2">
-                                <Users size={18} />
-                                <span className="text-sm font-black uppercase">Cupo</span>
-                             </div>
-                             <span className="text-lg font-black">{assignedStudentsCount} / {c.capacity}</span>
-                          </div>
-                       </div>
-
-                       <div className="grid grid-cols-2 gap-3">
-                          <Button 
-                            variant="primary" 
-                            size="sm" 
+                       <div className="grid grid-cols-2 gap-2 mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => setSelectedClassForStudents(c.id)}
-                            className="rounded-xl py-3 font-bold flex gap-2"
+                            className="w-full rounded-lg py-2 text-xs gap-1.5"
                           >
-                            <Users size={16} /> Alumnos
+                            <Users size={14} /> Alumnos
                           </Button>
-                          <Button 
-                            variant="primary" 
-                            size="sm" 
+                          <Button
+                            variant={isFull ? 'secondary' : 'primary'}
+                            size="sm"
+                            disabled={isFull}
                             onClick={() => setSelectedClassForAssign(c.id)}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3 font-bold flex gap-2 border-none"
+                            className={`w-full rounded-lg py-2 text-xs gap-1.5 ${isFull ? '' : 'bg-emerald-600 hover:bg-emerald-700 text-white border-none'}`}
                           >
-                            <UserPlus size={16} /> Inscribir
+                            <UserPlus size={14} /> {isFull ? 'Completo' : 'Inscribir'}
                           </Button>
                        </div>
                     </div>
