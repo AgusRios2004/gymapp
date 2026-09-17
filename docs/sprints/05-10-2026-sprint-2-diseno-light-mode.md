@@ -2,7 +2,7 @@
 > **Período:** 05/10/2026 → 18/10/2026 (2 semanas)  
 > **Ramas:** una rama corta por bloque de trabajo → merge a `main`.  
 > **Origen:** Tareas de diseño y UX que salieron del [Sprint 1](./06-09-2026-sprint-1-refactor-core-admin.md) al partirlo el 13/09/2026 ([ADR-0006](../adr/0006-partir-sprint-1-diseno-a-sprint-2.md)).  
-> **Estado:** 🔵 En curso — T-19, T-22 y T-23 adelantadas el 15/09/2026 (sobró capacidad del Sprint 1)
+> **Estado:** 🔵 Todas las tareas cerradas (16/09/2026), muy adelantado sobre la fecha calendario (05/10 → 18/10) por capacidad sobrante del Sprint 1. Falta solo la QA Sesión 03, que se hace en su fecha (17/10) — no antes.
 
 ---
 
@@ -46,12 +46,12 @@ Capacidad: ~12,5 hs/semana efectivas ([ADR-0004](../adr/0004-capacidad-de-planif
 | T-21 | Grep masivo + fix de fondos oscuros y amber → `bg-white text-slate-900 border-slate-200` | 15 `.tsx` con fondos oscuros + 15 con amber | 4 hs | — | ✅ |
 | T-22 | Layout 100% pantalla — `MainLayout.tsx` sin max-width restrictivo | `MainLayout.tsx` | 1 h | — | ✅ |
 | T-23 | Toast centrado — `ToastContainer position="top-center"` | `main.tsx` | 15 min | — | ✅ |
-| T-24 | Botón "Nuevo Alumno" — layout inline con `flex items-center gap-2` | `ClientsPage.tsx` | 15 min | — | ⬜ |
-| T-26 | Card "GRASA CORPORAL" — rose para grasa, emerald para músculo, fondo blanco | `ClientDetailPage.tsx` | 30 min | — | ⬜ |
+| T-24 | Botón "Nuevo Alumno" — layout inline con `flex items-center gap-2` | `ClientsPage.tsx` | 15 min | — | ✅ |
+| T-26 | Card "GRASA CORPORAL" — rose para grasa, emerald para músculo, fondo blanco | `ClientDetailPage.tsx` | 30 min | — | ✅ |
 | T-27 | Ejercicios agrupados por grupo muscular con header de sección | `ExercisesPage.tsx` | 1,5 hs | — | ✅ |
 | T-28 | Clases — cards con color por día, info resumida | `ClassesPage.tsx` | 2 hs | T-14 (Sprint 1) | ✅ |
 | T-29 | Rutinas — cards con formato consistente | `RoutinesPage.tsx` | 1 h | — | ✅ |
-| T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ⬜ |
+| T-30 | Fix "Marcar sesión hecha" — overflow de texto en botón | `RoutinesPage.tsx` o `ClientDetailPage.tsx` | 30 min | — | ✅ |
 
 > **T-21:** `layouts/MainLayout.tsx` ya se arregló de paso al adelantar T-22 (15/09/2026) — quedaba `bg-slate-950`/botón hamburguesa `zinc`+`amber` en el shell general, se pasó a light/emerald. Empezar T-21 por `ui/Modal.tsx` y el resto del grep. Detalle del grep original en el Sprint 1 (historial de git) y en [`BITACORA_QA.md`](../notes/BITACORA_QA.md).
 >
@@ -77,14 +77,14 @@ Lo del diseño va **sin spec**: es cosmético y se valida en la QA. T-18 y T-19 
 
 ## ✅ Criterios de aceptación del sprint
 
-- [ ] Todos los inputs con fondo blanco y texto legible
-- [ ] Ningún fondo oscuro ni amber como marca en la app (grep limpio)
-- [ ] Layout ocupa 100% de pantalla
-- [ ] ESC cierra todos los modales
-- [ ] Toast visible centrado
-- [ ] Todos los selects con más de 10 items tienen buscador
-- [ ] `verify.sh` en verde en `main`
-- [ ] QA Sesión 03 (17/10) pasa sin bugs críticos ni de experiencia
+- [x] Todos los inputs con fondo blanco y texto legible
+- [x] Ningún fondo oscuro ni amber como marca en la app (grep limpio)
+- [x] Layout ocupa 100% de pantalla
+- [x] ESC cierra todos los modales
+- [x] Toast visible centrado
+- [x] Todos los selects con más de 10 items tienen buscador
+- [x] `verify.sh` en verde en `main`
+- [ ] QA Sesión 03 (17/10) pasa sin bugs críticos ni de experiencia — pendiente, es la fecha calendario del sprint; todas las tareas están cerradas con adelanto
 
 ---
 
