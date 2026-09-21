@@ -134,7 +134,7 @@ export default function DashboardPage() {
               <Tag size={20} className="text-rose-600" />
               <p>Atención: Tienes {stats.lowStockCount} productos con stock crítico.</p>
            </div>
-           <Link to="/products" className="text-rose-700 font-extrabold hover:underline text-xs uppercase tracking-wider">Gestionar Stock →</Link>
+           <Link to="/products" className="inline-flex items-center min-h-11 text-rose-700 font-extrabold hover:underline text-xs uppercase tracking-wider">Gestionar Stock →</Link>
         </div>
       )}
 
@@ -144,7 +144,7 @@ export default function DashboardPage() {
               <Users size={20} className="text-amber-600" />
               <p>Atención: Hay {stats.debtorsCount} alumnos con la cuota vencida o sin pagar.</p>
            </div>
-           <Link to="/clients?filter=debtors" className="text-amber-800 font-extrabold hover:underline text-xs uppercase tracking-wider">Ver Alumnos →</Link>
+           <Link to="/clients?filter=debtors" className="inline-flex items-center min-h-11 text-amber-800 font-extrabold hover:underline text-xs uppercase tracking-wider">Ver Alumnos →</Link>
         </div>
       )}
 
