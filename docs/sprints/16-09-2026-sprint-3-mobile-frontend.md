@@ -30,6 +30,9 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-02 | Botones de acción de la card de clase (editar/borrar) con target táctil ~24-28px, por debajo del mínimo de 44px | `pages/ClassesPage.tsx` | ✅ |
 | M-03 | Grid de 3 columnas del form "Nuevo Registro Físico" no colapsa en mobile | `pages/ClientDetailPage.tsx` (línea ~497) | ✅ |
 | M-04 | Links "Gestionar Stock →" / "Ver Alumnos →" de los banners de alerta sin padding, target táctil ~16-20px de alto | `pages/DashboardPage.tsx` | ✅ |
+| M-05 | `Button` size="sm" usaba `h-9` (36px), por debajo del mínimo de 44px — afecta a las 19 llamadas con `size="sm"` en todo el frontend (11 archivos) | `components/ui/Button.tsx` | ✅ |
+| M-06 | Toggle de estado activo/inactivo con hit area de 20×36px (el propio switch visual) | `components/clients/ClientItem.tsx` | ✅ |
+| M-07 | Pills de filtro (Todos/Activos/Inactivos/Deudores) ~36-40px de alto y el `<select>` de "por página" ~28px, ambos por debajo de 44px | `pages/ClientsPage.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -38,7 +41,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | ID | Pantalla | Estado |
 |:---:|:---|:---:|
 | P-01 | `DashboardPage.tsx` | ✅ (encontró M-04, corregido) |
-| P-02 | `ClientsPage.tsx` (tabla/lista + filtros) | ⬜ |
+| P-02 | `ClientsPage.tsx` (tabla/lista + filtros) | ✅ (encontró M-05, M-06, M-07, corregidos) |
 | P-03 | `ClientDetailPage.tsx` (tabs, gráfico Recharts, resto de la vista) | ⬜ |
 | P-04 | `PaymentsPage.tsx` | ⬜ |
 | P-05 | `ProductsPage.tsx` (además de M-01) | ⬜ |
@@ -47,7 +50,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-08 | `StaffPage.tsx` | ⬜ |
 | P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ⬜ |
 | P-10 | `DesignSystemShowcasePage.tsx` | ⬜ |
-| P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` | ⬜ |
+| P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05, no volver a auditarlo acá) | ⬜ |
 | P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ⬜ |
 | P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ⬜ |
 
@@ -61,7 +64,7 @@ Ninguna todavía — se agregan acá a medida que la auditoría las encuentre. F
 
 ## ✅ Criterios de cierre del sprint
 
-- [ ] Los 3 bugs ya encontrados (M-01, M-02, M-03) corregidos y verificados.
+- [ ] Todos los bugs mecánicos encontrados (M-01 a M-07 y los que salgan de la auditoría) corregidos y verificados.
 - [ ] Las 13 filas de auditoría (P-01 a P-13) cerradas — con cambios o confirmando que ya cumplían.
 - [ ] Ninguna tarea D-XX quedó sin decisión del usuario (aprobada o descartada).
 - [ ] `verify.sh` en verde en `main` en cada commit.

@@ -202,7 +202,7 @@ export default function ClientsPage() {
         <div className="flex p-1.5 bg-white border border-slate-200 rounded-2xl shrink-0 self-start w-full md:w-auto overflow-x-auto whitespace-nowrap shadow-sm">
           <button
             onClick={() => { setFilterStatus('all'); setPage(0); }}
-            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+            className={`min-h-11 flex items-center px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
               filterStatus === 'all' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -210,7 +210,7 @@ export default function ClientsPage() {
           </button>
           <button
             onClick={() => { setFilterStatus('active'); setPage(0); }}
-            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+            className={`min-h-11 flex items-center px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
               filterStatus === 'active' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -218,7 +218,7 @@ export default function ClientsPage() {
           </button>
           <button
             onClick={() => { setFilterStatus('inactive'); setPage(0); }}
-            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+            className={`min-h-11 flex items-center px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
               filterStatus === 'inactive' ? 'bg-rose-600 text-white shadow-md shadow-rose-600/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -226,7 +226,7 @@ export default function ClientsPage() {
           </button>
           <button
             onClick={() => { setFilterStatus('debtors'); setPage(0); }}
-            className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
+            className={`min-h-11 flex items-center px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all ${
               filterStatus === 'debtors' ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -268,7 +268,7 @@ export default function ClientsPage() {
               <select 
                 value={pageSize} 
                 onChange={(e) => { setPageSize(Number(e.target.value)); setPage(0); }}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
+                className="min-h-11 bg-slate-50 border border-slate-200 rounded-xl px-2.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
