@@ -124,7 +124,7 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
 
         <button
           onClick={logout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/80 rounded-xl transition-all group"
+          className="w-full min-h-11 flex items-center justify-center gap-2 px-3 text-xs font-bold uppercase tracking-wider text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/80 rounded-xl transition-all group"
         >
           <LogOut size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           Cerrar Sesión

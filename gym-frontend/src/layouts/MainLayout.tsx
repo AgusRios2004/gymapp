@@ -11,7 +11,7 @@ const MainLayout = () => {
       {/* Mobile Hamburger Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-white/90 backdrop-blur-md rounded-xl shadow-sm border border-slate-200 text-emerald-600 active:scale-95 transition-all"
+        className="lg:hidden fixed top-4 left-4 z-50 min-h-11 min-w-11 flex items-center justify-center bg-white/90 backdrop-blur-md rounded-xl shadow-sm border border-slate-200 text-emerald-600 active:scale-95 transition-all"
         aria-label="Abrir menú"
       >
         {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}

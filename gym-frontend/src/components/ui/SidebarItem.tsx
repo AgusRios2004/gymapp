@@ -21,7 +21,7 @@ export const SidebarItem = ({ path, label, icon, end, relatedPaths, onClick }: S
       onClick={onClick}
       className={({ isActive }) => {
         const active = isActive || isRelatedActive;
-        return `flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 ${
+        return `min-h-11 flex items-center gap-3 px-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 ${
           active
             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-sm font-extrabold'
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'

@@ -52,6 +52,9 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-24 | Botón cerrar (`p-2`, ícono 20px) ~36px y toggle activo/inactivo (20×56px) por debajo de 44px de alto | `components/clients/ClientModal.tsx` | ✅ |
 | M-25 | Fila de ejercicio sin `flex-wrap` (podía recortarse en mobile, el modal usa `overflow-hidden`) + botón cerrar, "Eliminar Día", botón "+", reordenar y borrar ejercicio todos por debajo de 44px | `components/routines/CreateRoutineModal.tsx` | ✅ |
 | M-26 | Checkbox "Rutina Activa" (20×20px sin envolver), botón cerrar, borrar día, "Eliminar Rutina", "+ AGREGAR", select/inputs de ejercicio y reordenar/borrar — todos por debajo de 44px | `components/routines/EditRoutineModal.tsx` | ✅ |
+| M-27 | Botón hamburguesa mobile (`p-2.5`, ícono 22px) ~42px de alto | `layouts/MainLayout.tsx` | ✅ |
+| M-28 | Botón "Cerrar Sesión" (`py-2.5 text-xs`) ~36px de alto | `components/ui/SIdebar.tsx` | ✅ |
+| M-29 | Ítems de navegación del sidebar (`px-3.5 py-2.5 text-xs`) ~36px de alto | `components/ui/SidebarItem.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -70,7 +73,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ✅ (encontró M-19 en RegisterPage, corregido; LoginPage ya cumplía, el grid de 4 campos de RegisterPage ya colapsaba a 1 columna en mobile) |
 | P-10 | `DesignSystemShowcasePage.tsx` | ✅ (verificado, cumple sin cambios — solo usa componentes compartidos ya corregidos por M-05, todos los grids ya son responsive) |
 | P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05) | ✅ (encontró M-20 a M-26, corregidos; `ConfirmModal.tsx` y `Modal.tsx` ya cumplían — solo usan `Button` y `Input`, ya arreglados. `CreateExerciseModal.tsx` queda para P-13 junto con ExercisesPage) |
-| P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ⬜ |
+| P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ✅ (encontró M-27, M-28, M-29, corregidos; el drawer en sí, el `overflow-x-hidden` del main y el ancho fijo w-64 ya cumplían) |
 | P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ⬜ |
 
 Cada fila de auditoría (P-XX) puede cerrar sin cambios ("verificado, cumple") o abrir una tarea M-XX/D-XX nueva si encuentra algo — anotarlo en esta tabla al cerrar la fila, no dejarlo suelto en un commit sin rastro.
