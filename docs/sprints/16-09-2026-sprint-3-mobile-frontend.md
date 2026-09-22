@@ -61,7 +61,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-07 | `MonthlyTypesPage.tsx` | ✅ (encontró M-17, corregido; grid de cards y grid Precio/Duración del modal ya cumplían) |
 | P-08 | `StaffPage.tsx` | ✅ (encontró M-18, corregido; grid de cards y grid Nombre/Apellido del modal ya cumplían) |
 | P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ✅ (encontró M-19 en RegisterPage, corregido; LoginPage ya cumplía, el grid de 4 campos de RegisterPage ya colapsaba a 1 columna en mobile) |
-| P-10 | `DesignSystemShowcasePage.tsx` | ⬜ |
+| P-10 | `DesignSystemShowcasePage.tsx` | ✅ (verificado, cumple sin cambios — solo usa componentes compartidos ya corregidos por M-05, todos los grids ya son responsive) |
 | P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05, no volver a auditarlo acá) | ⬜ |
 | P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ⬜ |
 | P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ⬜ |
