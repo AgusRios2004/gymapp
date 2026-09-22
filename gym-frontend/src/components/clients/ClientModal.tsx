@@ -97,7 +97,7 @@ const ClientModal: React.FC<ClientModalProps> = ({
           </h3>
           <button
             onClick={handleCloseAttempt}
-            className="p-2 bg-gray-100 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none"
+            className="min-h-11 min-w-11 flex items-center justify-center bg-gray-100 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none"
             aria-label="Cerrar"
           >
             {/* Icono X */}
@@ -159,21 +159,25 @@ const ClientModal: React.FC<ClientModalProps> = ({
               <button
                 type="button"
                 onClick={() => setValue('active', !isActive)}
-                className={`
-                  relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent
-                  transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2
-                  ${isActive ? 'bg-green-500' : 'bg-gray-300'}
-                `}
+                className="min-h-11 min-w-11 flex items-center justify-center cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
               >
                 <span className="sr-only">Cambiar estado</span>
                 <span
-                  aria-hidden="true"
                   className={`
-                    pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0
-                    transition duration-200 ease-in-out
-                    ${isActive ? 'translate-x-6' : 'translate-x-0'}
+                    relative inline-flex h-8 w-14 shrink-0 rounded-full border-2 border-transparent
+                    transition-colors duration-200 ease-in-out
+                    ${isActive ? 'bg-green-500' : 'bg-gray-300'}
                   `}
-                />
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`
+                      pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0
+                      transition duration-200 ease-in-out
+                      ${isActive ? 'translate-x-6' : 'translate-x-0'}
+                    `}
+                  />
+                </span>
               </button>
             </div>
           )}

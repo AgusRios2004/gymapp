@@ -133,7 +133,7 @@ export function SearchableSelect<T>({
           onFocus={() => setIsOpen(true)}
           onBlur={close}
           onKeyDown={handleKeyDown}
-          className="w-full bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-200 px-3.5 py-2.5 pr-10 text-sm transition-all duration-200 hover:border-slate-300 focus:outline-none focus:ring-2 focus:border-emerald-500 focus:ring-emerald-500/30 disabled:bg-slate-50 disabled:text-slate-400"
+          className="w-full min-h-11 bg-white text-slate-900 placeholder-slate-400 rounded-xl border border-slate-200 px-3.5 pr-10 text-sm transition-all duration-200 hover:border-slate-300 focus:outline-none focus:ring-2 focus:border-emerald-500 focus:ring-emerald-500/30 disabled:bg-slate-50 disabled:text-slate-400"
         />
         <ChevronDown
           size={16}
@@ -160,7 +160,7 @@ export function SearchableSelect<T>({
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => select(item)}
                       onMouseEnter={() => setHighlightedIndex(index)}
-                      className={`cursor-pointer px-3.5 py-2 text-sm ${
+                      className={`min-h-11 flex items-center cursor-pointer px-3.5 text-sm ${
                         isHighlighted ? 'bg-emerald-50 text-emerald-700' : 'text-slate-900'
                       } ${isSelected ? 'font-semibold' : ''}`}
                     >

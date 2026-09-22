@@ -172,7 +172,7 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
         
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h3 className="text-2xl font-bold text-gray-900">Nueva Rutina</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
+          <button onClick={onClose} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
             ✕
           </button>
         </div>
@@ -207,19 +207,19 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                   <span className="font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
                     Día {day.dayOrder}
                   </span>
-                  <button onClick={() => removeDay(dayIndex)} className="text-red-500 text-sm hover:underline">
+                  <button onClick={() => removeDay(dayIndex)} className="min-h-11 inline-flex items-center text-red-500 text-sm hover:underline">
                     Eliminar Día
                   </button>
                 </div>
 
                 <div className="space-y-3">
                   {day.routineExercises.map((ex, exIndex) => (
-                    <div key={exIndex} className="flex gap-3 items-end bg-white p-3 rounded-lg shadow-sm border border-gray-100">
-                      <div className="flex-1">
+                    <div key={exIndex} className="flex flex-wrap gap-3 items-end bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                      <div className="flex-1 min-w-[180px]">
                         <label className="text-xs font-medium text-gray-500 mb-1 block">Ejercicio</label>
                         <div className="flex gap-2">
                           <select
-                            className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full min-h-11 text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                             value={ex.exerciseId || ''}
                             onChange={(e) => updateExercise(dayIndex, exIndex, 'exerciseId', Number(e.target.value))}
                           >
@@ -228,10 +228,10 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                               <option key={e.id} value={e.id}>{e.name}</option>
                             ))}
                           </select>
-                          <button 
+                          <button
                             type="button"
                             onClick={() => setExerciseModalTarget({ dayIndex, exIndex })}
-                            className="px-3 py-1 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
+                            className="min-h-11 min-w-11 px-3 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
                             title="Crear nuevo ejercicio"
                           >
                             +
@@ -239,35 +239,35 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
                         </div>
                       </div>
                       <div className="w-20">
-                        <Input label="Series" type="number" value={ex.sets} 
+                        <Input label="Series" type="number" value={ex.sets}
                           onChange={(e) => updateExercise(dayIndex, exIndex, 'sets', Number(e.target.value))} />
                       </div>
                       <div className="w-20">
-                        <Input label="Reps" type="number" value={ex.repetitions} 
+                        <Input label="Reps" type="number" value={ex.repetitions}
                           onChange={(e) => updateExercise(dayIndex, exIndex, 'repetitions', Number(e.target.value))} />
                       </div>
                       <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
-                        <button 
+                        <button
                           type="button"
                           onClick={() => moveExercise(dayIndex, exIndex, 'up')}
                           disabled={exIndex === 0}
-                          className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                          className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
                         >
                           <ChevronUp size={16} />
                         </button>
-                        <button 
+                        <button
                           type="button"
                           onClick={() => moveExercise(dayIndex, exIndex, 'down')}
                           disabled={exIndex === day.routineExercises.length - 1}
-                          className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+                          className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
                         >
                           <ChevronDown size={16} />
                         </button>
                       </div>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => removeExercise(dayIndex, exIndex)}
-                        className="mb-2 text-gray-400 hover:text-red-500 transition-colors"
+                        className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
                       >
                         <Trash2 size={18} />
                       </button>

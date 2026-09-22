@@ -45,6 +45,13 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-17 | Botones editar/borrar de las cards de plan (`p-2`, ícono 18px) ~34px de hit area | `pages/MonthlyTypesPage.tsx` | ✅ |
 | M-18 | Botón dar de baja/reactivar profesor (`p-2`, ícono 18px) ~34px de hit area | `pages/StaffPage.tsx` | ✅ |
 | M-19 | Link "Volver al Login" sin padding, ~20px de hit area | `pages/RegisterPage.tsx` | ✅ |
+| M-20 | `Input.tsx` (`py-2.5`) quedaba en ~40px de alto — afecta a los 13 archivos que usan el componente compartido `Input` | `components/ui/Input.tsx` | ✅ |
+| M-21 | Input y opciones del combobox (`py-2.5`/`py-2`) ~40px/36px de alto — usado en Pagos, Productos, asignar rutina, etc. | `components/ui/SearchableSelect.tsx` | ✅ |
+| M-22 | Botón cerrar (✕, sin padding) y `<select>` de día (`h-10`) por debajo de 44px | `components/routines/AssignRoutineModal.tsx` | ✅ |
+| M-23 | Botón cerrar (✕, sin padding) ~16px de hit area | `components/routines/RoutineDetailsModal.tsx` | ✅ |
+| M-24 | Botón cerrar (`p-2`, ícono 20px) ~36px y toggle activo/inactivo (20×56px) por debajo de 44px de alto | `components/clients/ClientModal.tsx` | ✅ |
+| M-25 | Fila de ejercicio sin `flex-wrap` (podía recortarse en mobile, el modal usa `overflow-hidden`) + botón cerrar, "Eliminar Día", botón "+", reordenar y borrar ejercicio todos por debajo de 44px | `components/routines/CreateRoutineModal.tsx` | ✅ |
+| M-26 | Checkbox "Rutina Activa" (20×20px sin envolver), botón cerrar, borrar día, "Eliminar Rutina", "+ AGREGAR", select/inputs de ejercicio y reordenar/borrar — todos por debajo de 44px | `components/routines/EditRoutineModal.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -62,7 +69,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-08 | `StaffPage.tsx` | ✅ (encontró M-18, corregido; grid de cards y grid Nombre/Apellido del modal ya cumplían) |
 | P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ✅ (encontró M-19 en RegisterPage, corregido; LoginPage ya cumplía, el grid de 4 campos de RegisterPage ya colapsaba a 1 columna en mobile) |
 | P-10 | `DesignSystemShowcasePage.tsx` | ✅ (verificado, cumple sin cambios — solo usa componentes compartidos ya corregidos por M-05, todos los grids ya son responsive) |
-| P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05, no volver a auditarlo acá) | ⬜ |
+| P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05) | ✅ (encontró M-20 a M-26, corregidos; `ConfirmModal.tsx` y `Modal.tsx` ya cumplían — solo usan `Button` y `Input`, ya arreglados. `CreateExerciseModal.tsx` queda para P-13 junto con ExercisesPage) |
 | P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ⬜ |
 | P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ⬜ |
 

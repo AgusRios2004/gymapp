@@ -27,7 +27,7 @@ const RoutineDetailsModal: React.FC<RoutineDetailsModalProps> = ({ isOpen, onClo
             <h3 className="text-2xl font-bold text-gray-900">{routine.name}</h3>
             <p className="text-gray-500 text-sm mt-1">{routine.goal}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
+          <button onClick={onClose} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
             ✕
           </button>
         </div>

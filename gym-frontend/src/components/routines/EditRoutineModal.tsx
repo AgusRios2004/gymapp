@@ -201,7 +201,7 @@ useEffect(() => {
             <h3 className="text-2xl font-bold text-gray-900">Editar Rutina</h3>
             <p className="text-gray-500 text-sm">Modifica la estructura y ejercicios</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-200 transition-colors">
+          <button onClick={onClose} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -222,17 +222,17 @@ useEffect(() => {
                 {...register('goal')}
                 error={errors.goal?.message}
               />
-              <div className="flex items-center gap-3 mt-2">
+              <label htmlFor="active" className="min-h-11 flex items-center gap-3 mt-2 cursor-pointer">
                 <input
                   type="checkbox"
                   id="active"
                   {...register('active')}
                   className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
                 />
-                <label htmlFor="active" className="text-gray-700 font-medium cursor-pointer">
+                <span className="text-gray-700 font-medium">
                   Rutina Activa
-                </label>
-              </div>
+                </span>
+              </label>
             </div>
 
             <div className="border-t border-gray-100"></div>
@@ -269,7 +269,7 @@ useEffect(() => {
                       <button
                         type="button"
                         onClick={() => removeDay(index)}
-                        className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors"
+                        className="min-h-11 min-w-11 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -299,7 +299,7 @@ useEffect(() => {
                   type="button"
                   onClick={handleDelete}
                   disabled={deleteMutation.isPending}
-                  className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-2 px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                  className="min-h-11 text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-2 px-2 rounded hover:bg-red-50 transition-colors"
                 >
                   <Trash2 size={18} /> Eliminar Rutina
                 </button>
@@ -341,7 +341,7 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
         <button
           type="button"
           onClick={() => append({ exerciseId: 0, sets: 3, repetitions: 10, weight: 0 })}
-          className="text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1"
+          className="min-h-11 text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1"
         >
           <Plus size={14} /> AGREGAR
         </button>
@@ -357,17 +357,17 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
               <div className="flex gap-2">
                 <select
                   {...register(`days.${nestIndex}.routineExercises.${k}.exerciseId`, { valueAsNumber: true })}
-                  className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full min-h-11 px-3 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                 >
                   <option value="">Seleccionar...</option>
                   {exercisesList.map((ex) => (
                     <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscleGroup})</option>
                   ))}
                 </select>
-                <button 
+                <button
                   type="button"
                   onClick={() => onOpenExerciseModal(k)}
-                  className="px-3 py-1 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
+                  className="min-h-11 min-w-11 px-3 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center shrink-0"
                   title="Crear nuevo ejercicio"
                 >
                   +
@@ -376,35 +376,35 @@ const DayExercises = ({ nestIndex, control, register, exercisesList, getValues, 
             </div>
             <div className="w-20">
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Series</label>
-              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.sets`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
+              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.sets`, { valueAsNumber: true })} className="w-full min-h-11 px-2 border border-gray-200 rounded-lg text-sm text-center" />
             </div>
             <div className="w-20">
               <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Reps</label>
-              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full px-2 py-2 border border-gray-200 rounded-lg text-sm text-center" />
+              <input type="number" {...register(`days.${nestIndex}.routineExercises.${k}.repetitions`, { valueAsNumber: true })} className="w-full min-h-11 px-2 border border-gray-200 rounded-lg text-sm text-center" />
             </div>
             
             <div className="flex flex-col gap-1 mb-1 border-l border-gray-100 pl-2">
-              <button 
-                type="button" 
-                onClick={() => swap(k, k - 1)} 
-                disabled={k === 0} 
-                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+              <button
+                type="button"
+                onClick={() => swap(k, k - 1)}
+                disabled={k === 0}
+                className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
                 title="Subir"
               >
                 <ChevronUp size={16} />
               </button>
-              <button 
-                type="button" 
-                onClick={() => swap(k, k + 1)} 
-                disabled={k === fields.length - 1} 
-                className="text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
+              <button
+                type="button"
+                onClick={() => swap(k, k + 1)}
+                disabled={k === fields.length - 1}
+                className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-500 disabled:opacity-30 transition-colors"
                 title="Bajar"
               >
                 <ChevronDown size={16} />
               </button>
             </div>
 
-            <button type="button" onClick={() => remove(k)} className="mb-2 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
+            <button type="button" onClick={() => remove(k)} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors" title="Eliminar"><Trash2 size={18} /></button>
           </div>
           );
         })}

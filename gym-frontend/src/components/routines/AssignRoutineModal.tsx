@@ -135,7 +135,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
             <h3 className="text-xl font-bold text-gray-900">Asignar Rutina</h3>
             <p className="text-sm text-gray-500">Alumno: {client.name} {client.lastName}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
+          <button onClick={onClose} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -169,7 +169,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
                   </span>
                   <span className="text-gray-400 text-xs">se realiza el</span>
                   <select
-                    className="flex-1 h-10 px-3 bg-white border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-sm"
+                    className="flex-1 min-h-11 px-3 bg-white border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-sm"
                     value={scheduleMap[day.dayOrder] || ''}
                     onChange={(e) => setScheduleMap(prev => ({ ...prev, [day.dayOrder]: e.target.value }))}
                   >
