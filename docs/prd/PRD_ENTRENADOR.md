@@ -70,13 +70,11 @@ Además, al descartar el chat, el usuario planteó una idea distinta pero **para
 | `Routine` / `RoutineDay` / `RoutineExercise` | estructura completa | Formato de salida de la generación; también lo que se lee para sugerir cambios |
 | `Exercise` | `name`, `muscleGroup`, `type` | Catálogo cerrado del que el LLM puede elegir |
 
-### ⚠️ Gap detectado que bloquea las sugerencias de progresión de carga
+### ⚠️ Gap detectado — parcialmente cerrado
 
-`RoutineExercise` (backend) **no persiste peso** — solo tiene `sets`, `repetitions`, `durationMinutes` y `cardioIntensity`. Sin embargo el frontend (`CreateRoutineModal.tsx`, `EditRoutineModal.tsx`, `RoutineDetailsModal.tsx`) ya pide y muestra un campo `weight` por ejercicio, que hoy se pierde silenciosamente porque el backend no lo guarda. Antes de poder sugerir "subile 2.5kg a la sentadilla" hace falta persistirlo.
+`RoutineExercise` (backend) no persistía peso pese a que el frontend (`CreateRoutineModal.tsx`, `EditRoutineModal.tsx`, `RoutineDetailsModal.tsx`) ya lo pedía y lo mostraba — se perdía silenciosamente al guardar. **Corregido el 22/09/2026** (independiente de este PRD, era un bug de Capa 1): `RoutineExercise` ahora tiene un campo `weight` que persiste el valor actual cargado en la rutina.
 
-**Decidido (22/09/2026): tabla de historial dedicada**, no un campo fijo en la rutina — algo como `RoutineExerciseLog` (cliente, ejercicio, fecha, peso real levantado). Un campo fijo no alcanza para ver progresión real en el tiempo, que es justo lo que necesita la Fase 3. El diseño exacto de esa tabla (si se referencia por `RoutineExercise` o directo por `Client`+`Exercise`, si se carga a mano o solo la completa el flujo de progresión) queda para cuando arranque la Fase 1.
-
-Esto no es un bug de Capa 1 que haya que salir a arreglar ahora — es un prerequisito técnico de Capa 2 que hay que resolver en su Fase 1.
+Lo que **sigue pendiente para la Fase 1** es distinto: ese campo guarda un solo valor fijo (el peso "de la rutina"), no un historial en el tiempo. Para sugerir "subile 2.5kg a la sentadilla" hace falta ver cómo varió el peso entre sesiones, y **eso se decidió (22/09/2026) que va en una tabla de historial dedicada**, algo como `RoutineExerciseLog` (cliente, ejercicio, fecha, peso real levantado) — no alcanza con el campo fijo que ya existe. El diseño exacto de esa tabla (si se referencia por `RoutineExercise` o directo por `Client`+`Exercise`, si se carga a mano o solo la completa el flujo de progresión) queda para cuando arranque la Fase 1.
 
 ---
 
@@ -86,7 +84,7 @@ Esto no es un bug de Capa 1 que haya que salir a arreglar ahora — es un prereq
 
 | Tema | Qué implica |
 |:---|:---|
-| Persistir peso por ejercicio | Crear la tabla de historial (`RoutineExerciseLog` o similar, decidido el 22/09) — ver gap técnico arriba. |
+| Historial de peso por ejercicio | Crear la tabla de historial (`RoutineExerciseLog` o similar, decidido el 22/09) — el campo fijo ya existe desde el 22/09, esto es lo que falta para ver progresión en el tiempo. Ver gap técnico arriba. |
 | Integrar Gemini | Backend nuevo: SDK/API de Gemini + credenciales + un servicio (`RoutineAiService` o similar) que arme el prompt y parsee la respuesta a la estructura de `Routine`. |
 | Diseñar el contrato del prompt | Qué contexto exacto del cliente se manda (ver tabla de arriba), qué formato de salida se exige (JSON estructurado, no texto libre, para poder mapear directo a `RoutineDay`/`RoutineExercise`), y qué pasa si el LLM devuelve algo inválido (reintentar, rechazar, pedir al profesor que edite a mano). |
 | Estado de "borrador de IA" | Las rutinas generadas necesitan poder distinguirse de las rutinas armadas a mano y de las ya asignadas — para que la UI muestre "pendiente de revisión" en vez de mezclarse con el resto. Definir si es un campo nuevo en `Routine` o una tabla separada. |
@@ -126,6 +124,7 @@ No se ponen fechas ni horas todavía — siguiendo la regla de `ROADMAP.md`, las
 
 ## ✅ Criterios de aceptación — Capa 2 lista
 
+- [x] `RoutineExercise` persiste peso (campo fijo, cerrado el 22/09/2026 — independiente de este PRD)
 - [ ] Existe la tabla de historial de peso por ejercicio y se completa en el flujo de progresión
 - [ ] Gemini está integrado y documentado (ADR de privacidad/proveedor escrito, revisando específicamente sus políticas de datos)
 - [ ] El profesor puede generar una rutina con IA desde el flujo de asignación existente, usando solo ejercicios del catálogo
