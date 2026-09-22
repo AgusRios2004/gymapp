@@ -283,7 +283,7 @@ export default function AttendancePage() {
 
             {todayAssistance.length > 0 && (
                 <div className="mt-10 pt-6 border-t border-gray-50 flex justify-center">
-                    <button className="text-[10px] font-bold text-gray-300 hover:text-blue-500 uppercase tracking-widest transition-colors flex items-center gap-2">
+                    <button className="min-h-11 text-[10px] font-bold text-gray-300 hover:text-blue-500 uppercase tracking-widest transition-colors flex items-center gap-2">
                         Ver registro histórico completo <Search size={10} />
                     </button>
                 </div>
