@@ -200,19 +200,19 @@ export default function ProductsPage() {
         <div className="flex p-1 bg-gray-100 rounded-2xl w-full md:w-auto overflow-x-auto">
           <button 
             onClick={() => setActiveTab('inventory')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+            className={`min-h-11 flex items-center gap-2 px-6 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'inventory' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
           >
             <Package size={18} /> Inventario
           </button>
           <button 
             onClick={() => setActiveTab('pos')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'pos' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+            className={`min-h-11 flex items-center gap-2 px-6 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'pos' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
           >
             <ShoppingCart size={18} /> Punto de Venta
           </button>
           <button 
             onClick={() => setActiveTab('sales')}
-            className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'sales' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
+            className={`min-h-11 flex items-center gap-2 px-6 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'sales' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'}`}
           >
             <HistoryIcon size={18} /> Historial Ventas
           </button>
@@ -271,10 +271,10 @@ export default function ProductsPage() {
                       </Badge>
                     </td>
                     <td className="px-6 py-4 text-right flex justify-end gap-2">
-                       <button onClick={() => handleOpenProductModal(p)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                       <button onClick={() => handleOpenProductModal(p)} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                           <Edit3 size={18} />
                        </button>
-                       <button onClick={() => { if(confirm("¿Seguro de borrar?")) deleteMutation.mutate(p.id) }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                       <button onClick={() => { if(confirm("¿Seguro de borrar?")) deleteMutation.mutate(p.id) }} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
                           <Trash2 size={18} />
                        </button>
                     </td>
@@ -371,7 +371,7 @@ export default function ProductsPage() {
                                   <p className="font-bold text-sm text-gray-900">{item.product.productName}</p>
                                   <p className="text-xs text-blue-600">{item.quantity} x ${item.product.price.toLocaleString()}</p>
                                </div>
-                               <button onClick={() => removeFromCart(item.product.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                               <button onClick={() => removeFromCart(item.product.id)} className="min-h-11 min-w-11 flex items-center justify-center text-red-400 hover:text-red-600 transition-colors">
                                   <Trash2 size={16} />
                                 </button>
                             </div>

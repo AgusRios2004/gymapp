@@ -38,6 +38,9 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-10 | Botones +250ml/+500ml/-250ml (`py-2.5 text-xs`) ~36px de alto | `components/HydrationTracker.tsx` | ✅ |
 | M-11 | Botón submit "Guardar Registro de Comida" (~40px) y botón "Eliminar" de comida sin padding (~16px de alto) | `components/ClientNutritionTab.tsx` | ✅ |
 | M-12 | `<select>` de "Tipo de Cuota" del modal de registrar pago (`p-2`) ~40px de alto | `pages/PaymentsPage.tsx` | ✅ |
+| M-13 | Tabs Inventario/Punto de Venta/Historial Ventas (`px-6 py-2 text-sm`) ~36px de alto | `pages/ProductsPage.tsx` | ✅ |
+| M-14 | Botones editar/borrar de la tabla de inventario (`p-2`, ícono 18px) ~34px de hit area | `pages/ProductsPage.tsx` | ✅ |
+| M-15 | Botón de quitar ítem del carrito (POS) sin padding, ~16px de hit area | `pages/ProductsPage.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -49,7 +52,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-02 | `ClientsPage.tsx` (tabla/lista + filtros) | ✅ (encontró M-05, M-06, M-07, corregidos) |
 | P-03 | `ClientDetailPage.tsx` (tabs, gráfico Recharts, resto de la vista) | ✅ (encontró M-08 a M-11, corregidos; gráfico Recharts y tablas de pagos/compras ya cumplían) |
 | P-04 | `PaymentsPage.tsx` | ✅ (encontró M-12, corregido; tabla ya tenía overflow-x-auto. Nota fuera de scope: el modal usa colores `gray`/`blue` en vez de la paleta emerald/slate del design system — no es un tema mobile, dejarlo para la pasada de diseño del Sprint 2/QA) |
-| P-05 | `ProductsPage.tsx` (además de M-01) | ⬜ |
+| P-05 | `ProductsPage.tsx` (además de M-01) | ✅ (encontró M-13, M-14, M-15, corregidos; grid Precio/Stock del modal es 2 columnas cortas, cumple sin cambios. Mismo aparte de colores gray/blue que P-04) |
 | P-06 | `AttendancePage.tsx` | ⬜ |
 | P-07 | `MonthlyTypesPage.tsx` | ⬜ |
 | P-08 | `StaffPage.tsx` | ⬜ |
