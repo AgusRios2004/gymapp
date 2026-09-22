@@ -44,6 +44,7 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-16 | Botón "Ver registro histórico completo" sin padding, ~14px de hit area (nota: además no tiene `onClick`, queda sin funcionalidad — no es un tema mobile, no se implementó) | `pages/AttendancePage.tsx` | ✅ |
 | M-17 | Botones editar/borrar de las cards de plan (`p-2`, ícono 18px) ~34px de hit area | `pages/MonthlyTypesPage.tsx` | ✅ |
 | M-18 | Botón dar de baja/reactivar profesor (`p-2`, ícono 18px) ~34px de hit area | `pages/StaffPage.tsx` | ✅ |
+| M-19 | Link "Volver al Login" sin padding, ~20px de hit area | `pages/RegisterPage.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -59,7 +60,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-06 | `AttendancePage.tsx` | ✅ (encontró M-16, corregido; el resto — cards de resultado, grid de actividad — ya cumplía. Mismo aparte de colores gray/blue que P-04/P-05) |
 | P-07 | `MonthlyTypesPage.tsx` | ✅ (encontró M-17, corregido; grid de cards y grid Precio/Duración del modal ya cumplían) |
 | P-08 | `StaffPage.tsx` | ✅ (encontró M-18, corregido; grid de cards y grid Nombre/Apellido del modal ya cumplían) |
-| P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ⬜ |
+| P-09 | `LoginPage.tsx` / `RegisterPage.tsx` | ✅ (encontró M-19 en RegisterPage, corregido; LoginPage ya cumplía, el grid de 4 campos de RegisterPage ya colapsaba a 1 columna en mobile) |
 | P-10 | `DesignSystemShowcasePage.tsx` | ⬜ |
 | P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05, no volver a auditarlo acá) | ⬜ |
 | P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ⬜ |

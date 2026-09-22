@@ -50,7 +50,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-xl w-full space-y-8 bg-white p-10 rounded-[3rem] shadow-xl border border-gray-100">
         <div className="text-center">
-            <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 mb-6 hover:translate-x-[-4px] transition-transform">
+            <Link to="/login" className="min-h-11 inline-flex items-center gap-2 text-sm font-bold text-blue-600 mb-6 hover:translate-x-[-4px] transition-transform">
                <ArrowLeft size={16} /> Volver al Login
             </Link>
             <div className="flex justify-center mb-6">
