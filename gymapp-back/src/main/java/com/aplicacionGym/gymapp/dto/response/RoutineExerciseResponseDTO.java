@@ -5,6 +5,7 @@ public class RoutineExerciseResponseDTO {
     private String exerciseName;
     private int sets;
     private int repetitions;
+    private Double weight;
 
     public RoutineExerciseResponseDTO() {
     }
@@ -39,5 +40,13 @@ public class RoutineExerciseResponseDTO {
 
     public void setRepetitions(int repetitions) {
         this.repetitions = repetitions;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 }

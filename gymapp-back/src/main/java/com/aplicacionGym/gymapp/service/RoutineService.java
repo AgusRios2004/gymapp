@@ -120,6 +120,7 @@ public class RoutineService {
                 re.setExercise(exercise);
                 re.setSets(exDTO.getSets());
                 re.setRepetitions(exDTO.getRepetitions());
+                re.setWeight(exDTO.getWeight());
                 re.setRoutineDay(day);
                 return re;
             }).toList();

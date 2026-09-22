@@ -23,6 +23,8 @@ public class RoutineExercise {
 
     private String cardioIntensity;
 
+    private Double weight;
+
     public RoutineExercise() {
     }
 
@@ -88,6 +90,14 @@ public class RoutineExercise {
 
     public void setCardioIntensity(String cardioIntensity) {
         this.cardioIntensity = cardioIntensity;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 }
 

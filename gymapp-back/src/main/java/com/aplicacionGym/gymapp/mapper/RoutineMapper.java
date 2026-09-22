@@ -45,6 +45,7 @@ public class RoutineMapper {
         dto.setId(re.getId());
         dto.setSets(re.getSets());
         dto.setRepetitions(re.getRepetitions());
+        dto.setWeight(re.getWeight());
         dto.setExerciseName(re.getExercise().getName()); // accede al nombre del ejercicio
         return dto;
     }
