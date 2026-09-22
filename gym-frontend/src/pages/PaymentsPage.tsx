@@ -220,7 +220,7 @@ export default function PaymentsPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Cuota</label>
             <select 
-              className="w-full p-2 border rounded-lg"
+              className="w-full min-h-11 p-2 border rounded-lg"
               value={selectedMonthlyType}
               onChange={(e) => setSelectedMonthlyType(e.target.value)}
             >
