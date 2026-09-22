@@ -23,7 +23,7 @@ CAPA 3 — ALUMNO      Consumo de su propio plan
 |:---|:---:|:---|:---|:---|
 | **1 — Admin** | 🔵 En curso | 07/09 → 18/10/2026 | [`prd/PRD_REFACTOR.md`](./prd/PRD_REFACTOR.md) | [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) (bugs críticos + pipeline, → 04/10) · [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) (diseño + UX, → 18/10) · [Sprint 3](./sprints/16-09-2026-sprint-3-mobile-frontend.md) (mobile, adelantado, sirve a la QA Sesión 03) |
 | **2 — Entrenador** | ⬜ Sin fecha | A definir tras QA Sesión 03 (17/10) | [`prd/PRD_ENTRENADOR.md`](./prd/PRD_ENTRENADOR.md) (borrador, 21/09/2026 — adelantado, no se empieza a construir hasta cerrar Capa 1) | — |
-| **3 — Alumno** | ⬜ Sin fecha | Después de Capa 2 | Falta escribir `prd/PRD_ALUMNO.md` | — |
+| **3 — Alumno** | ⬜ Sin fecha | Después de Capa 2 | Falta escribir `prd/PRD_ALUMNO.md` — idea ya anotada (22/09/2026) en la sección "Abierto" de [`PRD_ENTRENADOR.md`](./prd/PRD_ENTRENADOR.md#-abierto-para-la-próxima-revisión): que el alumno arme su propia rutina con IA | — |
 
 Las fechas de Capa 2 y 3 son deliberadamente "sin fecha" — no las inventamos hasta que la Capa 1 cierre y sepamos la velocidad real del equipo. Cuando eso pase, actualizar esta tabla, no antes.
 
