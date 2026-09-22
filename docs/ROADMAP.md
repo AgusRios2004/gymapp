@@ -22,7 +22,7 @@ CAPA 3 — ALUMNO      Consumo de su propio plan
 | Capa | Estado | Período | PRD | Sprint(s) |
 |:---|:---:|:---|:---|:---|
 | **1 — Admin** | 🔵 En curso | 07/09 → 18/10/2026 | [`prd/PRD_REFACTOR.md`](./prd/PRD_REFACTOR.md) | [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) (bugs críticos + pipeline, → 04/10) · [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) (diseño + UX, → 18/10) · [Sprint 3](./sprints/16-09-2026-sprint-3-mobile-frontend.md) (mobile, adelantado, sirve a la QA Sesión 03) |
-| **2 — Entrenador** | ⬜ Sin fecha | A definir tras QA Sesión 03 (17/10) | Falta escribir `prd/PRD_ENTRENADOR.md` | — |
+| **2 — Entrenador** | ⬜ Sin fecha | A definir tras QA Sesión 03 (17/10) | [`prd/PRD_ENTRENADOR.md`](./prd/PRD_ENTRENADOR.md) (borrador, 21/09/2026 — adelantado, no se empieza a construir hasta cerrar Capa 1) | — |
 | **3 — Alumno** | ⬜ Sin fecha | Después de Capa 2 | Falta escribir `prd/PRD_ALUMNO.md` | — |
 
 Las fechas de Capa 2 y 3 son deliberadamente "sin fecha" — no las inventamos hasta que la Capa 1 cierre y sepamos la velocidad real del equipo. Cuando eso pase, actualizar esta tabla, no antes.
@@ -54,8 +54,8 @@ Cualquier fecha de este roadmap sale de dividir el esfuerzo estimado por esas 12
 - [x] Capa 1 — Sprint 3 (mobile, adelantado): 13 filas de auditoría cerradas, 31 bugs corregidos contra ADR-0009 (21/09/2026) — pendiente una pasada visual en navegador a 375px.
 - [ ] Capa 1 — Sprint 1 cierra (04/10/2026) con QA Sesión 02 sin bugs críticos.
 - [ ] Capa 1 — Sprint 2 cierra (18/10/2026) con QA Sesión 03 sin bugs críticos ni de experiencia. **Cierre de Capa 1.**
-- [ ] Capa 2 — escribir `prd/PRD_ENTRENADOR.md` (alcance de rutinas inteligentes + LLM).
-- [ ] Capa 2 — primer sprint.
+- [x] Capa 2 — escribir `prd/PRD_ENTRENADOR.md` (alcance de rutinas inteligentes + LLM, 21/09/2026 — borrador adelantado, ver [ADR-0010](./adr/0010-capa2-revision-humana-obligatoria.md)).
+- [ ] Capa 2 — primer sprint (no arranca hasta cerrar Capa 1 en QA Sesión 03).
 - [ ] Capa 3 — escribir `prd/PRD_ALUMNO.md`.
 
 ---

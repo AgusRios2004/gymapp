@@ -47,11 +47,13 @@ docs/
 │   ├── 0006-partir-sprint-1-diseno-a-sprint-2.md
 │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
-│   └── 0009-estandar-mobile.md
+│   ├── 0009-estandar-mobile.md
+│   └── 0010-capa2-revision-humana-obligatoria.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
-│   └── PRD_REFACTOR.md
+│   ├── PRD_REFACTOR.md
+│   └── PRD_ENTRENADOR.md
 ├── sprints/                ← planificación de sprints
 │   ├── README.md           ← convención de nomenclatura
 │   ├── 06-09-2026-sprint-1-refactor-core-admin.md
@@ -84,6 +86,7 @@ docs/
 | Archivo | Descripción |
 |:---|:---|
 | [`prd/PRD_REFACTOR.md`](./prd/PRD_REFACTOR.md) | Backlog priorizado del refactor core admin. Reglas de arquitectura, decisiones técnicas y criterios de aceptación por capa. Fuente de verdad de las reglas globales (light mode, errores descriptivos, etc). |
+| [`prd/PRD_ENTRENADOR.md`](./prd/PRD_ENTRENADOR.md) | Borrador de la Capa 2 (rutinas inteligentes + LLM). Sin sprint calendario — se escribe adelantado para no perder la planificación. Alcance MVP, fases del backlog y el gap técnico (`RoutineExercise` sin peso persistido) que hay que cerrar antes de generar sugerencias de progresión. |
 
 ---
 
@@ -157,11 +160,13 @@ gymapp/
 │   │   ├── 0006-partir-sprint-1-diseno-a-sprint-2.md
 │   │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
-│   │   └── 0009-estandar-mobile.md
+│   │   ├── 0009-estandar-mobile.md
+│   │   └── 0010-capa2-revision-humana-obligatoria.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/
-│   │   └── PRD_REFACTOR.md
+│   │   ├── PRD_REFACTOR.md
+│   │   └── PRD_ENTRENADOR.md
 │   ├── sprints/
 │   │   ├── README.md
 │   │   ├── 06-09-2026-sprint-1-refactor-core-admin.md
