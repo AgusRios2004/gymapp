@@ -183,7 +183,7 @@ export default function ClientDetailPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`min-h-11 flex items-center gap-2 px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap ${
               activeTab === tab.id 
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' 
                 : 'text-slate-600 hover:text-slate-900'
@@ -379,7 +379,7 @@ export default function ClientDetailPage() {
                     <div key={record.id} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 hover:shadow-md transition-all group relative">
                       <button
                         onClick={() => setRecordToDelete(record)}
-                        className="absolute top-4 right-4 p-2 text-slate-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 min-h-11 min-w-11 flex items-center justify-center text-slate-400 hover:text-rose-600 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       >
                         <Trash2 size={16} />
                       </button>

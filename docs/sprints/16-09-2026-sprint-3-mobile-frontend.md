@@ -33,6 +33,10 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-05 | `Button` size="sm" usaba `h-9` (36px), por debajo del mínimo de 44px — afecta a las 19 llamadas con `size="sm"` en todo el frontend (11 archivos) | `components/ui/Button.tsx` | ✅ |
 | M-06 | Toggle de estado activo/inactivo con hit area de 20×36px (el propio switch visual) | `components/clients/ClientItem.tsx` | ✅ |
 | M-07 | Pills de filtro (Todos/Activos/Inactivos/Deudores) ~36-40px de alto y el `<select>` de "por página" ~28px, ambos por debajo de 44px | `pages/ClientsPage.tsx` | ✅ |
+| M-08 | Tabs de la ficha de cliente (`px-5 py-2.5 text-xs`) ~36-40px de alto | `pages/ClientDetailPage.tsx` | ✅ |
+| M-09 | Botón de borrar registro físico con hit area ~32px y además solo visible con `group-hover` — inaccesible en touch (sin hover) | `pages/ClientDetailPage.tsx` | ✅ |
+| M-10 | Botones +250ml/+500ml/-250ml (`py-2.5 text-xs`) ~36px de alto | `components/HydrationTracker.tsx` | ✅ |
+| M-11 | Botón submit "Guardar Registro de Comida" (~40px) y botón "Eliminar" de comida sin padding (~16px de alto) | `components/ClientNutritionTab.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -42,7 +46,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 |:---:|:---|:---:|
 | P-01 | `DashboardPage.tsx` | ✅ (encontró M-04, corregido) |
 | P-02 | `ClientsPage.tsx` (tabla/lista + filtros) | ✅ (encontró M-05, M-06, M-07, corregidos) |
-| P-03 | `ClientDetailPage.tsx` (tabs, gráfico Recharts, resto de la vista) | ⬜ |
+| P-03 | `ClientDetailPage.tsx` (tabs, gráfico Recharts, resto de la vista) | ✅ (encontró M-08 a M-11, corregidos; gráfico Recharts y tablas de pagos/compras ya cumplían) |
 | P-04 | `PaymentsPage.tsx` | ⬜ |
 | P-05 | `ProductsPage.tsx` (además de M-01) | ⬜ |
 | P-06 | `AttendancePage.tsx` | ⬜ |

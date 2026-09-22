@@ -192,7 +192,7 @@ export const ClientNutritionTab: React.FC<Props> = ({ clientId }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 rounded-2xl text-xs transition shadow-lg shadow-emerald-600/20"
+          className="min-h-11 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-2xl text-xs transition shadow-lg shadow-emerald-600/20"
         >
           <Plus className="w-4 h-4" /> Guardar Registro de Comida
         </button>
@@ -227,7 +227,7 @@ export const ClientNutritionTab: React.FC<Props> = ({ clientId }) => {
                   {meal.id && (
                     <button
                       onClick={() => handleDelete(meal.id!)}
-                      className="text-xs text-rose-600 hover:text-rose-700 font-bold transition"
+                      className="min-h-11 inline-flex items-center text-xs text-rose-600 hover:text-rose-700 font-bold transition"
                     >
                       Eliminar
                     </button>
