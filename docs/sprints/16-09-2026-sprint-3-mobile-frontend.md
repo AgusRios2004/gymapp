@@ -3,7 +3,7 @@
 > **Origen:** pedido directo del usuario (16/09/2026), adelantado sobre el calendario — Sprint 1 y Sprint 2 ya cerraron todas sus tareas (ver sus docs), y sirve al mismo objetivo que la QA Sesión 03 (17/10): cerrar Capa 1 sin bugs de experiencia. No es un sprint nuevo del PRD, es trabajo extra aprovechando capacidad sobrante — igual que T-19/T-22/T-23 en su momento.
 > **Estándar de referencia:** [ADR-0009](../adr/0009-estandar-mobile.md) y [`DESIGN_SYSTEM.md` § 6.1 Mobile](../DESIGN_SYSTEM.md).
 > **Modo de ejecución:** `/loop` autopaced. Ver reglas de ejecución más abajo antes de tocar código.
-> **Estado:** 🔵 En curso
+> **Estado:** ✅ Completado (21/09/2026) — falta la verificación visual en navegador a 375px, ver criterio de cierre
 
 ---
 
@@ -55,6 +55,8 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-27 | Botón hamburguesa mobile (`p-2.5`, ícono 22px) ~42px de alto | `layouts/MainLayout.tsx` | ✅ |
 | M-28 | Botón "Cerrar Sesión" (`py-2.5 text-xs`) ~36px de alto | `components/ui/SIdebar.tsx` | ✅ |
 | M-29 | Ítems de navegación del sidebar (`px-3.5 py-2.5 text-xs`) ~36px de alto | `components/ui/SidebarItem.tsx` | ✅ |
+| M-30 | Botones ver/editar/borrar de las cards de rutina (`p-2`, ícono 16px) ~32px de hit area | `pages/RoutinesPage.tsx` | ✅ |
+| M-31 | Input "Nombre" y select "Grupo Muscular" (`py-2`, sin `text-sm`) ~40px de alto | `components/exercises/CreateExerciseModal.tsx` | ✅ |
 
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
@@ -74,7 +76,7 @@ Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados,
 | P-10 | `DesignSystemShowcasePage.tsx` | ✅ (verificado, cumple sin cambios — solo usa componentes compartidos ya corregidos por M-05, todos los grids ya son responsive) |
 | P-11 | Componentes compartidos: `SearchableSelect.tsx`, `ConfirmModal.tsx`, `Modal.tsx`, todos los modales de `components/routines/` y `components/clients/` (`Button.tsx` ya quedó cubierto por M-05) | ✅ (encontró M-20 a M-26, corregidos; `ConfirmModal.tsx` y `Modal.tsx` ya cumplían — solo usan `Button` y `Input`, ya arreglados. `CreateExerciseModal.tsx` queda para P-13 junto con ExercisesPage) |
 | P-12 | Segunda pasada de `MainLayout.tsx`/`Sidebar` — confirmar que el estándar del ADR se cumple también ahí (no solo el drawer) | ✅ (encontró M-27, M-28, M-29, corregidos; el drawer en sí, el `overflow-x-hidden` del main y el ancho fijo w-64 ya cumplían) |
-| P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ⬜ |
+| P-13 | `RoutinesPage.tsx` y `ExercisesPage.tsx` — pasada específica contra el checklist completo del ADR (lo de hoy solo miró grids, falta touch targets y demás puntos) | ✅ (encontró M-30 en RoutinesPage y M-31 en CreateExerciseModal.tsx, corregidos; ExercisesPage.tsx ya cumplía sin cambios) |
 
 Cada fila de auditoría (P-XX) puede cerrar sin cambios ("verificado, cumple") o abrir una tarea M-XX/D-XX nueva si encuentra algo — anotarlo en esta tabla al cerrar la fila, no dejarlo suelto en un commit sin rastro.
 
@@ -86,8 +88,8 @@ Ninguna todavía — se agregan acá a medida que la auditoría las encuentre. F
 
 ## ✅ Criterios de cierre del sprint
 
-- [ ] Todos los bugs mecánicos encontrados (M-01 a M-07 y los que salgan de la auditoría) corregidos y verificados.
-- [ ] Las 13 filas de auditoría (P-01 a P-13) cerradas — con cambios o confirmando que ya cumplían.
-- [ ] Ninguna tarea D-XX quedó sin decisión del usuario (aprobada o descartada).
-- [ ] `verify.sh` en verde en `main` en cada commit.
-- [ ] Sin scroll horizontal de página en ninguna vista, probado al menos en el viewport de referencia (375px de ancho).
+- [x] Todos los bugs mecánicos encontrados (M-01 a M-31) corregidos y verificados.
+- [x] Las 13 filas de auditoría (P-01 a P-13) cerradas — con cambios o confirmando que ya cumplían.
+- [x] Ninguna tarea D-XX quedó sin decisión del usuario (no se abrió ninguna — el único caso límite, la fila de ejercicio de `CreateRoutineModal.tsx` sin `flex-wrap`, se resolvió aplicando un patrón ya usado en `EditRoutineModal.tsx`, no una decisión de diseño nueva).
+- [x] `verify.sh` en verde en `main` en cada commit.
+- [ ] Sin scroll horizontal de página en ninguna vista, probado al menos en el viewport de referencia (375px de ancho) — **verificado por revisión de código** (breakpoints, `overflow-x-auto` en tablas/filas anchas, grids que colapsan, `overflow-x-hidden` en el `<main>` de `MainLayout`), pero no se pudo probar visualmente en navegador: la extensión Claude in Chrome no estaba conectada en esta sesión. Pendiente una pasada visual rápida a 375px antes de dar el criterio por 100% cerrado.

@@ -99,21 +99,21 @@ const RoutinesPage: React.FC = () => {
                 <div className="flex gap-1">
                   <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToView(routine); }}
-                    className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                    className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
                     title="Ver detalles"
                   >
                     <Eye size={16} />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToEdit(routine); }}
-                    className="p-2 text-slate-300 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
+                    className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
                     title="Editar rutina"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setRoutineToDelete(routine); }}
-                    className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     title="Eliminar rutina"
                   >
                     <Trash2 size={16} />
