@@ -110,7 +110,7 @@ export default function StaffPage() {
                            deleteMutation.mutate(p.id);
                         }
                      }} 
-                     className={`p-2 rounded-xl transition-colors ${p.active ? 'text-red-500 hover:bg-red-50' : 'text-green-500 hover:bg-green-50'}`}
+                     className={`min-h-11 min-w-11 flex items-center justify-center rounded-xl transition-colors ${p.active ? 'text-red-500 hover:bg-red-50' : 'text-green-500 hover:bg-green-50'}`}
                    >
                      {p.active ? <UserX size={18} /> : <UserCheck size={18} />}
                    </button>
