@@ -138,10 +138,10 @@ export default function MonthlyTypesPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-gray-900">{plan.type}</h3>
                   <div className="flex gap-1">
-                     <button onClick={() => handleOpenModal(plan)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                     <button onClick={() => handleOpenModal(plan)} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                         <Edit3 size={18} />
                      </button>
-                     <button onClick={() => handleDelete(plan.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                     <button onClick={() => handleDelete(plan.id)} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
                         <Trash2 size={18} />
                      </button>
                   </div>
