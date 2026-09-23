@@ -12,6 +12,7 @@ import type { AssignRoutineRequest, Client, Routine } from '../../types';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { getClientRoutines } from '../../services/clientInfoService';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { DAYS_OF_WEEK } from '../../constants/time';
 
 interface AssignRoutineModalProps {
   isOpen: boolean;
@@ -31,6 +32,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const [search, setSearch] = useState('');
   const [notes, setNotes] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY"), para la Agenda Semanal (spec §B.9, RoutineService.assignComplexRoutine).
+  const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
   const shouldCloseRef = useRef(true);
 
   // Plantillas disponibles para asignar.
@@ -61,8 +64,14 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       setSearch('');
       setNotes('');
       setStartDate(new Date().toISOString().split('T')[0]);
+      setScheduleMap({});
     }
   }
+
+  const handleSelectRoutine = (template: Routine) => {
+    setSelectedRoutine(template);
+    setScheduleMap({});
+  };
 
   const mutation = useMutation({
     mutationFn: (data: ReturnType<typeof AssignRoutineSchema.parse>) =>
@@ -93,15 +102,27 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     );
   }, [templates, search]);
 
+  const routineDays = useMemo(
+    () => [...(selectedRoutine?.days ?? [])].sort((a, b) => (a.dayOrder || 0) - (b.dayOrder || 0)),
+    [selectedRoutine],
+  );
+  const scheduleComplete = routineDays.every((day) => !!scheduleMap[day.dayOrder]);
+
   const handleSave = (closeAfterSave: boolean) => {
-    if (!client || !selectedRoutine) return;
+    if (!client || !selectedRoutine || !scheduleComplete) return;
     shouldCloseRef.current = closeAfterSave;
+
+    const schedule = routineDays.map((day) => ({
+      dayOrder: day.dayOrder,
+      assignedDay: scheduleMap[day.dayOrder],
+    }));
 
     const result = AssignRoutineSchema.safeParse({
       clientId: client.id,
       routineTemplateId: selectedRoutine.id,
       startDate,
       notes,
+      schedule,
     });
     if (!result.success) return;
 
@@ -112,7 +133,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 
   if (!isOpen || !client) return null;
 
-  const canSave = !!selectedRoutine && !mutation.isPending;
+  const canSave = !!selectedRoutine && !mutation.isPending && scheduleComplete;
 
   return ReactDOM.createPortal(
     <div
@@ -170,11 +191,11 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
                       role="radio"
                       aria-checked={checked}
                       tabIndex={0}
-                      onClick={() => setSelectedRoutine(template)}
+                      onClick={() => handleSelectRoutine(template)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
-                          setSelectedRoutine(template);
+                          handleSelectRoutine(template);
                         }
                       }}
                       className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-colors ${
@@ -205,6 +226,32 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               </div>
             )}
           </div>
+
+          {routineDays.length > 0 && (
+            <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Agenda semanal</h4>
+              <p className="text-xs text-slate-500">Elegí qué día de la semana se realiza cada sesión de la rutina.</p>
+
+              {routineDays.map((day) => (
+                <div key={day.id ?? day.dayOrder} className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shrink-0">
+                    Sesión {day.dayOrder}
+                  </span>
+                  <select
+                    aria-label={`Día de la semana para la sesión ${day.dayOrder}`}
+                    className="flex-1 min-h-11 px-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 outline-none text-sm"
+                    value={scheduleMap[day.dayOrder] || ''}
+                    onChange={(e) => setScheduleMap((prev) => ({ ...prev, [day.dayOrder]: e.target.value }))}
+                  >
+                    <option value="">Seleccionar día...</option>
+                    {DAYS_OF_WEEK.map((d) => (
+                      <option key={d.value} value={d.value}>{d.label}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
 
           <Input
             label="Fecha de inicio"

@@ -27,6 +27,17 @@ const TEMPLATE_CARDIO: Routine = { id: 3, name: 'Cardio HIIT', goal: 'Resistenci
 
 const TEMPLATES = [TEMPLATE_FUERZA, TEMPLATE_GRASA, TEMPLATE_CARDIO];
 
+const TEMPLATE_MULTIDIA: Routine = {
+  id: 4,
+  name: 'Full Body A',
+  goal: 'Fuerza general',
+  active: true,
+  days: [
+    { id: 10, dayOrder: 1, routineExercises: [] },
+    { id: 11, dayOrder: 2, routineExercises: [] },
+  ],
+};
+
 function renderModal(overrides: { templates?: Routine[]; clientRoutines?: Routine[] } = {}) {
   vi.mocked(getRoutines).mockResolvedValue(overrides.templates ?? TEMPLATES);
   vi.mocked(getClientRoutines).mockResolvedValue(overrides.clientRoutines ?? []);
@@ -72,6 +83,36 @@ describe('AssignRoutineModal - lista de plantillas como radiogroup (AC-0007-08)'
     expect(within(group).getByText('Resistencia cardiovascular')).toBeInTheDocument();
 
     radios.forEach((radio) => expect(radio).toHaveAttribute('aria-checked', 'false'));
+  });
+});
+
+// H-0007-1-01: la plantilla de varios días debe poder agendarse por día de la semana y ese
+// mapeo tiene que viajar en `schedule`; si no, la agenda semanal del alumno queda vacía.
+describe('AssignRoutineModal - agenda semanal al asignar una plantilla de varios días (H-0007-1-01)', () => {
+  it('envía schedule con el día de la semana asignado a cada sesión de la rutina', async () => {
+    vi.mocked(assignRoutineToClient).mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    renderModal({ templates: [TEMPLATE_MULTIDIA] });
+
+    const group = await screen.findByRole('radiogroup');
+    await user.click(cardFor(group, 'Full Body A'));
+
+    const selects = await screen.findAllByRole('combobox');
+    expect(selects).toHaveLength(2);
+    await user.selectOptions(selects[0], 'MONDAY');
+    await user.selectOptions(selects[1], 'WEDNESDAY');
+
+    await user.click(screen.getByRole('button', { name: 'Asignar rutina' }));
+
+    await waitFor(() => expect(assignRoutineToClient).toHaveBeenCalledTimes(1));
+    expect(assignRoutineToClient).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schedule: [
+          { dayOrder: 1, assignedDay: 'MONDAY' },
+          { dayOrder: 2, assignedDay: 'WEDNESDAY' },
+        ],
+      }),
+    );
   });
 });
 
