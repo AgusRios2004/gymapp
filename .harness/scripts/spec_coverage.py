@@ -6,7 +6,14 @@ aceptacion que ningun test menciona no existe.
 
 Deliberadamente tonto: busca los AC-ID como texto plano dentro de los archivos
 de test. No parsea el lenguaje. Asi funciona igual en Python, Java, TypeScript
-o Go, y no se puede burlar sin querer.
+o Go.
+
+Con `spec_coverage.junit_glob` en la config, ademas exige evidencia de
+ejecucion: cada AC tiene que aparecer en el NOMBRE de un testcase que paso en
+los reportes JUnit XML (pytest --junitxml, surefire, jest-junit, vitest). Sin
+eso, un test con @skip/@Disabled y el AC en un comentario daba verde. En los
+nombres se acepta `_` por `-` y cualquier mayuscula: test_ac_0001_02 cuenta
+como AC-0001-02.
 
 Uso:
     python3 spec_coverage.py                     # usa ./harness.config.yml
@@ -27,6 +34,7 @@ import argparse
 import json
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 DEFAULT_AC_PATTERN = r"AC-[0-9]{4}-[0-9]{2}"
@@ -102,6 +110,53 @@ def recolectar_tests(raiz: Path, patrones: list[str], patron_ac: re.Pattern) -> 
     return encontrados
 
 
+def recolectar_junit(
+    raiz: Path, patrones: list[str], patron_ac: re.Pattern
+) -> tuple[dict, int]:
+    """(AC-ID -> set de estados, cantidad de reportes leidos).
+
+    Estados: "paso", "fallo", "salteado". Un AC puede tener varios testcases.
+    """
+    insensible = re.compile(patron_ac.pattern, re.IGNORECASE)
+    estados: dict[str, set[str]] = {}
+    reportes = 0
+    vistos: set[Path] = set()
+
+    for patron in patrones:
+        for archivo in raiz.glob(patron):
+            if not archivo.is_file() or archivo in vistos:
+                continue
+            vistos.add(archivo)
+            try:
+                arbol = ET.parse(archivo)
+            except (ET.ParseError, OSError) as e:
+                print(f"⚠ No pude leer el reporte {archivo}: {e}", file=sys.stderr)
+                continue
+            reportes += 1
+            for caso in arbol.iter("testcase"):
+                nombre = f"{caso.get('classname', '')} {caso.get('name', '')}".replace(
+                    "_", "-"
+                )
+                if caso.find("failure") is not None or caso.find("error") is not None:
+                    estado = "fallo"
+                elif caso.find("skipped") is not None:
+                    estado = "salteado"
+                else:
+                    estado = "paso"
+                for ac in insensible.findall(nombre):
+                    estados.setdefault(ac.upper(), set()).add(estado)
+
+    return estados, reportes
+
+
+def motivo_sin_pasar(estados: set[str] | None) -> str:
+    if not estados:
+        return "no aparece en ningún testcase del reporte (¿el AC está en el nombre del test?)"
+    if "fallo" in estados:
+        return "su test falla"
+    return "su test está salteado"
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -141,6 +196,30 @@ def main() -> int:
     colgados = sorted(ac for ac in en_tests if ac not in todos)
     cubiertos = sorted(ac for ac in auditados if ac in en_tests)
 
+    # Evidencia de ejecucion, solo si la config la pide.
+    sin_pasar: dict[str, str] = {}
+    glob_junit = buscar(config, "spec_coverage", "junit_glob")
+    if glob_junit:
+        patrones_junit = (
+            [glob_junit] if isinstance(glob_junit, str) else list(glob_junit)
+        )
+        estados, reportes = recolectar_junit(raiz, patrones_junit, patron_ac)
+        if reportes == 0:
+            print(
+                "✗ spec_coverage.junit_glob está configurado pero no hay reportes JUnit.",
+                file=sys.stderr,
+            )
+            print(f"  Patrón: {', '.join(patrones_junit)}", file=sys.stderr)
+            print(
+                "  ¿commands.test los genera? (pytest --junitxml=..., surefire, jest-junit)",
+                file=sys.stderr,
+            )
+            return 1
+        for ac in cubiertos:
+            if "paso" not in estados.get(ac, set()):
+                sin_pasar[ac] = motivo_sin_pasar(estados.get(ac))
+        cubiertos = [ac for ac in cubiertos if ac not in sin_pasar]
+
     if args.json:
         print(
             json.dumps(
@@ -149,13 +228,17 @@ def main() -> int:
                     "cubiertos": cubiertos,
                     "huerfanos": [{"ac": a, "spec": auditados[a]} for a in huerfanos],
                     "colgados": [{"ac": a, "tests": en_tests[a]} for a in colgados],
-                    "ok": not huerfanos,
+                    "sin_pasar": [
+                        {"ac": a, "spec": auditados[a], "motivo": m}
+                        for a, m in sorted(sin_pasar.items())
+                    ],
+                    "ok": not huerfanos and not sin_pasar,
                 },
                 ensure_ascii=False,
                 indent=2,
             )
         )
-        return 1 if huerfanos else 0
+        return 1 if huerfanos or sin_pasar else 0
 
     if not auditados:
         print("· No hay specs aprobadas ni implementadas. Nada que auditar.")
@@ -175,6 +258,14 @@ def main() -> int:
             print(f"    {ac}  (spec: {auditados[ac]})")
         print()
         print("  Escribí el test citando el AC-ID, o sacá el criterio de la spec.")
+
+    if sin_pasar:
+        print()
+        print(f"✗ {len(sin_pasar)} criterio(s) citados en tests sin un test que pase:")
+        for ac, motivo in sorted(sin_pasar.items()):
+            print(f"    {ac}  (spec: {auditados[ac]}) — {motivo}")
+
+    if huerfanos or sin_pasar:
         return 1
 
     if auditados:

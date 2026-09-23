@@ -15,13 +15,24 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Bash",
+        "matcher": "Read|Bash|Agent|Task",
         "hooks": [
           {
             "type": "command",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/hook_pre_read.sh",
             "timeout": 15,
             "statusMessage": "Chequeando el costo de la lectura"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/hook_readonly_guard.sh",
+            "timeout": 5,
+            "statusMessage": "Chequeando la garantía de solo-lectura"
           }
         ]
       }

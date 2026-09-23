@@ -27,18 +27,31 @@ Numeración secuencial, nunca se reutiliza ni se reordena. Es la misma regla que
 
 Formato: `AC-NNNN-MM`, donde `NNNN` es el id de la spec y `MM` el número de criterio.
 
-El ID tiene que aparecer literalmente en el test que lo cubre — en el nombre del test, en un docstring o en un comentario, da igual cuál. `spec_coverage.py` lo busca como texto plano, a propósito: funciona igual en Python, Java o TypeScript, y no se puede burlar sin querer.
+El ID va **en el nombre del test**. Con `_` en vez de `-` donde el lenguaje no
+acepta guiones: `spec_coverage.py` los trata igual.
 
 ```python
-def test_draft_queda_pending_si_gemini_falla():
-    """AC-0002-04: con la API caída el draft queda en pending."""
+def test_ac_0002_04_draft_queda_pending_si_gemini_falla():
+    ...
 ```
 
 ```java
-// AC-0002-04: con la API caída el draft queda en pending.
 @Test
-void draftQuedaPendingSiGeminiFalla() { … }
+void ac_0002_04_draftQuedaPendingSiGeminiFalla() { … }
 ```
+
+```ts
+it('AC-0002-04: con la API caída el draft queda en pending', () => { … })
+```
+
+Por defecto `spec_coverage.py` busca el ID como texto plano en los archivos de
+test, así que un docstring o un comentario también cuentan. Pero con
+`spec_coverage.junit_glob` activo, solo cuenta un test **que pasó** y cuyo
+**nombre** trae el ID: es lo único que aparece en el reporte JUnit. Un
+comentario de sección arriba de tres tests no dice cuál de los tres cubre el
+criterio, y un test salteado con el ID en un comentario daba verde. Escribilo
+en el nombre desde el principio: es gratis y deja activar la evidencia de
+ejecución sin renombrar después.
 
 ## Reglas
 

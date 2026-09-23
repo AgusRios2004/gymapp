@@ -30,6 +30,7 @@ nombre del modelo (gemini-* / claude-*).
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import os
 import sys
@@ -45,6 +46,25 @@ from harness_config import buscar, leer_config  # noqa: E402, I001
 # Tope de seguridad: si el paquete de archivos supera esto, se corta y se
 # avisa. Delegar 5 MB de texto no ahorra plata, la quema en otro lado.
 MAX_BYTES_ENTRADA = 400_000
+
+# Lo que nunca sale de la máquina. El worker manda el contenido a un proveedor
+# externo: un `--paths .env` por descuido publica las claves del proyecto.
+SECRETOS = (
+    ".env",
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "*.p12",
+    "*.pfx",
+    "*.keystore",
+    "*.jks",
+    "id_rsa*",
+    "id_ed25519*",
+    "credentials*",
+    "*secret*",
+    ".npmrc",
+    ".pypirc",
+)
 
 PROMPT_READ = """Sos un lector masivo. Te paso archivos completos y una pregunta.
 
@@ -242,6 +262,12 @@ def empaquetar(paths: list[str]) -> tuple[str, int]:
 
     for p in paths:
         ruta = Path(p)
+        nombre = ruta.name.lower()
+        if any(fnmatch.fnmatch(nombre, patron) for patron in SECRETOS):
+            raise SystemExit(
+                f"✗ {p} parece un secreto y no se manda a un proveedor externo.\n"
+                "  Si de verdad es código, renombralo o leelo con grep/offset."
+            )
         if not ruta.is_file():
             print(f"[worker] aviso: {p} no existe, se omite", file=sys.stderr)
             continue
@@ -315,7 +341,11 @@ def op_write(args, cfg: dict) -> int:
             "  si de verdad querés pisarlo."
         )
 
-    spec = Path(args.spec).read_text(encoding="utf-8") if Path(args.spec).is_file() else args.spec
+    spec = (
+        Path(args.spec).read_text(encoding="utf-8")
+        if Path(args.spec).is_file()
+        else args.spec
+    )
 
     referencia = ""
     if args.reference:
@@ -347,7 +377,9 @@ def op_write(args, cfg: dict) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Delegación de I/O a un modelo barato.")
+    parser = argparse.ArgumentParser(
+        description="Delegación de I/O a un modelo barato."
+    )
     parser.add_argument("--config", default="harness.config.yml")
     parser.add_argument("--root", default=".")
     sub = parser.add_subparsers(dest="op", required=True)

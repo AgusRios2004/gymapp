@@ -13,6 +13,8 @@
 #   verify.sh                 gate completo: lint + typecheck + tests + specs
 #   verify.sh --file RUTA     gate rapido de un archivo: formato + lint
 #   verify.sh --no-specs      omite spec_coverage (util al instalar, sin specs)
+#   verify.sh --solo-lint     solo lint: para quien deja la suite en rojo a
+#                             proposito (el test-author de spec-driven)
 #   verify.sh --help
 #
 # Salida: 0 si todo pasa, 1 al primer fallo.
@@ -49,7 +51,7 @@ correr() {
 }
 
 uso() {
-  sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,22p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
   exit 0
 }
 
@@ -58,11 +60,13 @@ uso() {
 MODO="completo"
 ARCHIVO=""
 CON_SPECS=1
+SOLO_LINT=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --file)     MODO="rapido"; ARCHIVO="${2:-}"; shift 2 ;;
     --no-specs) CON_SPECS=0; shift ;;
+    --solo-lint) SOLO_LINT=1; shift ;;
     -h|--help)  uso ;;
     *)          rojo "Opción desconocida: $1"; exit 2 ;;
   esac
@@ -99,7 +103,27 @@ fi
 
 echo "── verify: $(cfg project.name "$(basename "$RAIZ")") ──"
 
+# Copia vendoreada vieja: avisa, no falla. Solo se puede comparar donde commons
+# existe (la máquina de desarrollo); en CI el origen no está y se omite.
+ORIGEN="$(sed -n 's/^origen: *//p' "$RAIZ/.harness/VERSION" 2>/dev/null)"
+if [ -n "$ORIGEN" ] && [ -d "$ORIGEN/scripts" ] && [ "$AQUI" != "$ORIGEN/scripts" ]; then
+  for f in "$ORIGEN"/scripts/*; do
+    [ -f "$f" ] || continue
+    if ! cmp -s "$f" "$AQUI/$(basename "$f")"; then
+      gris "⚠ .harness/scripts/ está desactualizado respecto de commons."
+      gris "  $ORIGEN/install.sh --update $RAIZ"
+      break
+    fi
+  done
+fi
+
 correr "lint"      "$(cfg commands.lint '')"      || exit 1
+
+if [ "$SOLO_LINT" -eq 1 ]; then
+  verde "✓ verify OK (solo lint)"
+  exit 0
+fi
+
 correr "typecheck" "$(cfg commands.typecheck '')" || exit 1
 correr "tests"     "$(cfg commands.test '')"      || exit 1
 

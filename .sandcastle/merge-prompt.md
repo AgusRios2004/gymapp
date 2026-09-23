@@ -1,46 +1,53 @@
 # TAREA
 
-Fusionar en `{{TARGET_BRANCH}}` las ramas que pasaron la revisión.
+Resolver el conflicto del merge de `{{BRANCH}}` (spec {{SPEC_ID}}: {{SPEC_TITULO}})
+sobre la rama de integración.
 
-# RAMAS
+El orquestador ya corrió `git merge` y quedó a mitad: hay archivos en conflicto.
+Todo lo demás del merge —la compuerta, revertir si rompe, marcar la spec como
+implementada, avanzar la rama base— lo hace el orquestador. Vos solo resolvés
+el conflicto.
 
-{{RAMAS}}
+<conflicto>
 
-# SPECS QUE CUBREN
+{{CONFLICTO}}
 
-{{SPECS}}
+</conflicto>
+
+<archivos-en-conflicto>
+
+!`git diff --name-only --diff-filter=U || true`
+
+</archivos-en-conflicto>
+
+# LA SPEC QUE ENTRA
+
+<spec>
+
+!`cat specs/{{SPEC_ID}}-*.md 2>/dev/null | head -200`
+
+</spec>
 
 # CÓMO
 
-0. **No asumas que "las ramas que llegaron acá ya pasaron la revisión" es
-   cierto.** El 08/09/2026 pasó una rama con 2 hallazgos `alta` reales sin que
-   nada la frenara antes de esta tarea. Antes de mergear cada rama, leé su log
-   (`.sandcastle/logs/*-reviewer-*.log`, la última etiqueta `<revision>`) vos
-   mismo. Si hay algún hallazgo con `"severidad": "alta"`, **no la mergees**:
-   dejala afuera y decí cuál es el hallazgo en tu commit final, igual que ya
-   hacés cuando una rama rompe el suite.
-1. Mergeá las ramas en `{{TARGET_BRANCH}}`, una por vez.
-2. Si hay conflicto, resolvelo **conservando el comportamiento de las dos specs**.
-   Si las dos specs se contradicen de verdad, eso no se resuelve acá: pará, dejá
-   esa rama sin mergear y anotá cuál es la contradicción.
-3. Después de cada merge corré la compuerta completa:
+1. Resolvé cada conflicto **conservando el comportamiento de las dos partes**:
+   lo que ya está en la integración (otras specs mergeadas en esta vuelta) y lo
+   que trae `{{BRANCH}}`.
+2. Si las dos partes se contradicen de verdad —cumplir una spec rompe la
+   otra— **no lo resuelvas**: no commitees nada y explicá la contradicción.
+   El orquestador aborta el merge y la spec queda para un humano. Elegir cuál
+   de las dos specs gana no es tu decisión.
+3. Corré `{{VERIFY_COMMAND}}` antes de cerrar.
+4. Cerrá el merge con `git add` de los archivos resueltos y `git commit
+   --no-edit`.
 
-   ```
-   {{VERIFY_COMMAND}}
-   ```
+# REGLAS DURAS
 
-   Si falla, revertí ese merge y seguí con las demás ramas. Una rama que rompe el
-   suite no entra, aunque su revisión haya salido limpia.
+- No tocás `specs/`.
+- No borrás ni debilitás tests de ninguna de las dos partes para destrabar el
+  conflicto.
+- No hacés `git merge --abort`, `git reset` ni `git rebase`: si no podés
+  resolver, dejá el merge como está y explicalo.
 
-4. Con todo mergeado y en verde, actualizá el frontmatter de cada spec fusionada:
-   `estado: aprobada` pasa a `estado: implementada`.
-
-   **Es el único momento del pipeline en que se toca un archivo de `specs/`**, y
-   solo esa línea. Nada más del contenido de la spec se modifica.
-
-# COMMIT
-
-Un commit final que liste qué specs quedaron implementadas y qué ramas se
-mergearon. Si alguna quedó afuera, decí cuál y por qué.
-
-Cuando termines, emití <promise>COMPLETE</promise>.
+Cuando el merge esté commiteado y la compuerta pase, emití
+<promise>COMPLETE</promise>.

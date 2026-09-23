@@ -28,3 +28,5 @@ mysql-data/
 .sandcastle/.env
 __pycache__/
 .sandcastle/deps/
+.sandcastle/mediciones.jsonl
+.harness/.estado/
