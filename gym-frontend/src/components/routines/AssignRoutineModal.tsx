@@ -10,7 +10,6 @@ import { EmptyState } from '../ui/EmptyState';
 import { AssignRoutineSchema } from '../../types/schema.type';
 import type { AssignRoutineRequest, Client, Routine } from '../../types';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
-import { getClientRoutines } from '../../services/clientInfoService';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { DAYS_OF_WEEK } from '../../constants/time';
 
@@ -46,13 +45,10 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     enabled: isOpen,
   });
 
-  // Rutinas del alumno, para saber cuál es la activa (spec §B.7-9).
-  const { data: clientRoutines = [] } = useQuery({
-    queryKey: ['client-routines', client?.id],
-    queryFn: () => getClientRoutines(client?.id ?? 0),
-    enabled: isOpen && !!client,
-  });
-  const activeRoutine = clientRoutines.find((r) => r.active) ?? null;
+  // Rutina vigente del alumno: `client.routineActive`, no `active` de la plantilla (spec §B.7-9;
+  // `active` de la plantilla no distingue asignaciones históricas de la vigente cuando el alumno
+  // tiene más de una rutina con active=true).
+  const activeRoutine = client?.routineActive ?? null;
 
   // Resetear estado al abrir o al cambiar de cliente. Se ajusta durante el
   // render en vez de en un useEffect, para no disparar un render extra en cascada.

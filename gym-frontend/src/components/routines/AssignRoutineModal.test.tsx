@@ -38,14 +38,16 @@ const TEMPLATE_MULTIDIA: Routine = {
   ],
 };
 
-function renderModal(overrides: { templates?: Routine[]; clientRoutines?: Routine[] } = {}) {
+function renderModal(
+  overrides: { templates?: Routine[]; clientRoutines?: Routine[]; client?: Client } = {},
+) {
   vi.mocked(getRoutines).mockResolvedValue(overrides.templates ?? TEMPLATES);
   vi.mocked(getClientRoutines).mockResolvedValue(overrides.clientRoutines ?? []);
   const onClose = vi.fn();
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={queryClient}>
-      <AssignRoutineModal isOpen client={CLIENT} onClose={onClose} />
+      <AssignRoutineModal isOpen client={overrides.client ?? CLIENT} onClose={onClose} />
     </QueryClientProvider>,
   );
   return { onClose };
@@ -120,7 +122,9 @@ describe('AssignRoutineModal - agenda semanal al asignar una plantilla de varios
 // demás no.
 describe('AssignRoutineModal - etiqueta "Actual" (AC-0007-09)', () => {
   it('la plantilla que coincide con la rutina activa del alumno muestra "Actual"', async () => {
-    renderModal({ clientRoutines: [{ ...TEMPLATE_GRASA, active: true }] });
+    renderModal({
+      client: { ...CLIENT, routineActive: { id: TEMPLATE_GRASA.id, name: TEMPLATE_GRASA.name, goal: TEMPLATE_GRASA.goal } },
+    });
 
     const group = await screen.findByRole('radiogroup');
     const grasaCard = cardFor(group, 'Pérdida de grasa');
@@ -128,6 +132,27 @@ describe('AssignRoutineModal - etiqueta "Actual" (AC-0007-09)', () => {
 
     expect(within(grasaCard).getByText('Actual')).toBeInTheDocument();
     expect(within(fuerzaCard).queryByText('Actual')).not.toBeInTheDocument();
+  });
+
+  // H-0007-1-03: con dos rutinas asignadas al alumno ("active" de plantilla en ambas, ej. "Full
+  // Body A" de marzo y "Hipertrofia B" de hoy), "Actual" tiene que ir en la vigente
+  // (client.routineActive), no en la primera de `getClientRoutines`.
+  it('H-0007-1-03: con dos rutinas del alumno, "Actual" va en la vigente (client.routineActive)', async () => {
+    renderModal({
+      client: { ...CLIENT, routineActive: { id: TEMPLATE_CARDIO.id, name: TEMPLATE_CARDIO.name, goal: TEMPLATE_CARDIO.goal } },
+      clientRoutines: [
+        { ...TEMPLATE_GRASA, active: true },
+        { ...TEMPLATE_CARDIO, active: true },
+      ],
+    });
+
+    const group = await screen.findByRole('radiogroup');
+    const grasaCard = cardFor(group, 'Pérdida de grasa');
+    const cardioCard = cardFor(group, 'Cardio HIIT');
+
+    expect(within(cardioCard).getByText('Actual')).toBeInTheDocument();
+    expect(within(grasaCard).queryByText('Actual')).not.toBeInTheDocument();
+    expect(screen.getByText(/rutina actual: Cardio HIIT/)).toBeInTheDocument();
   });
 });
 
