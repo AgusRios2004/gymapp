@@ -36,7 +36,7 @@ const MainLayout = () => {
       </div>
 
       {/* Main Content Pane */}
-      <main className="flex-1 p-4 sm:p-8 transition-all duration-300 w-full overflow-x-hidden min-h-screen">
+      <main className="flex-1 p-4 sm:p-8 pt-20 sm:pt-20 lg:pt-8 transition-all duration-300 w-full overflow-x-hidden min-h-screen">
         <Outlet />
       </main>
     </div>
