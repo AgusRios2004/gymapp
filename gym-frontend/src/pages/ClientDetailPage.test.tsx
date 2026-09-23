@@ -29,6 +29,7 @@ const CLIENT_CARLOS: Client = {
 };
 
 const ROUTINE_ACTIVE: Routine = { id: 5, name: 'Full Body A', goal: 'Hipertrofia', active: true };
+const ROUTINE_VIGENTE: Routine = { id: 9, name: 'Hipertrofia B', goal: 'Ganar masa muscular', active: true };
 
 const PAYMENT_RECENT: Payment = { id: 20, amount: 15000, date: '2026-09-01', paymentType: 'MONTHLY' };
 
@@ -129,12 +130,27 @@ describe('ClientDetailPage - etiquetas de estado y cuota (AC-0007-03)', () => {
 // "Teléfono" muestra "-" si el alumno no tiene teléfono cargado.
 describe('ClientDetailPage - rutina actual y teléfono (AC-0007-04)', () => {
   it('"Rutina actual" muestra el nombre de la rutina activa del alumno', async () => {
-    renderClientDetailPage(CLIENT_CARLOS, { routines: [ROUTINE_ACTIVE] });
+    renderClientDetailPage(
+      { ...CLIENT_CARLOS, routineActive: { id: ROUTINE_ACTIVE.id, name: ROUTINE_ACTIVE.name, goal: ROUTINE_ACTIVE.goal } },
+      { routines: [ROUTINE_ACTIVE] },
+    );
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
     const dl = headerDataList();
     const dt = within(dl).getByText('Rutina actual');
     expect(dt.nextElementSibling).toHaveTextContent('Full Body A');
+  });
+
+  it('H-0007-1-02: con dos rutinas asignadas ("active" de plantilla en ambas), muestra la vigente (client.routineActive), no la primera de la lista', async () => {
+    renderClientDetailPage(
+      { ...CLIENT_CARLOS, routineActive: { id: ROUTINE_VIGENTE.id, name: ROUTINE_VIGENTE.name, goal: ROUTINE_VIGENTE.goal } },
+      { routines: [ROUTINE_ACTIVE, ROUTINE_VIGENTE] },
+    );
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    const dl = headerDataList();
+    const dt = within(dl).getByText('Rutina actual');
+    expect(dt.nextElementSibling).toHaveTextContent('Hipertrofia B');
   });
 
   it('"Rutina actual" muestra "Sin rutina asignada" si el alumno no tiene rutina activa', async () => {

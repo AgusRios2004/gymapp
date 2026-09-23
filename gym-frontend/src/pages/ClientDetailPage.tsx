@@ -141,7 +141,7 @@ export default function ClientDetailPage() {
     { id: 'products', label: 'Compras', icon: <ShoppingBag size={18} /> },
   ];
 
-  const activeRoutine = routines.find((r) => r.active);
+  const activeRoutine = client.routineActive ?? null;
   const initials = [client.name, client.lastName]
     .filter(Boolean)
     .map((n) => n.trim().charAt(0).toUpperCase())
