@@ -74,13 +74,13 @@ export default function StaffPage() {
           <p className="text-gray-500">Administra los profesores y el personal del gimnasio</p>
         </div>
         
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex-1 md:flex-none">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full md:w-auto">
+          <div className="flex items-center gap-3 bg-white px-4 rounded-2xl border border-gray-100 shadow-sm flex-1 md:flex-none">
              <Search size={20} className="text-gray-400" />
              <input 
                type="text" 
                placeholder="Buscar profesor..." 
-               className="bg-transparent border-0 focus:ring-0 text-sm font-medium w-full"
+               className="bg-transparent border-0 focus:ring-0 text-sm font-medium w-full py-4"
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
              />

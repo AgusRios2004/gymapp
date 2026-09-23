@@ -227,12 +227,12 @@ export default function ProductsPage() {
 
       {activeTab === 'inventory' ? (
         <div className="space-y-6">
-          <div className="flex items-center gap-3 bg-white p-4 rounded-3xl border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3 bg-white px-4 rounded-3xl border border-gray-100 shadow-sm">
              <Search size={20} className="text-gray-400" />
              <input 
                type="text" 
                placeholder="Buscar producto por nombre..." 
-               className="bg-transparent border-0 focus:ring-0 text-gray-900 font-medium w-full"
+               className="bg-transparent border-0 focus:ring-0 text-gray-900 font-medium w-full py-4"
                value={searchTerm}
                onChange={e => setSearchTerm(e.target.value)}
              />
