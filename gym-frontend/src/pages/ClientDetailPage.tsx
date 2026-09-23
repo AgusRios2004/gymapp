@@ -142,6 +142,10 @@ export default function ClientDetailPage() {
   ];
 
   const activeRoutine = client.routineActive ?? null;
+  // findByClientId no tiene ORDER BY: el array llega en orden de inserción, no por fecha.
+  const latestPayment = payments.length > 0
+    ? payments.reduce((latest, p) => (new Date(p.date) > new Date(latest.date) ? p : latest))
+    : null;
   const initials = [client.name, client.lastName]
     .filter(Boolean)
     .map((n) => n.trim().charAt(0).toUpperCase())
@@ -209,7 +213,7 @@ export default function ClientDetailPage() {
                   <div className="hidden sm:block">
                     <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Último pago</dt>
                     <dd className="text-slate-900 font-semibold text-sm mt-0.5">
-                      {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
+                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
                     </dd>
                   </div>
                 </dl>

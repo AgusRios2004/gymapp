@@ -32,6 +32,8 @@ const ROUTINE_ACTIVE: Routine = { id: 5, name: 'Full Body A', goal: 'Hipertrofia
 const ROUTINE_VIGENTE: Routine = { id: 9, name: 'Hipertrofia B', goal: 'Ganar masa muscular', active: true };
 
 const PAYMENT_RECENT: Payment = { id: 20, amount: 15000, date: '2026-09-01', paymentType: 'MONTHLY' };
+const PAYMENT_ENERO: Payment = { id: 5, amount: 10000, date: '2026-01-10', paymentType: 'MONTHLY' };
+const PAYMENT_SEPTIEMBRE: Payment = { id: 21, amount: 15000, date: '2026-09-15', paymentType: 'MONTHLY' };
 
 function renderClientDetailPage(
   client: Client,
@@ -169,6 +171,20 @@ describe('ClientDetailPage - rutina actual y teléfono (AC-0007-04)', () => {
     const dl = headerDataList();
     const dt = within(dl).getByText('Teléfono');
     expect(dt.nextElementSibling).toHaveTextContent('-');
+  });
+});
+
+// H-0007-1-04: "Último pago" del encabezado tiene que ser el pago más reciente por fecha, no el
+// primero del array (PaymentRepository.findByClientId no tiene ORDER BY, así que llega en orden
+// de inserción/id).
+describe('ClientDetailPage - "Último pago" del encabezado toma el más reciente por fecha (H-0007-1-04)', () => {
+  it('muestra el monto del pago más reciente aunque llegue primero en el array', async () => {
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_ENERO, PAYMENT_SEPTIEMBRE] });
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    const dl = headerDataList();
+    const dt = within(dl).getByText('Último pago');
+    expect(dt.nextElementSibling).toHaveTextContent(`$${PAYMENT_SEPTIEMBRE.amount.toLocaleString()}`);
   });
 });
 
