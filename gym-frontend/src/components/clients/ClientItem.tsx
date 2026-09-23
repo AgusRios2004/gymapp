@@ -18,10 +18,10 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
     <div className="bg-white border border-slate-200/80 hover:border-slate-300 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group">
       {/* Información del Cliente */}
       <div 
-        className="flex-1 cursor-pointer hover:opacity-90"
+        className="flex-1 min-w-0 w-full sm:w-auto cursor-pointer hover:opacity-90"
         onClick={() => navigate(`/clients/${client.id}`)}
       >
-        <div className="flex items-center gap-2 mb-1.5">
+        <div className="flex flex-wrap items-center gap-2 mb-1.5">
           <h3 className="font-extrabold text-slate-900 text-lg group-hover:text-emerald-600 transition-colors font-display tracking-tight">
             {client.name} {client.lastName}
           </h3>
@@ -61,7 +61,7 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
             </span>
           </button>
         </div>
-        <p className="text-xs text-slate-500 flex items-center gap-2 font-medium">
+        <p className="text-xs text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1 font-medium">
           <span>DNI: <strong className="text-slate-700">{client.dni}</strong></span>
           <span className="text-slate-300">•</span>
           <span>Tel: <strong className="text-slate-700">{client.phone || '-'}</strong></span>
@@ -69,14 +69,14 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
       </div>
 
       {/* Botones de Acción */}
-      <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         <Button 
           onClick={() => navigate(`/clients/${client.id}`)} 
           variant="outline" 
           size="sm"
-          className="flex-1 sm:flex-initial text-emerald-700 border-emerald-300 bg-emerald-50/60 hover:bg-emerald-100/90 px-5 font-extrabold"
+          className="flex-1 sm:flex-initial text-emerald-700 border-emerald-300 bg-emerald-50/60 hover:bg-emerald-100/90 min-w-0 px-2 sm:px-5 font-extrabold"
         >
-          <Eye size={14} className="mr-1.5" />
+          <Eye size={14} className="hidden sm:inline mr-1.5" />
           Ver Ficha
         </Button>
 
@@ -84,9 +84,9 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
           onClick={onAssignRoutine} 
           variant="secondary" 
           size="sm"
-          className="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200 px-5 font-bold"
+          className="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200 min-w-0 px-2 sm:px-5 font-bold"
         >
-          <Dumbbell size={14} className="mr-1.5 text-emerald-600" />
+          <Dumbbell size={14} className="hidden sm:inline mr-1.5 text-emerald-600" />
           Rutina
         </Button>
         
@@ -94,9 +94,9 @@ export const ClientItem: React.FC<ClientItemProps> = ({ client, onEdit, onAssign
           onClick={onEdit} 
           variant="ghost"
           size="sm"
-          className="flex-1 sm:flex-initial text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-4 font-bold"
+          className="flex-1 sm:flex-initial text-slate-500 hover:text-slate-900 hover:bg-slate-100 min-w-0 px-2 sm:px-4 font-bold"
         >
-          <Edit size={14} className="mr-1.5" />
+          <Edit size={14} className="hidden sm:inline mr-1.5" />
           Editar
         </Button>
       </div>
