@@ -51,7 +51,7 @@ Cualquier fecha de este roadmap sale de dividir el esfuerzo estimado por esas 12
 - [x] Capa 1 — saneamiento de documentación (06/09/2026): duplicados de `docs/` eliminados, `CLAUDE.md`/`GEMINI.md` sincronizados, backlog auditado contra el código, sprint recalendarizado sobre la capacidad real.
 - [x] Capa 1 — harness de commons + Sandcastle `spec-driven` instalados (12/09/2026, [ADR-0005](./adr/0005-harness-commons-y-sandcastle-spec-driven.md)).
 - [x] Capa 1 — Fase 0: pipeline de agentes probado con la spec 0001 (20/09/2026).
-- [x] Capa 1 — Sprint 3 (mobile, adelantado): 13 filas de auditoría cerradas, 31 bugs corregidos contra ADR-0009 (21/09/2026) — pendiente una pasada visual en navegador a 375px.
+- [x] Capa 1 — Sprint 3 (mobile, adelantado): 13 filas de auditoría cerradas, 31 bugs corregidos contra ADR-0009 (21/09/2026); pasada visual a 375px hecha el 22/09/2026 con 6 bugs más corregidos (M-32 a M-37).
 - [ ] Capa 1 — Sprint 1 cierra (04/10/2026) con QA Sesión 02 sin bugs críticos.
 - [ ] Capa 1 — Sprint 2 cierra (18/10/2026) con QA Sesión 03 sin bugs críticos ni de experiencia. **Cierre de Capa 1.**
 - [x] Capa 2 — escribir `prd/PRD_ENTRENADOR.md` (alcance de rutinas inteligentes + LLM, 21/09/2026 — borrador adelantado, ver [ADR-0010](./adr/0010-capa2-revision-humana-obligatoria.md)).

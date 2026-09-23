@@ -3,7 +3,7 @@
 > **Origen:** pedido directo del usuario (16/09/2026), adelantado sobre el calendario — Sprint 1 y Sprint 2 ya cerraron todas sus tareas (ver sus docs), y sirve al mismo objetivo que la QA Sesión 03 (17/10): cerrar Capa 1 sin bugs de experiencia. No es un sprint nuevo del PRD, es trabajo extra aprovechando capacidad sobrante — igual que T-19/T-22/T-23 en su momento.
 > **Estándar de referencia:** [ADR-0009](../adr/0009-estandar-mobile.md) y [`DESIGN_SYSTEM.md` § 6.1 Mobile](../DESIGN_SYSTEM.md).
 > **Modo de ejecución:** `/loop` autopaced. Ver reglas de ejecución más abajo antes de tocar código.
-> **Estado:** ✅ Completado (21/09/2026) — falta la verificación visual en navegador a 375px, ver criterio de cierre
+> **Estado:** ✅ Completado (21/09/2026) — pasada visual a 375px hecha el 22/09/2026 (M-32 a M-37)
 
 ---
 
@@ -58,6 +58,20 @@ Después de cada tarea (mecánica o aprobada): `bash .harness/scripts/verify.sh`
 | M-30 | Botones ver/editar/borrar de las cards de rutina (`p-2`, ícono 16px) ~32px de hit area | `pages/RoutinesPage.tsx` | ✅ |
 | M-31 | Input "Nombre" y select "Grupo Muscular" (`py-2`, sin `text-sm`) ~40px de alto | `components/exercises/CreateExerciseModal.tsx` | ✅ |
 
+### Pasada visual a 375px (22/09/2026)
+
+Hecha con Playwright + Chromium headless (la extensión de Chrome seguía sin conectar): 19 vistas (login, registro, las 11 páginas del menú, ficha de cliente y sus tabs, menú mobile abierto), midiendo scroll horizontal de página, contenido recortado por contenedores `overflow-hidden` y targets táctiles <44px, más revisión de capturas. La métrica de scroll sola daba todo verde porque el `overflow-x-hidden` del `<main>` escondía el desborde en vez de evitarlo — el contenido quedaba cortado.
+
+| ID | Bug | Archivo | Estado |
+|:---:|:---|:---|:---:|
+| M-32 | Restos del template de Vite: `#root` con `padding: 2rem` y `max-width: 1280px` — comía 64px de ancho en mobile y contradecía el layout 100% de T-22. También tenía `text-align: center`, que centraba por herencia títulos y textos en toda la app de forma inconsistente (unas páginas con `text-left` explícito, otras no). Se borró `App.css` entero; se comparó antes/después en las 19 vistas a 375px y 1440px: lo que está pensado centrado (login, empty states, cards de staff/ejercicios en mobile) tiene `text-center` propio y no cambió | `App.css` (borrado), `App.tsx` | ✅ |
+| M-33 | Card de cliente: los 3 botones (`min-w-[100px]` de `Button sm`) y el bloque de datos (`items-start` lo dimensiona al contenido) desbordaban la card; "Editar", el toggle y el DNI quedaban cortados | `components/clients/ClientItem.tsx` | ✅ |
+| M-34 | Header del widget de objetivo sin `flex-wrap`: badge del objetivo cortado y botón "Editar Metas" fuera de pantalla | `components/physical/RecompositionWidget.tsx` | ✅ |
+| M-35 | El botón hamburguesa (fijo) tapaba el título de Clases, Pagos, Ejercicios, Planes, Asistencia y la tab "Inventario" de Productos — `<main>` sin espacio superior en mobile | `layouts/MainLayout.tsx` | ✅ |
+| M-36 | Buscador de Staff aplastado (~80px) al lado de "Nuevo Profesor" | `pages/StaffPage.tsx` | ✅ |
+| M-37 | Inputs de búsqueda de Staff y Productos con hit area real de 20-24px (el padding era del contenedor, no del input) | `pages/StaffPage.tsx`, `pages/ProductsPage.tsx` | ✅ |
+| M-38 | Íconos pasados como children de `Button` (`<Plus /> Nuevo Plan`) quedaban **arriba** del texto: `Button` envolvía los children en un `<span>` inline y el preflight de Tailwind hace `svg { display: block }`. El span pasa a `inline-flex` y hereda el `gap` del botón | `components/ui/Button.tsx` | ✅ |
+
 ## 📋 Auditoría pendiente por pantalla — verificar contra ADR-0009, corregir si hace falta
 
 Páginas ya revisadas de pasada al escribir el ADR (sin bugs nuevos encontrados, pero sin auditoría exhaustiva): `MainLayout.tsx`/`Sidebar` (drawer mobile ya anda bien), `ClassesPage.tsx` grid de días, `RoutinesPage.tsx`, `ExercisesPage.tsx`. El resto no se miró todavía:
@@ -82,14 +96,19 @@ Cada fila de auditoría (P-XX) puede cerrar sin cambios ("verificado, cumple") o
 
 ## 🎨 Tareas que salgan con mockup (D-XX)
 
-Ninguna todavía — se agregan acá a medida que la auditoría las encuentre. Formato: `| D-XX | Qué pantalla / qué decisión | Link del mockup | 🟡 pendiente aprobación / ✅ aprobado |`.
+Se agregan acá a medida que la auditoría las encuentre. Formato: `| D-XX | Qué pantalla / qué decisión | Link del mockup | 🟡 pendiente aprobación / ✅ aprobado |`.
+
+| ID | Pantalla / decisión | Mockup | Estado |
+|:---:|:---|:---|:---:|
+| D-01 | Encabezado de la ficha del alumno: nombre arriba y datos abajo, link "‹ Alumnos" en lugar del botón cuadrado, pestañas subrayadas, métricas sin cortes. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `aprobada` |
+| D-02 | Modal "Asignar rutina": plantillas como lista seleccionable, hoja inferior en mobile, botones renombrados que entran en pantalla. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `aprobada` |
 
 ---
 
 ## ✅ Criterios de cierre del sprint
 
-- [x] Todos los bugs mecánicos encontrados (M-01 a M-31) corregidos y verificados.
+- [x] Todos los bugs mecánicos encontrados (M-01 a M-38) corregidos y verificados.
 - [x] Las 13 filas de auditoría (P-01 a P-13) cerradas — con cambios o confirmando que ya cumplían.
 - [x] Ninguna tarea D-XX quedó sin decisión del usuario (no se abrió ninguna — el único caso límite, la fila de ejercicio de `CreateRoutineModal.tsx` sin `flex-wrap`, se resolvió aplicando un patrón ya usado en `EditRoutineModal.tsx`, no una decisión de diseño nueva).
 - [x] `verify.sh` en verde en `main` en cada commit.
-- [ ] Sin scroll horizontal de página en ninguna vista, probado al menos en el viewport de referencia (375px de ancho) — **verificado por revisión de código** (breakpoints, `overflow-x-auto` en tablas/filas anchas, grids que colapsan, `overflow-x-hidden` en el `<main>` de `MainLayout`), pero no se pudo probar visualmente en navegador: la extensión Claude in Chrome no estaba conectada en esta sesión. Pendiente una pasada visual rápida a 375px antes de dar el criterio por 100% cerrado.
+- [x] Sin scroll horizontal de página en ninguna vista, probado en el viewport de referencia (375px de ancho) — pasada visual del 22/09/2026 con Chromium headless, 19 vistas sin desborde ni contenido recortado tras corregir M-32 a M-37. Verificado también a 1440px que el desktop no cambió.
