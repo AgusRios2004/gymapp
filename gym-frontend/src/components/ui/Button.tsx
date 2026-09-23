@@ -76,7 +76,7 @@ const Button: React.FC<ButtonProps> = ({
         leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>
       )}
 
-      <span>{children}</span>
+      <span className="inline-flex items-center gap-[inherit]">{children}</span>
 
       {!isLoading && rightIcon && (
         <span className="inline-flex shrink-0">{rightIcon}</span>
