@@ -27,6 +27,8 @@ Fuente de verdad del diseño: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 **Cuidado:** documentos y un skill local quedaron desactualizados con la decisión anterior (dark mode "Industrial"). Ya fueron corregidos en esta pasada (06/09/2026), pero si en el futuro alguno vuelve a mencionar `bg-slate-950`, `bg-zinc-900`, `bg-gray-900` o "prohibido bg-white" como regla activa, es un documento viejo — ignoralo y avisá para corregirlo. Ver detalle en `docs/SITEMAP.md` → sección "Documentación histórica".
 
+**Skills de terceros:** `.claude/skills/` tiene linkeadas las skills de diseño y animación de Emil Kowalski (origen en `~/WorkSpace/commons/skills/terceros/emilkowalski/ORIGEN.md`). Son criterio general, no reglas del proyecto: si chocan con `docs/DESIGN_SYSTEM.md` o con este archivo, gana el proyecto. En particular: los toasts siguen en `react-toastify` (no migrar a Sonner), los bordes `slate-200` se mantienen y no hay dark mode.
+
 ---
 
 ## En qué capa estamos
