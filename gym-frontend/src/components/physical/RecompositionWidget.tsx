@@ -66,13 +66,13 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
   return (
     <div className="bg-white text-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-6">
       {/* Header Widget */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="p-3 bg-emerald-100 text-emerald-700 rounded-2xl border border-emerald-200">
             <Target size={24} />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="font-extrabold text-lg text-slate-900 font-display uppercase tracking-tight">Objetivo de Recomposición Corporal</h3>
               <span className="px-3 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
                 {primaryGoal}
