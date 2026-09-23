@@ -100,7 +100,7 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
             <Activity size={14} className="text-emerald-600" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900 font-mono">{heightInMeters} m</span>
+            <span className="text-2xl font-black text-slate-900 font-mono whitespace-nowrap">{heightInMeters} m</span>
             <span className="text-xs font-extrabold text-emerald-700">IMC {computedBmi}</span>
           </div>
           <p className="text-[11px] text-slate-400 font-medium">Estatura base</p>
@@ -112,9 +112,9 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
             <span>PESO OBJETIVO</span>
             <Scale size={14} className="text-teal-600" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-teal-700 font-mono">{currentWeight} kg</span>
-            <span className="text-xs font-bold text-slate-500">/ Meta: {targetWeight} kg</span>
+          <div className="space-y-0.5">
+            <span className="block text-2xl font-black text-teal-700 font-mono whitespace-nowrap">{currentWeight} kg</span>
+            <span className="block text-xs font-bold text-slate-500">Meta {targetWeight} kg</span>
           </div>
           <p className="text-[11px] text-slate-400 font-medium">Recomposición corporal</p>
         </div>
@@ -125,9 +125,9 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
             <span>% GRASA CORPORAL</span>
             <Flame size={14} className="text-rose-500" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-rose-500 font-mono">{currentFat}%</span>
-            <span className="text-xs font-bold text-slate-500">/ Meta: {targetFat}%</span>
+          <div className="space-y-0.5">
+            <span className="block text-2xl font-black text-rose-500 font-mono whitespace-nowrap">{currentFat}%</span>
+            <span className="block text-xs font-bold text-slate-500">Meta {targetFat}%</span>
           </div>
           <p className="text-[11px] text-slate-400 font-medium">Est. Grasa: {fatMassKg} kg</p>
         </div>
@@ -138,9 +138,9 @@ export default function RecompositionWidget({ client, latestWeight, latestFat, l
             <span>MASA MUSCULAR</span>
             <Activity size={14} className="text-emerald-600" />
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-emerald-600 font-mono">{currentMuscle}%</span>
-            <span className="text-xs font-bold text-slate-500">/ Meta: {targetMuscle}%</span>
+          <div className="space-y-0.5">
+            <span className="block text-2xl font-black text-emerald-600 font-mono whitespace-nowrap">{currentMuscle}%</span>
+            <span className="block text-xs font-bold text-slate-500">Meta {targetMuscle}%</span>
           </div>
           <p className="text-[11px] text-slate-400 font-medium">Est. Masa Magra: {leanMassKg} kg</p>
         </div>

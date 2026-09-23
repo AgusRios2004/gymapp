@@ -1,19 +1,17 @@
-import { useState, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import { toast } from 'react-toastify';
+import { Check, Search, X } from 'lucide-react';
 import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
+import { EmptyState } from '../ui/EmptyState';
 import { AssignRoutineSchema } from '../../types/schema.type';
-import type { Client, Routine, AssignRoutineRequest } from '../../types/index';
+import type { AssignRoutineRequest, Client, Routine } from '../../types';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
-import { DAYS_OF_WEEK } from '../../constants/time';
+import { getClientRoutines } from '../../services/clientInfoService';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
-import { SearchableSelect } from '../ui/SearchableSelect';
-
-type AssignRoutineFormData = z.infer<typeof AssignRoutineSchema>;
 
 interface AssignRoutineModalProps {
   isOpen: boolean;
@@ -30,22 +28,28 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [selectedRoutine, setSelectedRoutine] = useState<Routine | null>(null);
-  // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY")
-  const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
+  const [search, setSearch] = useState('');
   const [notes, setNotes] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [errors, setErrors] = useState<string[]>([]);
   const shouldCloseRef = useRef(true);
 
-  // Cargar rutinas (templates)
-  const { data: routines = [] } = useQuery({
+  // Plantillas disponibles para asignar.
+  const { data: templates = [] } = useQuery({
     queryKey: ['routines', 'templates'],
     queryFn: async () => {
-      const allRoutines = await getRoutines(); 
+      const allRoutines = await getRoutines();
       return Array.isArray(allRoutines) ? allRoutines.filter((r: Routine) => r.active !== false) : [];
     },
-    enabled: isOpen, // Solo cargar cuando se abre el modal
+    enabled: isOpen,
   });
+
+  // Rutinas del alumno, para saber cuál es la activa (spec §B.7-9).
+  const { data: clientRoutines = [] } = useQuery({
+    queryKey: ['client-routines', client?.id],
+    queryFn: () => getClientRoutines(client?.id ?? 0),
+    enabled: isOpen && !!client,
+  });
+  const activeRoutine = clientRoutines.find((r) => r.active) ?? null;
 
   // Resetear estado al abrir o al cambiar de cliente. Se ajusta durante el
   // render en vez de en un useEffect, para no disparar un render extra en cascada.
@@ -54,71 +58,53 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     setPrevReset({ isOpen, client });
     if (isOpen) {
       setSelectedRoutine(null);
-      setScheduleMap({});
+      setSearch('');
       setNotes('');
       setStartDate(new Date().toISOString().split('T')[0]);
-      setErrors([]);
     }
   }
 
-  // Mutación para asignar la rutina
   const mutation = useMutation({
-    mutationFn: (data: AssignRoutineFormData) => assignRoutineToClient(data),
+    mutationFn: (data: ReturnType<typeof AssignRoutineSchema.parse>) =>
+      assignRoutineToClient({ ...data, schedule: data.schedule ?? [] }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-routines', client?.id] });
       queryClient.invalidateQueries({ queryKey: ['client-routine', client?.id] });
       toast.success('Rutina asignada correctamente');
-      
+
       if (shouldCloseRef.current) {
         onClose();
       } else {
-        // Resetear formulario para permitir agregar otra inmediatamente
+        // Resetear selección/notas para permitir cargar otra inmediatamente.
         setSelectedRoutine(null);
-        setScheduleMap({});
         setNotes('');
-        setErrors([]);
       }
     },
     onError: (error: Error) => {
-      console.error(error);
       toast.error(error.message || 'Error al asignar la rutina');
-    }
+    },
   });
 
+  const filteredTemplates = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return templates;
+    return templates.filter(
+      (t) => t.name.toLowerCase().includes(term) || t.goal.toLowerCase().includes(term),
+    );
+  }, [templates, search]);
+
   const handleSave = (closeAfterSave: boolean) => {
+    if (!client || !selectedRoutine) return;
     shouldCloseRef.current = closeAfterSave;
 
-    if (!client || !selectedRoutine) {
-      setErrors(["Debes seleccionar una rutina."]);
-      return;
-    }
-
-    const schedule = Object.entries(scheduleMap).map(([dayOrder, assignedDay]) => ({
-      dayOrder: Number(dayOrder),
-      assignedDay,
-    }));
-
-    const payload = {
+    const result = AssignRoutineSchema.safeParse({
       clientId: client.id,
       routineTemplateId: selectedRoutine.id,
-      schedule,
-      notes,
       startDate,
-    };
+      notes,
+    });
+    if (!result.success) return;
 
-    const result = AssignRoutineSchema.safeParse(payload);
-
-    if (!result.success) {
-      const errorMessages = result.error.issues.map((e) => e.message);
-      setErrors(errorMessages);
-      return;
-    }
-
-    if (selectedRoutine?.days && schedule.length < selectedRoutine.days.length) {
-        setErrors(["Debes asignar un día de la semana a cada día de la rutina."]);
-        return;
-    }
-
-    // Enviamos los datos. Aseguramos que startDate vaya en el payload final.
     mutation.mutate(result.data);
   };
 
@@ -126,94 +112,138 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 
   if (!isOpen || !client) return null;
 
+  const canSave = !!selectedRoutine && !mutation.isPending;
+
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        
-        <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">Asignar Rutina</h3>
-            <p className="text-sm text-gray-500">Alumno: {client.name} {client.lastName}</p>
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-sm sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full sm:max-w-[560px] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-64px)] sm:max-h-[85vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sm:hidden pt-2 pb-1 flex justify-center shrink-0">
+          <span className="h-1.5 w-10 rounded-full bg-slate-200" />
+        </div>
+
+        <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-start gap-4 shrink-0">
+          <div className="min-w-0">
+            <h3 className="text-xl font-black font-display uppercase tracking-tight text-slate-900">Asignar rutina</h3>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Para <span className="font-semibold text-slate-900">{client.name} {client.lastName}</span>
+              {activeRoutine && (
+                <span className="hidden sm:inline"> · rutina actual: {activeRoutine.name}</span>
+              )}
+            </p>
           </div>
-          <button onClick={onClose} className="min-h-11 min-w-11 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          <button
+            onClick={onClose}
+            aria-label="Cerrar"
+            className="h-11 w-11 shrink-0 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"
+          >
+            <X size={22} />
           </button>
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto">
-          
-          <SearchableSelect<Routine>
-            label="Seleccionar Plantilla"
-            placeholder="Buscar por nombre..."
-            options={routines}
-            value={selectedRoutine}
-            onChange={(routine) => {
-              setSelectedRoutine(routine);
-              setScheduleMap({});
-            }}
-            getKey={(r) => r.id}
-            getLabel={(r) => `${r.name} (${r.goal})`}
-            disabled={mutation.isPending}
-          />
+          <div className="space-y-3">
+            <Input
+              placeholder="Buscar plantilla"
+              leftIcon={<Search size={16} />}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-          {/* Mapeo de Días */}
-          {selectedRoutine && selectedRoutine.days && (
-            <div className="space-y-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-              <h4 className="font-semibold text-gray-800 text-sm uppercase tracking-wider">Agenda Semanal</h4>
-              <p className="text-xs text-gray-500 mb-4">Define qué día de la semana el alumno realizará cada sesión de la rutina.</p>
-              
-              {[...(selectedRoutine.days || [])].sort((a, b) => (a.dayOrder || 0) - (b.dayOrder || 0)).map((day) => (
-                <div key={day.id || day.dayOrder} className="flex items-center justify-between gap-4">
-                  <span className="text-sm font-medium text-gray-700 bg-white px-3 py-2 rounded-lg border shadow-sm min-w-[80px] text-center">
-                    Sesión {day.dayOrder}
-                  </span>
-                  <span className="text-gray-400 text-xs">se realiza el</span>
-                  <select
-                    className="flex-1 min-h-11 px-3 bg-white border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-sm"
-                    value={scheduleMap[day.dayOrder] || ''}
-                    onChange={(e) => setScheduleMap(prev => ({ ...prev, [day.dayOrder]: e.target.value }))}
-                  >
-                    <option value="">Seleccionar día...</option>
-                    {DAYS_OF_WEEK.map(d => (
-                      <option key={d.value} value={d.value}>{d.label}</option>
-                    ))}
-                  </select>
-                </div>
-              ))}
-            </div>
-          )}
+            {templates.length === 0 ? (
+              <EmptyState title="Todavía no hay plantillas de rutina" />
+            ) : filteredTemplates.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-8">No hay plantillas que coincidan</p>
+            ) : (
+              <div role="radiogroup" aria-label="Plantillas de rutina" className="space-y-2 max-h-64 overflow-y-auto">
+                {filteredTemplates.map((template) => {
+                  const checked = selectedRoutine?.id === template.id;
+                  const isCurrent = activeRoutine?.id === template.id;
+                  return (
+                    <div
+                      key={template.id}
+                      role="radio"
+                      aria-checked={checked}
+                      tabIndex={0}
+                      onClick={() => setSelectedRoutine(template)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedRoutine(template);
+                        }
+                      }}
+                      className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-colors ${
+                        checked ? 'border-emerald-700 bg-emerald-50' : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          checked ? 'border-emerald-700 bg-emerald-700 text-white' : 'border-slate-300'
+                        }`}
+                      >
+                        {checked && <Check size={12} />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-bold text-slate-900">{template.name}</p>
+                          {isCurrent && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">
+                              Actual
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-slate-500">{template.goal}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           <Input
-            label="Fecha de Inicio"
+            label="Fecha de inicio"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             disabled={mutation.isPending}
+            helperText="Pasa a ser la rutina actual del alumno."
           />
 
           <TextArea
-            label="Notas / Observaciones"
-            placeholder="Instrucciones especiales para el alumno..."
+            label="Notas (opcional)"
+            placeholder="Indicaciones para el alumno"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             disabled={mutation.isPending}
           />
-
-          {errors.length > 0 && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
-              {errors.map((err, idx) => <p key={idx}>• {err}</p>)}
-            </div>
-          )}
         </div>
 
-        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-between gap-3">
-          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => handleSave(false)} disabled={mutation.isPending}>
-              Guardar y Agregar Otra
+        <div className="p-4 sm:p-6 border-t border-slate-100 bg-white sm:bg-slate-50 flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-3 shrink-0">
+          <Button variant="ghost" onClick={onClose} className="hidden sm:inline-flex">
+            Cancelar
+          </Button>
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:ml-auto">
+            <Button
+              variant="outline"
+              onClick={() => handleSave(false)}
+              disabled={!canSave}
+              className="w-full sm:w-auto h-11 whitespace-nowrap"
+            >
+              Asignar y cargar otra
             </Button>
-            <Button variant="primary" onClick={() => handleSave(true)} disabled={mutation.isPending}>
-              {mutation.isPending ? 'Asignando...' : 'Confirmar y Cerrar'}
+            <Button
+              variant="primary"
+              onClick={() => handleSave(true)}
+              disabled={!canSave}
+              className="w-full sm:w-auto h-12 sm:h-11 whitespace-nowrap"
+            >
+              {mutation.isPending ? 'Asignando…' : 'Asignar rutina'}
             </Button>
           </div>
         </div>
