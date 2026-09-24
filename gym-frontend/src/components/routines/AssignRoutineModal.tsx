@@ -75,6 +75,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['client-routines', client?.id] });
       queryClient.invalidateQueries({ queryKey: ['client-routine', client?.id] });
+      queryClient.invalidateQueries({ queryKey: ['client', client?.id] });
       toast.success('Rutina asignada correctamente');
 
       if (shouldCloseRef.current) {

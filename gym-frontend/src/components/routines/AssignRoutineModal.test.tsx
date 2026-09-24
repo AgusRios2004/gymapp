@@ -50,7 +50,7 @@ function renderModal(
       <AssignRoutineModal isOpen client={overrides.client ?? CLIENT} onClose={onClose} />
     </QueryClientProvider>,
   );
-  return { onClose };
+  return { onClose, queryClient };
 }
 
 // Cada tarjeta de plantilla lleva role="radio" (spec §B.8); ubicarla por su nombre evita depender
@@ -297,5 +297,26 @@ describe('AssignRoutineModal - cerrar con ESC o con el botón de cerrar (AC-0007
     await user.click(screen.getByRole('button', { name: 'Cerrar' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+});
+
+// H-0007-2-02: "Rutina actual" del encabezado (ClientDetailPage) sale de la query ['client', id],
+// no de ['client-routines'/'client-routine']. Si onSuccess no invalida esa query, el encabezado
+// se queda con la rutina vieja hasta recargar la página.
+describe('AssignRoutineModal - invalidación de la query del cliente tras asignar (H-0007-2-02)', () => {
+  it('invalida la query ["client", id] además de las de rutinas', async () => {
+    vi.mocked(assignRoutineToClient).mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    const { queryClient } = renderModal();
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const group = await screen.findByRole('radiogroup');
+    await user.click(cardFor(group, 'Fuerza Full Body'));
+    await user.click(screen.getByRole('button', { name: 'Asignar rutina' }));
+
+    await waitFor(() => expect(assignRoutineToClient).toHaveBeenCalledTimes(1));
+    expect(invalidateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['client', CLIENT.id] }),
+    );
   });
 });
