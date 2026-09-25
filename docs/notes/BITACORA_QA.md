@@ -234,3 +234,30 @@ Ramas conservadas: `respaldo/spec-0001-intento-{1,3,4}` y `sandcastle/spec-0001`
 
 ⚠️ **Cambio de comportamiento a tener en cuenta en la QA Sesión 02:** toda petición sin sesión válida (sin token o con token vencido) pasa de **403 a 401**. El interceptor de `lib/axios.ts` ya trataba el 401 como sesión expirada, así que ahora ese aviso aparece donde antes no aparecía nada.
 
+
+---
+
+## 📅 Specs 0007 y 0008 + revisión a mano — 24 Sep 2026
+**Ejecutó:** Agustín + Claude Code | **Branch:** `main` | **Tipo:** cierre a mano de una corrida de Sandcastle, revisión en la app (dev server, 375px y desktop) y spec nueva
+
+### 🤖 Sandcastle sobre la spec 0007 (23/09/2026)
+
+Se cortó en la vuelta 2 de 2 del fixer por **límite de uso del plan** (`session limit`). Había corregido H-0007-2-01 y 2-02; H-0007-2-03, 2-04 y 2-05 se terminaron a mano sobre `sandcastle/spec-0007`, con test rojo primero. Spec 0007 → `implementada`, mergeada a `main`.
+
+La revisión a mano encontró que el pie del modal "Asignar rutina" se desbordaba en desktop (el primario quedaba cortado, contra §B.12). Corregido en `fd34060`. Lo demás cumplía: plantilla que no se arrastra entre alumnos, hoja inferior a 375px, ficha sin scroll horizontal.
+
+También apareció que el frontend trataba las fechas `LocalDate` como UTC: "hoy" daba el día siguiente entre las 21 y las 24, y las fechas se mostraban un día antes. Se escribió, aprobó e implementó la [spec 0008](../../specs/0008-fechas-en-hora-local.md) en la misma sesión (merge `f8a550f`).
+
+### 📌 Pendientes anotados — tener en cuenta antes de la QA Sesión 03
+
+| ID | Módulo | Descripción | Estado |
+|:---:|:---|:---|:---:|
+| BUG-18 | Backend (fechas) | `LocalDate.now()` usa la zona de la JVM. Si el contenedor corre en UTC, tiene el mismo corrimiento que la spec 0008 corrigió en el frontend (ej.: `RoutineService.assignComplexRoutine` cuando no llega `startDate`). Hoy el frontend siempre manda la fecha, así que no se dispara en el flujo normal. Se arregla fijando la zona (`TZ` / `-Duser.timezone`), no con código. Fuera de alcance de la spec 0008. | ⬜ |
+| BUG-19 | Global (formato) | Los montos se muestran con `toLocaleString()` sin locale: `$22,000` en vez de `$22.000`. Es el mismo problema de locale implícito que la spec 0008 corrigió para las fechas. Pide una spec de formato de números. | ⬜ |
+| DES-14 | Rutinas (modal) | La spec 0007 §B.11 pide "Asignar y cargar otra" con **estilo texto** en mobile y quedó como botón con borde (`variant="outline"`). | ⬜ |
+| QA-0007 | Rutinas / ficha | La revisión 1 de Sandcastle sobre la 0007 devolvió 6 hallazgos. El fixer corrigió los 4 de severidad alta/media; **los 2 de severidad baja no quedaron registrados** (el log del reviewer se pisó con la revisión 2). Para recuperarlos hay que correr una revisión nueva de la ficha y del modal. | ⬜ |
+
+### 🔧 Fricción nueva
+
+- **Sandcastle se corta sin reanudarse limpio:** la corrida terminó en la última vuelta del fixer, con un cambio de test sin commitear en el worktree. Al terminarlo a mano hubo que reconstruir qué hallazgos quedaban leyendo el log del fixer.
+- **Los hallazgos de la revisión 1 se pierden** cuando corre la revisión 2, porque escriben el mismo archivo de log. Deuda para commons: guardar cada revisión por separado.
