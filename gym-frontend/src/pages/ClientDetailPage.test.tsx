@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import ClientDetailPage from './ClientDetailPage';
 import { getClientById } from '../services/clientService';
 import {
@@ -11,8 +11,8 @@ import {
   getClientRoutines,
   getClientProductsPurchased,
 } from '../services/clientInfoService';
-import { getPhysicalRecords } from '../services/physicalRecordService';
-import type { Client, Routine, Payment } from '../types';
+import { getPhysicalRecords, createPhysicalRecord } from '../services/physicalRecordService';
+import type { Assistance, Client, PhysicalRecord, ProductPurchased, Routine, Payment } from '../types';
 
 vi.mock('../services/clientService');
 vi.mock('../services/clientInfoService');
@@ -249,5 +249,86 @@ describe('ClientDetailPage - "Resumen Reciente" coincide con el encabezado (H-00
 
     expect(resumenValue('Último Pago')).toHaveTextContent(`$${PAYMENT_SEPTIEMBRE.amount.toLocaleString()}`);
     expect(resumenValue('Rutina Activa')).toHaveTextContent('Hipertrofia B');
+  });
+});
+
+// Spec 0008: las fechas LocalDate ('2026-09-24') se mostraban un día antes porque new Date() las
+// toma como medianoche UTC, y el registro físico nuevo tomaba "hoy" en UTC.
+describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
+  const PAYMENT_24: Payment = { id: 30, amount: 18000, date: '2026-09-24', paymentType: 'MONTHLY' };
+  const PURCHASE_24: ProductPurchased = { nameProduct: 'Proteína', date: '2026-09-24', price: 25000, quantity: 1 };
+  const RECORD_24: PhysicalRecord = { id: 40, clientId: 1, date: '2026-09-24', weight: 80, muscleMass: 35, fatPercentage: 18 };
+  const ASSISTANCE_24: Assistance = {
+    idClient: 1,
+    clientName: 'Carlos Perez',
+    idProfessor: 9,
+    professorName: 'Hugo Ibarra',
+    date: '2026-09-24',
+    inputHour: '19:30',
+  };
+
+  function inputByLabel(label: string): HTMLInputElement {
+    return screen.getByText(label).parentElement!.querySelector('input')!;
+  }
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('AC-0008-10: un registro físico guardado a las 22:40 se envía con la fecha local', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-24T22:40:00-03:00'));
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS);
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    await user.click(screen.getByRole('button', { name: 'Progreso' }));
+    await user.click(await screen.findByRole('button', { name: /Nuevo Registro/ }));
+    await user.type(inputByLabel('Peso (kg)'), '80');
+    await user.type(inputByLabel('Músculo (%)'), '35');
+    await user.type(inputByLabel('Grasa (%)'), '18');
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+
+    await vi.waitFor(() => expect(createPhysicalRecord).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(createPhysicalRecord).mock.calls[0][1]).toMatchObject({ date: '2026-09-24' });
+  });
+
+  it('AC-0008-14: las pestañas Pagos y Compras muestran la fecha del mismo día', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_24] });
+    vi.mocked(getClientProductsPurchased).mockResolvedValue([PURCHASE_24]);
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    await user.click(screen.getByRole('button', { name: 'Pagos' }));
+    const paymentRow = (await screen.findByText('24/09/2026')).closest('tr')!;
+    expect(paymentRow).not.toHaveTextContent('23/09');
+
+    await user.click(screen.getByRole('button', { name: 'Compras' }));
+    const purchaseRow = (await screen.findByText('Proteína')).closest('tr')!;
+    expect(purchaseRow).toHaveTextContent('24/09/2026');
+  });
+
+  it('AC-0008-15: la lista de la pestaña Progreso muestra la fecha del mismo día', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS);
+    vi.mocked(getPhysicalRecords).mockResolvedValue([RECORD_24]);
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    await user.click(screen.getByRole('button', { name: 'Progreso' }));
+
+    expect(await screen.findByText('24/09/2026')).toBeInTheDocument();
+  });
+
+  it('AC-0008-16: la tarjeta de la asistencia muestra el día 24 y "jueves"', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS);
+    vi.mocked(getClientAssistance).mockResolvedValue([ASSISTANCE_24]);
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    await user.click(screen.getByRole('button', { name: 'Asistencias' }));
+
+    const card = (await screen.findByText(/19:30/)).closest('div.rounded-2xl') as HTMLElement;
+    expect(within(card).getByText('24')).toBeInTheDocument();
+    expect(within(card).getByText('jueves')).toBeInTheDocument();
   });
 });
