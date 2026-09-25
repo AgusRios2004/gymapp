@@ -15,6 +15,7 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
 import { normalizeSearch } from '../utils/search';
+import { todayLocalISO } from '../utils/date';
 
 const getClientLabel = (client: Client) =>
   `${client.name} ${client.lastName}${client.dni ? ` · DNI ${client.dni}` : ''}${client.isDebtor ? ' ⚠️ (DEUDOR)' : ''}`;
@@ -40,7 +41,7 @@ export default function PaymentsPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(null);
   const [selectedMonthlyType, setSelectedMonthlyType] = useState<string>('');
-  const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [paymentDate, setPaymentDate] = useState<string>(todayLocalISO());
 
   const { data: payments = [], isLoading: isLoadingPayments } = useQuery({
     queryKey: ['payments'],
@@ -80,7 +81,7 @@ export default function PaymentsPage() {
     setSelectedClient(null);
     setSelectedProfessor(null);
     setSelectedMonthlyType('');
-    setPaymentDate(new Date().toISOString().split('T')[0]);
+    setPaymentDate(todayLocalISO());
   };
 
   const handleCreatePayment = (e: React.FormEvent) => {

@@ -1,12 +1,13 @@
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { toast } from 'react-toastify';
 import AssignRoutineModal from './AssignRoutineModal';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { getClientRoutines } from '../../services/clientInfoService';
 import type { Client, Routine } from '../../types';
+import { todayLocalISO } from '../../utils/date';
 
 vi.mock('../../services/routineService');
 vi.mock('../../services/clientInfoService');
@@ -206,7 +207,8 @@ describe('AssignRoutineModal - asignar y cerrar (AC-0007-12)', () => {
     const group = await screen.findByRole('radiogroup');
     await user.click(cardFor(group, 'Fuerza Full Body'));
 
-    const today = new Date().toISOString().split('T')[0];
+    // Antes se calculaba con toISOString (UTC): fallaba entre las 21 y las 24 de Argentina (spec 0008).
+    const today = todayLocalISO();
     await user.click(screen.getByRole('button', { name: 'Asignar rutina' }));
 
     await waitFor(() => expect(assignRoutineToClient).toHaveBeenCalledTimes(1));
@@ -382,5 +384,32 @@ describe('AssignRoutineModal - agenda semanal incompleta (H-0007-2-04)', () => {
     expect(
       screen.queryByText('Elegí un día de la semana para cada sesión de la rutina'),
     ).not.toBeInTheDocument();
+  });
+});
+
+// Spec 0008: a las 22:40 la fecha de inicio propuesta es la del calendario local, no la UTC.
+describe('AssignRoutineModal - fecha de inicio en hora local (spec 0008)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-24T22:40:00-03:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('AC-0008-05: el campo arranca en el día local y se envía como startDate', async () => {
+    vi.mocked(assignRoutineToClient).mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    renderModal();
+
+    expect(screen.getByText('Fecha de inicio').parentElement!.querySelector('input')).toHaveValue('2026-09-24');
+
+    const group = await screen.findByRole('radiogroup');
+    await user.click(cardFor(group, 'Cardio HIIT'));
+    await user.click(screen.getByRole('button', { name: 'Asignar rutina' }));
+
+    await waitFor(() => expect(assignRoutineToClient).toHaveBeenCalledTimes(1));
+    expect(assignRoutineToClient).toHaveBeenCalledWith(expect.objectContaining({ startDate: '2026-09-24' }));
   });
 });

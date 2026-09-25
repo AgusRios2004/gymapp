@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
 import type { Product, Client, ProductDetailRequest, Payment, Professor } from '../types';
+import { todayLocalISO } from '../utils/date';
 
 export default function ProductsPage() {
   const { user } = useAuth();
@@ -176,7 +177,7 @@ export default function ProductsPage() {
     saleMutation.mutate({
       idClient: selectedClient.id,
       ...(isAdmin && selectedProfessor ? { idProfessor: selectedProfessor.id } : {}),
-      date: new Date().toISOString().split('T')[0],
+      date: todayLocalISO(),
       products
     });
   };
