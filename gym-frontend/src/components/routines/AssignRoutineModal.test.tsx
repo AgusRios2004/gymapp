@@ -352,3 +352,35 @@ describe('AssignRoutineModal - estado de carga y error de las plantillas (H-0007
     expect(screen.queryByText('Todavía no hay plantillas de rutina')).not.toBeInTheDocument();
   });
 });
+
+// H-0007-2-04: con una plantilla de varios días, los botones quedaban deshabilitados hasta mapear
+// cada sesión sin ningún mensaje que lo explicara. Spec §B.10: se habilitan con la plantilla
+// elegida; si falta mapear alguna sesión, el modal lo dice y no llama al backend.
+describe('AssignRoutineModal - agenda semanal incompleta (H-0007-2-04)', () => {
+  it('con la plantilla elegida los botones se habilitan y al asignar sin agenda avisa qué falta', async () => {
+    const user = userEvent.setup();
+    renderModal({ templates: [TEMPLATE_MULTIDIA] });
+
+    const group = await screen.findByRole('radiogroup');
+    await user.click(cardFor(group, 'Full Body A'));
+
+    const assignButton = screen.getByRole('button', { name: 'Asignar rutina' });
+    expect(assignButton).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Asignar y cargar otra' })).toBeEnabled();
+
+    await user.click(assignButton);
+
+    expect(
+      screen.getByText('Elegí un día de la semana para cada sesión de la rutina'),
+    ).toBeInTheDocument();
+    expect(assignRoutineToClient).not.toHaveBeenCalled();
+
+    const selects = screen.getAllByRole('combobox');
+    await user.selectOptions(selects[0], 'MONDAY');
+    await user.selectOptions(selects[1], 'WEDNESDAY');
+
+    expect(
+      screen.queryByText('Elegí un día de la semana para cada sesión de la rutina'),
+    ).not.toBeInTheDocument();
+  });
+});

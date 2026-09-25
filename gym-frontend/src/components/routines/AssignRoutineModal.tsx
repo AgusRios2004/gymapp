@@ -34,6 +34,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY"), para la Agenda Semanal (spec §B.9, RoutineService.assignComplexRoutine).
   const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
+  // Se prende al intentar asignar con la agenda incompleta; el aviso se apaga solo al completarla.
+  const [triedWithIncompleteSchedule, setTriedWithIncompleteSchedule] = useState(false);
   const shouldCloseRef = useRef(true);
 
   // Plantillas disponibles para asignar.
@@ -72,12 +74,14 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       setNotes('');
       setStartDate(new Date().toISOString().split('T')[0]);
       setScheduleMap({});
+      setTriedWithIncompleteSchedule(false);
     }
   }
 
   const handleSelectRoutine = (template: Routine) => {
     setSelectedRoutine(template);
     setScheduleMap({});
+    setTriedWithIncompleteSchedule(false);
   };
 
   const mutation = useMutation({
@@ -115,9 +119,14 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     [selectedRoutine],
   );
   const scheduleComplete = routineDays.every((day) => !!scheduleMap[day.dayOrder]);
+  const showScheduleError = triedWithIncompleteSchedule && !scheduleComplete;
 
   const handleSave = (closeAfterSave: boolean) => {
-    if (!client || !selectedRoutine || !scheduleComplete) return;
+    if (!client || !selectedRoutine) return;
+    if (!scheduleComplete) {
+      setTriedWithIncompleteSchedule(true);
+      return;
+    }
     shouldCloseRef.current = closeAfterSave;
 
     const schedule = routineDays.map((day) => ({
@@ -141,7 +150,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
 
   if (!isOpen || !client) return null;
 
-  const canSave = !!selectedRoutine && !mutation.isPending && scheduleComplete;
+  const canSave = !!selectedRoutine && !mutation.isPending;
 
   return ReactDOM.createPortal(
     <div
@@ -252,24 +261,36 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Agenda semanal</h4>
               <p className="text-xs text-slate-500">Elegí qué día de la semana se realiza cada sesión de la rutina.</p>
 
-              {routineDays.map((day) => (
-                <div key={day.id ?? day.dayOrder} className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shrink-0">
-                    Sesión {day.dayOrder}
-                  </span>
-                  <select
-                    aria-label={`Día de la semana para la sesión ${day.dayOrder}`}
-                    className="flex-1 min-h-11 px-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 outline-none text-sm"
-                    value={scheduleMap[day.dayOrder] || ''}
-                    onChange={(e) => setScheduleMap((prev) => ({ ...prev, [day.dayOrder]: e.target.value }))}
-                  >
-                    <option value="">Seleccionar día...</option>
-                    {DAYS_OF_WEEK.map((d) => (
-                      <option key={d.value} value={d.value}>{d.label}</option>
-                    ))}
-                  </select>
-                </div>
-              ))}
+              {routineDays.map((day) => {
+                const missing = showScheduleError && !scheduleMap[day.dayOrder];
+                return (
+                  <div key={day.id ?? day.dayOrder} className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shrink-0">
+                      Sesión {day.dayOrder}
+                    </span>
+                    <select
+                      aria-label={`Día de la semana para la sesión ${day.dayOrder}`}
+                      aria-invalid={missing}
+                      className={`flex-1 min-h-11 px-3 bg-white border rounded-lg focus:border-emerald-500 outline-none text-sm ${
+                        missing ? 'border-rose-500' : 'border-slate-200'
+                      }`}
+                      value={scheduleMap[day.dayOrder] || ''}
+                      onChange={(e) => setScheduleMap((prev) => ({ ...prev, [day.dayOrder]: e.target.value }))}
+                    >
+                      <option value="">Seleccionar día...</option>
+                      {DAYS_OF_WEEK.map((d) => (
+                        <option key={d.value} value={d.value}>{d.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              })}
+
+              {showScheduleError && (
+                <p role="alert" className="text-sm text-rose-600">
+                  Elegí un día de la semana para cada sesión de la rutina
+                </p>
+              )}
             </div>
           )}
 
