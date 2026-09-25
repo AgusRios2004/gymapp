@@ -1,9 +1,9 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  ArrowLeft, 
+import {
+  ChevronLeft,
   Plus,
   Calendar, 
   CreditCard, 
@@ -52,7 +52,6 @@ type TabType = 'general' | 'payments' | 'routines' | 'assistance' | 'products' |
 
 export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [recordToDelete, setRecordToDelete] = useState<PhysicalRecord | null>(null);
@@ -88,7 +87,7 @@ export default function ClientDetailPage() {
   const { data: routines = [] } = useQuery({
     queryKey: ['client-routines', clientId],
     queryFn: () => getClientRoutines(clientId),
-    enabled: !!clientId && (activeTab === 'routines' || activeTab === 'general')
+    enabled: !!clientId && activeTab === 'routines'
   });
 
   const { data: products = [] } = useQuery({
@@ -142,57 +141,119 @@ export default function ClientDetailPage() {
     { id: 'products', label: 'Compras', icon: <ShoppingBag size={18} /> },
   ];
 
+  const activeRoutine = client.routineActive ?? null;
+  // findByClientId no tiene ORDER BY: el array llega en orden de inserción, no por fecha.
+  const latestPayment = payments.length > 0
+    ? payments.reduce((latest, p) => (new Date(p.date) > new Date(latest.date) ? p : latest))
+    : null;
+  const initials = [client.name, client.lastName]
+    .filter(Boolean)
+    .map((n) => n.trim().charAt(0).toUpperCase())
+    .join('');
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header con navegación hacia atrás */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate('/clients')}
-            className="rounded-2xl w-11 h-11 p-0 flex items-center justify-center text-slate-600 border-slate-200 hover:bg-slate-100 min-w-0"
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-black font-display uppercase tracking-tight text-slate-900">{client.name} {client.lastName}</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant={client.active ? 'success' : 'danger'}>
-                {client.active ? 'Socio Activo' : 'Socio Inactivo'}
-              </Badge>
-              <span className="text-slate-500 text-xs font-semibold">• DNI: {client.dni}</span>
+      {/* Header */}
+      <div className="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
+        <div className="p-6 md:p-8 space-y-4">
+          <nav className="flex items-center gap-1.5 text-sm">
+            <Link
+              to="/clients"
+              className="inline-flex items-center gap-1 min-h-11 -ml-2 px-2 rounded-xl text-slate-600 hover:text-emerald-700 font-bold"
+            >
+              <ChevronLeft size={16} /> Alumnos
+            </Link>
+            <span className="hidden sm:inline text-slate-300">/</span>
+            <span className="hidden sm:inline text-slate-500 font-medium">{client.name} {client.lastName}</span>
+          </nav>
+
+          <div className="sm:flex sm:items-start sm:justify-between sm:gap-6">
+            <div className="flex items-start gap-4 min-w-0">
+              <div className="h-14 w-14 shrink-0 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-black font-display text-lg">
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 break-words">
+                  {client.name} {client.lastName}
+                </h1>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold">
+                    <span className={`h-2 w-2 rounded-full ${client.active ? 'bg-emerald-600' : 'bg-rose-500'}`} />
+                    <span className={client.active ? 'text-emerald-700' : 'text-rose-600'}>
+                      {client.active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold">
+                    {client.isDebtor ? (
+                      <XCircle size={14} className="text-rose-500" />
+                    ) : (
+                      <CheckCircle2 size={14} className="text-emerald-600" />
+                    )}
+                    <span className={client.isDebtor ? 'text-rose-600' : 'text-emerald-700'}>
+                      {client.isDebtor ? 'Cuota vencida' : 'Cuota al día'}
+                    </span>
+                  </span>
+                </div>
+
+                <dl className="mt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-x-8 gap-y-3">
+                  <div>
+                    <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">DNI</dt>
+                    <dd className="text-slate-900 font-semibold text-sm mt-0.5">{client.dni}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Teléfono</dt>
+                    <dd className="text-slate-900 font-semibold text-sm mt-0.5">{client.phone || '-'}</dd>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Rutina actual</dt>
+                    <dd className="text-slate-900 font-semibold text-sm mt-0.5">
+                      {activeRoutine ? activeRoutine.name : 'Sin rutina asignada'}
+                    </dd>
+                  </div>
+                  <div className="hidden sm:block">
+                    <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Último pago</dt>
+                    <dd className="text-slate-900 font-semibold text-sm mt-0.5">
+                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+
+            <div className="mt-4 sm:mt-0 shrink-0">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => setIsAssignRoutineModalOpen(true)}
+                className="w-full sm:w-auto px-8 gap-2 rounded-2xl shadow-lg shadow-emerald-600/25 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold"
+              >
+                <Dumbbell size={18} /> Asignar rutina
+              </Button>
             </div>
           </div>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-           <Button 
-             variant="primary" 
-             size="lg"
-             onClick={() => setIsAssignRoutineModalOpen(true)}
-             className="w-full sm:w-auto px-8 min-w-[200px] gap-2 rounded-2xl shadow-lg shadow-emerald-600/25 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold"
-           >
-             <Dumbbell size={18} /> Asignar Rutina
-           </Button>
-        </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="flex p-1.5 bg-white border border-slate-200 rounded-2xl overflow-x-auto no-scrollbar shadow-sm">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as TabType)}
-            className={`min-h-11 flex items-center gap-2 px-5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap ${
-              activeTab === tab.id 
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' 
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
+        {/* Tabs */}
+        <div className="relative border-t border-slate-100 px-2 sm:px-6">
+          <div className="flex overflow-x-auto no-scrollbar">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as TabType)}
+                aria-selected={activeTab === tab.id}
+                className={`min-h-11 flex items-center gap-2 px-4 border-b-2 text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'border-emerald-700 text-emerald-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <span className="hidden sm:inline">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="sm:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent" />
+        </div>
       </div>
 
       {/* Content Area */}
@@ -226,7 +287,7 @@ export default function ClientDetailPage() {
                     <div className="flex items-center gap-1.5">
                       {client.active ? <CheckCircle2 size={16} className="text-emerald-600" /> : <XCircle size={16} className="text-rose-600" />}
                       <span className={client.active ? "text-emerald-700 font-bold text-xs" : "text-rose-700 font-bold text-xs"}>
-                        {client.active ? "Al día" : "Inactivo"}
+                        {client.active ? "Cuenta activa" : "Cuenta inactiva"}
                       </span>
                     </div>
                   </div>
@@ -242,7 +303,7 @@ export default function ClientDetailPage() {
                       <span className="text-xs font-semibold text-slate-700">Último Pago</span>
                     </div>
                     <span className="text-base font-black text-emerald-700 font-mono">
-                      {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
+                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/60 rounded-2xl">
@@ -251,7 +312,7 @@ export default function ClientDetailPage() {
                       <span className="text-xs font-semibold text-slate-700">Rutina Activa</span>
                     </div>
                     <span className="text-xs font-bold text-slate-900">
-                      {routines.find(r => r.active)?.name || 'Ninguna'}
+                      {activeRoutine?.name || 'Ninguna'}
                     </span>
                   </div>
                 </div>

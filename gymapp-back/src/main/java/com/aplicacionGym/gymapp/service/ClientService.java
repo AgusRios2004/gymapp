@@ -170,7 +170,7 @@ public class ClientService {
     public Optional<ClientResponseDTO> getClientById(Long id) {
         Objects.requireNonNull(id, "ID cannot be null");
         return clientRepository.findById(id)
-                .map(ClientMapper::toDTO);
+                .map(this::mapToDTOWithDebtorStatus);
     }
 
     public ClientResponseDTO updateClient(Long id, Client updatedClient) {

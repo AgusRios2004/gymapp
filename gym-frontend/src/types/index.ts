@@ -61,7 +61,8 @@ export interface Routine {
 export interface Client extends Person {
     active: boolean;
     isDebtor?: boolean;
-    activeRoutineId?: number | null; 
+    activeRoutineId?: number | null;
+    routineActive?: { id: number; name: string; goal: string } | null;
     activeClassId?: number | null;
     activeClassName?: string | null;
     height?: number | null;

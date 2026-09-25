@@ -48,5 +48,5 @@ export const AssignRoutineSchema = z.object({
     schedule: z.array(z.object({
         dayOrder: z.number(),
         assignedDay: z.string().min(1, "Debes asignar un día de la semana"),
-    })).min(1, "La rutina debe tener días asignados")
+    })).optional()
 });
