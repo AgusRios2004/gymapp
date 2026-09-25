@@ -183,3 +183,27 @@ describe('ProductsPage - fecha de la venta en hora local (spec 0008)', () => {
     expect(call.date).toBe('2026-09-24');
   });
 });
+
+// Spec 0008: el historial de ventas mostraba el día anterior para una fecha LocalDate.
+describe('ProductsPage - fecha mostrada en el historial de ventas (spec 0008)', () => {
+  it('AC-0008-13: una venta del 24/09 se muestra como 24/09/2026', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      {
+        id: 60,
+        amount: 25000,
+        date: '2026-09-24',
+        paymentType: 'PRODUCTS',
+        clientName: 'Marina Suarez',
+        paymentProducts: [{ productName: 'Proteina', quantity: 1 }],
+      },
+    ]);
+    const user = userEvent.setup();
+    renderProductsPage();
+
+    await user.click(screen.getByRole('button', { name: /Historial Ventas/i }));
+
+    const row = (await screen.findByText('Marina Suarez')).closest('tr')!;
+    expect(row).toHaveTextContent('24/09/2026');
+  });
+});

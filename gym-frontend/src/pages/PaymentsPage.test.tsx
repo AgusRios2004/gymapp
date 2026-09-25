@@ -267,3 +267,18 @@ describe('PaymentsPage - fecha de pago en hora local (spec 0008)', () => {
     expect(paymentDateInput(dialog)).toHaveValue('2026-09-24');
   });
 });
+
+// Spec 0008: un pago con date '2026-09-24' se mostraba como 9/23/2026 (medianoche UTC).
+describe('PaymentsPage - fecha mostrada en la lista (spec 0008)', () => {
+  it('AC-0008-12: un pago del 24/09 se muestra como 24/09/2026, sin correrse al 23', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      { id: 50, amount: 20000, date: '2026-09-24', paymentType: 'MONTHLY', clientName: 'Nora Vega' },
+    ]);
+    renderPaymentsPage();
+
+    const row = (await screen.findByText('Nora Vega')).closest('tr')!;
+    expect(row).toHaveTextContent('24/09/2026');
+    expect(row).not.toHaveTextContent('23/09');
+  });
+});

@@ -15,7 +15,7 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
 import { normalizeSearch } from '../utils/search';
-import { todayLocalISO } from '../utils/date';
+import { formatDate, todayLocalISO } from '../utils/date';
 
 const getClientLabel = (client: Client) =>
   `${client.name} ${client.lastName}${client.dni ? ` · DNI ${client.dni}` : ''}${client.isDebtor ? ' ⚠️ (DEUDOR)' : ''}`;
@@ -157,7 +157,7 @@ export default function PaymentsPage() {
                 filteredPayments.map((payment) => (
                   <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {new Date(payment.date).toLocaleDateString()}
+                      {formatDate(payment.date)}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
