@@ -1,6 +1,6 @@
 # Tareas — spec 0008: fechas en hora local
 
-> Spec: [`0008-fechas-en-hora-local.md`](./0008-fechas-en-hora-local.md) · Estado de la spec: `aprobada`
+> Spec: [`0008-fechas-en-hora-local.md`](./0008-fechas-en-hora-local.md) · Estado de la spec: `implementada`
 > Solo frontend. Tamaños **relativos** entre sí (chica / media / grande), sin base histórica para estimar en horas.
 
 | # | Tarea | Archivos | Depende de | AC | Tamaño |
