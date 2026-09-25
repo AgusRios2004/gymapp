@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
 import type { Product, Client, ProductDetailRequest, Payment, Professor } from '../types';
+import { formatDate, todayLocalISO } from '../utils/date';
 
 export default function ProductsPage() {
   const { user } = useAuth();
@@ -176,7 +177,7 @@ export default function ProductsPage() {
     saleMutation.mutate({
       idClient: selectedClient.id,
       ...(isAdmin && selectedProfessor ? { idProfessor: selectedProfessor.id } : {}),
-      date: new Date().toISOString().split('T')[0],
+      date: todayLocalISO(),
       products
     });
   };
@@ -415,7 +416,7 @@ export default function ProductsPage() {
                 <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-400">No hay ventas registradas</td></tr>
               ) : productSales.map((s: Payment) => (
                 <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-500">{new Date(s.date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{formatDate(s.date)}</td>
                   <td className="px-6 py-4 font-bold text-gray-900">{s.clientName}</td>
                   <td className="px-6 py-4">
                      <div className="flex flex-wrap gap-1">

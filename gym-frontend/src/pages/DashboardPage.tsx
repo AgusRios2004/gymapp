@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle, GraduationCap, PackageX } from 'lucide-react';
 import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../types/index';
+import { todayLocalISO } from '../utils/date';
 
 interface StatCardProps {
   title: string;
@@ -55,7 +56,7 @@ export default function DashboardPage() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Reporte_Cierre_Mes_${new Date().toISOString().split('T')[0]}.pdf`;
+        a.download = `Reporte_Cierre_Mes_${todayLocalISO()}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

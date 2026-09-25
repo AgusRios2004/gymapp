@@ -1,7 +1,7 @@
 ---
 id: 0008
 titulo: Fechas en hora local — "hoy" y fechas mostradas sin corrimiento de un día
-estado: propuesta             # draft | propuesta | aprobada | implementada | archivada
+estado: implementada          # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 24/09/2026
 adrs_relacionados: [ADR-0009]

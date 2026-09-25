@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import ProductsPage from './ProductsPage';
 import { useAuth } from '../context/AuthContext';
 import { getProducts } from '../services/productService';
@@ -153,5 +153,57 @@ describe('ProductsPage - búsqueda de cliente con dni null (AC-0002-11)', () => 
     await user.click(await screen.findByText(/Marina Suarez/i));
 
     expect(screen.getByPlaceholderText('Buscar cliente...')).toHaveValue('Marina Suarez');
+  });
+});
+
+// Spec 0008: una venta a las 22:40 no puede quedar con la fecha del día siguiente.
+describe('ProductsPage - fecha de la venta en hora local (spec 0008)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-24T22:40:00-03:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('AC-0008-09: confirmar una venta a las 22:40 la envía con la fecha local', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    const user = userEvent.setup();
+    renderProductsPage();
+
+    await goToPosTab(user);
+    await user.click(await screen.findByRole('button', { name: /Proteina/i }));
+    await user.type(screen.getByPlaceholderText('Buscar cliente...'), 'Marina');
+    await user.click(await screen.findByText(/Marina Suarez/i));
+    await user.click(screen.getByRole('button', { name: /Confirmar Venta/i }));
+
+    expect(createProductPayment).toHaveBeenCalledTimes(1);
+    const call = vi.mocked(createProductPayment).mock.calls[0][0] as unknown as Record<string, unknown>;
+    expect(call.date).toBe('2026-09-24');
+  });
+});
+
+// Spec 0008: el historial de ventas mostraba el día anterior para una fecha LocalDate.
+describe('ProductsPage - fecha mostrada en el historial de ventas (spec 0008)', () => {
+  it('AC-0008-13: una venta del 24/09 se muestra como 24/09/2026', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      {
+        id: 60,
+        amount: 25000,
+        date: '2026-09-24',
+        paymentType: 'PRODUCTS',
+        clientName: 'Marina Suarez',
+        paymentProducts: [{ productName: 'Proteina', quantity: 1 }],
+      },
+    ]);
+    const user = userEvent.setup();
+    renderProductsPage();
+
+    await user.click(screen.getByRole('button', { name: /Historial Ventas/i }));
+
+    const row = (await screen.findByText('Marina Suarez')).closest('tr')!;
+    expect(row).toHaveTextContent('24/09/2026');
   });
 });

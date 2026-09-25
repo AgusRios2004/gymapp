@@ -6,6 +6,7 @@ import { getClasses, createClass, deleteClass, updateClass, getStudentsByClass, 
 import { getRoutines } from '../services/routineService';
 import { createClient, getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
+import { todayLocalISO } from '../utils/date';
 import { toast } from 'react-toastify';
 import type { GroupClass, Professor, Client, Assistance, Routine } from '../types';
 import { AxiosError } from 'axios';
@@ -36,7 +37,7 @@ const DAY_STYLES: Record<string, { header: string; pill: string }> = {
 
 export default function ClassesPage() {
   const queryClient = useQueryClient();
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayLocalISO();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingClassId, setEditingClassId] = useState<number | null>(null);

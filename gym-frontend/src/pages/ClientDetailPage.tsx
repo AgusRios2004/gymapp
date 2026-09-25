@@ -34,6 +34,7 @@ import {
   getClientProductsPurchased 
 } from '../services/clientInfoService';
 import { getPhysicalRecords, createPhysicalRecord, deletePhysicalRecord } from '../services/physicalRecordService';
+import { formatDate, parseLocalDate, todayLocalISO } from '../utils/date';
 import type { PhysicalRecord } from '../types';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -342,7 +343,7 @@ export default function ClientDetailPage() {
                   ) : (
                     payments.map((p) => (
                       <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="py-4 px-2 text-xs text-slate-600 font-medium">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="py-4 px-2 text-xs text-slate-600 font-medium">{formatDate(p.date)}</td>
                         <td className="py-4 font-semibold text-slate-900 text-xs">{p.monthlyTypeName || 'Producto'}</td>
                         <td className="py-4 text-emerald-700 font-mono font-black text-sm">${p.amount.toLocaleString()}</td>
                         <td className="py-4 text-xs text-slate-500">{p.professorName}</td>
@@ -410,7 +411,7 @@ export default function ClientDetailPage() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                       <XAxis 
                         dataKey="date" 
-                        tickFormatter={(str) => new Date(str).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} 
+                        tickFormatter={(str) => parseLocalDate(str).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} 
                         tick={{fontSize: 12, fill: '#64748b'}}
                       />
                       <YAxis tick={{fontSize: 12, fill: '#64748b'}} />
@@ -445,7 +446,7 @@ export default function ClientDetailPage() {
                         <Trash2 size={16} />
                       </button>
                       <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                        <span className="text-xs font-bold text-slate-900">{new Date(record.date).toLocaleDateString()}</span>
+                        <span className="text-xs font-bold text-slate-900">{formatDate(record.date)}</span>
                         <Badge variant="neutral">Medición</Badge>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
@@ -493,11 +494,11 @@ export default function ClientDetailPage() {
                 assistance.map((a, idx) => (
                   <div key={idx} className="bg-white border border-slate-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm">
                     <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-extrabold text-emerald-700 uppercase">{new Date(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
-                      <span className="text-lg font-black text-slate-900">{new Date(a.date).getDate()}</span>
+                      <span className="text-[10px] font-extrabold text-emerald-700 uppercase">{parseLocalDate(a.date).toLocaleString('es-ES', { month: 'short' })}</span>
+                      <span className="text-lg font-black text-slate-900">{parseLocalDate(a.date).getDate()}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900 capitalize">{new Date(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
+                      <p className="text-sm font-bold text-slate-900 capitalize">{parseLocalDate(a.date).toLocaleDateString('es-ES', { weekday: 'long' })}</p>
                       <p className="text-xs text-slate-500 flex items-center gap-1">
                         <Clock size={12} className="text-slate-400" /> {a.inputHour} hs
                       </p>
@@ -530,7 +531,7 @@ export default function ClientDetailPage() {
                     products.map((p, idx) => (
                       <tr key={idx} className="hover:bg-slate-50 transition-colors">
                         <td className="py-4 px-2 font-semibold text-slate-800 text-xs">{p.nameProduct}</td>
-                        <td className="py-4 text-xs text-slate-500">{new Date(p.date).toLocaleDateString()}</td>
+                        <td className="py-4 text-xs text-slate-500">{formatDate(p.date)}</td>
                         <td className="py-4 text-xs text-slate-700">{p.quantity}</td>
                         <td className="py-4 text-xs text-slate-600 font-mono">${p.price.toLocaleString()}</td>
                         <td className="py-4 font-black text-emerald-600 font-mono text-sm">${(p.price * p.quantity).toLocaleString()}</td>
@@ -552,7 +553,7 @@ export default function ClientDetailPage() {
              weight: Number(recordForm.weight),
              muscleMass: Number(recordForm.muscleMass),
              fatPercentage: Number(recordForm.fatPercentage),
-             date: new Date().toISOString().split('T')[0]
+             date: todayLocalISO()
            });
          }} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

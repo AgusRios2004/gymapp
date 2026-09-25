@@ -19,5 +19,17 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Spec 0008: toISOString() es UTC y entre las 21 y las 24 de Argentina da el día siguiente.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "CallExpression[callee.property.name=/^(split|slice)$/][callee.object.callee.property.name='toISOString']",
+          message:
+            "toISOString() es UTC y corre la fecha un día en Argentina. Para la fecha de hoy usá todayLocalISO() de 'src/utils/date' (spec 0008).",
+        },
+      ],
+    },
   },
 ])

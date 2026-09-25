@@ -1,14 +1,14 @@
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import ClassesPage from './ClassesPage';
-import { getClasses, createClass } from '../services/classService';
+import { getClasses, createClass, getStudentsByClass } from '../services/classService';
 import { getProfessors } from '../services/professorService';
 import { getRoutines } from '../services/routineService';
 import { getAllClientsList } from '../services/clientService';
-import { getAssistanceByDate } from '../services/assistanceService';
-import type { GroupClass, Professor } from '../types';
+import { getAssistanceByDate, registerAssistance } from '../services/assistanceService';
+import type { Client, GroupClass, Professor } from '../types';
 
 vi.mock('../services/classService');
 vi.mock('../services/professorService');
@@ -187,5 +187,33 @@ describe('ClassesPage - formulario de edición precarga los días (AC-0003-11)',
     expect(within(dialog).getByRole('checkbox', { name: /Lunes/i })).toBeChecked();
     expect(within(dialog).getByRole('checkbox', { name: /Viernes/i })).toBeChecked();
     expect(within(dialog).getByRole('checkbox', { name: /Martes/i })).not.toBeChecked();
+  });
+});
+
+// Spec 0008: la asistencia marcada desde una clase a las 22:40 no puede quedar con el día siguiente.
+describe('ClassesPage - asistencia desde una clase en hora local (spec 0008)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-24T22:40:00-03:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('AC-0008-08: marcar la asistencia de un alumno a las 22:40 la registra con la fecha local', async () => {
+    const student: Client = { id: 21, name: 'Mora', lastName: 'Diaz', dni: '42333444', phone: '1100000002', active: true };
+    vi.mocked(getClasses).mockResolvedValue([CLASS_MONDAY_WEDNESDAY] as unknown as GroupClass[]);
+    vi.mocked(getStudentsByClass).mockResolvedValue([student]);
+    vi.mocked(registerAssistance).mockResolvedValue(undefined as never);
+    const user = userEvent.setup();
+    renderClassesPage();
+
+    await waitFor(() => expect(within(getDayColumn('Lunes')).getByText('Funcional')).toBeInTheDocument());
+    await user.click(within(getClassCard('Funcional', 'Lunes')).getByRole('button', { name: /Alumnos/ }));
+    await user.click(await screen.findByTitle('Marcar asistencia'));
+
+    await waitFor(() => expect(registerAssistance).toHaveBeenCalled());
+    expect(vi.mocked(registerAssistance).mock.calls[0][0]).toMatchObject({ idClient: 21, date: '2026-09-24' });
   });
 });

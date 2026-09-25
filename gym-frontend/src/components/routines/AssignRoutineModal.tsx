@@ -12,6 +12,7 @@ import { AssignRoutineSchema } from '../../types/schema.type';
 import type { AssignRoutineRequest, Client, Routine } from '../../types';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { todayLocalISO } from '../../utils/date';
 import { DAYS_OF_WEEK } from '../../constants/time';
 
 interface AssignRoutineModalProps {
@@ -31,7 +32,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const [selectedRoutine, setSelectedRoutine] = useState<Routine | null>(null);
   const [search, setSearch] = useState('');
   const [notes, setNotes] = useState('');
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(todayLocalISO());
   // Mapa: dayOrder -> assignedDay (ej: 1 -> "MONDAY"), para la Agenda Semanal (spec §B.9, RoutineService.assignComplexRoutine).
   const [scheduleMap, setScheduleMap] = useState<Record<number, string>>({});
   // Se prende al intentar asignar con la agenda incompleta; el aviso se apaga solo al completarla.
@@ -72,7 +73,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
       setSelectedRoutine(null);
       setSearch('');
       setNotes('');
-      setStartDate(new Date().toISOString().split('T')[0]);
+      setStartDate(todayLocalISO());
       setScheduleMap({});
       setTriedWithIncompleteSchedule(false);
     }

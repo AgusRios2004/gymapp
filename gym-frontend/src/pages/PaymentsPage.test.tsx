@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { UserEvent } from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import PaymentsPage from './PaymentsPage';
 import { useAuth } from '../context/AuthContext';
 import { getAllPayments, getMonthlyTypes, createMonthlyPayment } from '../services/paymentService';
@@ -225,5 +225,60 @@ describe('PaymentsPage - selector de cliente con buscador (spec 0005)', () => {
     await user.click(within(dialog).getByRole('button', { name: /Confirmar Pago/i }));
 
     expect(createMonthlyPayment).not.toHaveBeenCalled();
+  });
+});
+
+// Spec 0008: la fecha de pago por defecto es la del calendario local, también al limpiar el
+// formulario después de cobrar.
+describe('PaymentsPage - fecha de pago en hora local (spec 0008)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-09-24T22:40:00-03:00'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function paymentDateInput(dialog: HTMLElement): HTMLInputElement {
+    return within(dialog).getByText('Fecha de Pago').parentElement!.querySelector('input')!;
+  }
+
+  it('AC-0008-06: a las 22:40 la fecha arranca en el día local y vuelve a él después de cobrar', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    const user = userEvent.setup();
+    renderPaymentsPage();
+
+    await user.click(screen.getByRole('button', { name: /Registrar Pago/i }));
+    let dialog = screen.getByRole('dialog');
+    expect(paymentDateInput(dialog)).toHaveValue('2026-09-24');
+
+    await pickClient(dialog, user, 'Nora Vega', /Nora Vega/);
+    const monthlySelect = within(dialog).getByText('Tipo de Cuota').parentElement!.querySelector('select')!;
+    await user.selectOptions(monthlySelect, String(MONTHLY_TYPE.id));
+    await user.click(within(dialog).getByRole('button', { name: /Confirmar Pago/i }));
+
+    await vi.waitFor(() => expect(createMonthlyPayment).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(createMonthlyPayment).mock.calls[0][0]).toMatchObject({ date: '2026-09-24' });
+    await vi.waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+
+    await user.click(screen.getByRole('button', { name: /Registrar Pago/i }));
+    dialog = screen.getByRole('dialog');
+    expect(paymentDateInput(dialog)).toHaveValue('2026-09-24');
+  });
+});
+
+// Spec 0008: un pago con date '2026-09-24' se mostraba como 9/23/2026 (medianoche UTC).
+describe('PaymentsPage - fecha mostrada en la lista (spec 0008)', () => {
+  it('AC-0008-12: un pago del 24/09 se muestra como 24/09/2026, sin correrse al 23', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      { id: 50, amount: 20000, date: '2026-09-24', paymentType: 'MONTHLY', clientName: 'Nora Vega' },
+    ]);
+    renderPaymentsPage();
+
+    const row = (await screen.findByText('Nora Vega')).closest('tr')!;
+    expect(row).toHaveTextContent('24/09/2026');
+    expect(row).not.toHaveTextContent('23/09');
   });
 });
