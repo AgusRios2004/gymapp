@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { getAllClientsList } from '../services/clientService';
 import { registerAssistance, getAssistanceByDate } from '../services/assistanceService';
+import { todayLocalISO } from '../utils/date';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import type { Client, Assistance } from '../types';
@@ -22,7 +23,7 @@ export default function AttendancePage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayLocalISO();
 
   // Queries
   const { data: clients = [], isLoading: loadingClients } = useQuery<Client[]>({
