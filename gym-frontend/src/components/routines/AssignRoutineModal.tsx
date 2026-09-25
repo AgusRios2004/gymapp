@@ -265,7 +265,7 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
                 const missing = showScheduleError && !scheduleMap[day.dayOrder];
                 return (
                   <div key={day.id ?? day.dayOrder} className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shrink-0">
+                    <span className="w-24 text-center text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shrink-0">
                       Sesión {day.dayOrder}
                     </span>
                     <select
@@ -313,23 +313,25 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
         </div>
 
         <div className="p-4 sm:p-6 border-t border-slate-100 bg-white sm:bg-slate-50 flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-3 shrink-0">
-          <Button variant="ghost" onClick={onClose} className="hidden sm:inline-flex">
+          <Button variant="ghost" size="sm" onClick={onClose} className="hidden sm:inline-flex">
             Cancelar
           </Button>
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 sm:ml-auto">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => handleSave(false)}
               disabled={!canSave}
-              className="w-full sm:w-auto h-11 whitespace-nowrap"
+              className="w-full sm:w-auto h-11 text-sm sm:text-xs whitespace-nowrap"
             >
               Asignar y cargar otra
             </Button>
             <Button
               variant="primary"
+              size="sm"
               onClick={() => handleSave(true)}
               disabled={!canSave}
-              className="w-full sm:w-auto h-12 sm:h-11 whitespace-nowrap"
+              className="w-full sm:w-auto h-12 sm:h-11 text-sm sm:text-xs whitespace-nowrap"
             >
               {mutation.isPending ? 'Asignando…' : 'Asignar rutina'}
             </Button>
