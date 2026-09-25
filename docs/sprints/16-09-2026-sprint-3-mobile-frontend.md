@@ -100,8 +100,8 @@ Se agregan acá a medida que la auditoría las encuentre. Formato: `| D-XX | Qu�
 
 | ID | Pantalla / decisión | Mockup | Estado |
 |:---:|:---|:---|:---:|
-| D-01 | Encabezado de la ficha del alumno: nombre arriba y datos abajo, link "‹ Alumnos" en lugar del botón cuadrado, pestañas subrayadas, métricas sin cortes. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `aprobada` |
-| D-02 | Modal "Asignar rutina": plantillas como lista seleccionable, hoja inferior en mobile, botones renombrados que entran en pantalla. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `aprobada` |
+| D-01 | Encabezado de la ficha del alumno: nombre arriba y datos abajo, link "‹ Alumnos" en lugar del botón cuadrado, pestañas subrayadas, métricas sin cortes. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `implementada` 24/09/2026 |
+| D-02 | Modal "Asignar rutina": plantillas como lista seleccionable, hoja inferior en mobile, botones renombrados que entran en pantalla. Se implementa por la [spec 0007](../../specs/0007-rediseno-ficha-y-asignar-rutina.md) | [canvas](https://claude.ai/artifact/HXvma78PG1ePfWCgQL1FRz) (privado) | ✅ aprobado 22/09/2026 — spec 0007 `implementada` 24/09/2026 |
 
 ---
 

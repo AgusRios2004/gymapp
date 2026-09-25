@@ -1,7 +1,7 @@
 ---
 id: 0007
 titulo: Rediseño del encabezado de la ficha del alumno y del modal "Asignar rutina"
-estado: aprobada              # draft | propuesta | aprobada | implementada | archivada
+estado: implementada          # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 22/09/2026
 adrs_relacionados: [ADR-0001, ADR-0002, ADR-0009]
