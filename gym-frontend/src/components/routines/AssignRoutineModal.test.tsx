@@ -320,3 +320,35 @@ describe('AssignRoutineModal - invalidación de la query del cliente tras asigna
     );
   });
 });
+
+// H-0007-2-03: la lista de plantillas usa `templates.length === 0` como único criterio, sin mirar
+// isLoading/isError. Con GET /routines lento o en error, el modal miente diciendo que no hay
+// plantillas cargadas.
+describe('AssignRoutineModal - estado de carga y error de las plantillas (H-0007-2-03)', () => {
+  it('mientras GET /routines está en curso, no dice que no hay plantillas', () => {
+    vi.mocked(getRoutines).mockImplementation(() => new Promise(() => {}));
+    vi.mocked(getClientRoutines).mockResolvedValue([]);
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssignRoutineModal isOpen client={CLIENT} onClose={vi.fn()} />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.queryByText('Todavía no hay plantillas de rutina')).not.toBeInTheDocument();
+  });
+
+  it('si GET /routines falla, avisa con un toast y no dice que no hay plantillas', async () => {
+    vi.mocked(getRoutines).mockRejectedValue(new Error('Error de red'));
+    vi.mocked(getClientRoutines).mockResolvedValue([]);
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssignRoutineModal isOpen client={CLIENT} onClose={vi.fn()} />
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(screen.queryByText('Todavía no hay plantillas de rutina')).not.toBeInTheDocument();
+  });
+});

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import Button from '../ui/Button';
 import { Input } from '../ui/Input';
 import { TextArea } from '../ui/TextArea';
 import { EmptyState } from '../ui/EmptyState';
+import { Skeleton } from '../ui/Skeleton';
 import { AssignRoutineSchema } from '../../types/schema.type';
 import type { AssignRoutineRequest, Client, Routine } from '../../types';
 import { getRoutines, assignRoutineToClient } from '../../services/routineService';
@@ -36,7 +37,12 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
   const shouldCloseRef = useRef(true);
 
   // Plantillas disponibles para asignar.
-  const { data: templates = [] } = useQuery({
+  const {
+    data: templates = [],
+    isLoading: templatesLoading,
+    isError: templatesIsError,
+    error: templatesError,
+  } = useQuery({
     queryKey: ['routines', 'templates'],
     queryFn: async () => {
       const allRoutines = await getRoutines();
@@ -44,6 +50,11 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
     },
     enabled: isOpen,
   });
+
+  // El toast va en un efecto y no en el queryFn: TanStack reintenta el queryFn y saldría un toast por intento.
+  useEffect(() => {
+    if (templatesError) toast.error(templatesError.message || 'Error al cargar las plantillas de rutina');
+  }, [templatesError]);
 
   // Rutina vigente del alumno: `client.routineActive`, no `active` de la plantilla (spec §B.7-9;
   // `active` de la plantilla no distingue asignaciones históricas de la vigente cuando el alumno
@@ -173,7 +184,19 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {templates.length === 0 ? (
+            {templatesLoading ? (
+              <div role="status" aria-label="Cargando plantillas" className="space-y-2">
+                {Array.from({ length: 3 }).map((_, idx) => (
+                  <Skeleton key={idx} className="h-[76px] w-full" shape="card" />
+                ))}
+              </div>
+            ) : templatesIsError ? (
+              <EmptyState
+                variant="error"
+                title="No pudimos cargar las plantillas"
+                description="Cerrá el modal y volvé a intentarlo en unos segundos."
+              />
+            ) : templates.length === 0 ? (
               <EmptyState title="Todavía no hay plantillas de rutina" />
             ) : filteredTemplates.length === 0 ? (
               <p className="text-sm text-slate-500 text-center py-8">No hay plantillas que coincidan</p>
