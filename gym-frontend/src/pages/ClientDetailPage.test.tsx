@@ -229,3 +229,25 @@ describe('ClientDetailPage - pestañas (AC-0007-06)', () => {
     expect(marcada).toBe(true);
   });
 });
+
+// H-0007-2-05: "Resumen Reciente" (pestaña General) tiene que coincidir con el encabezado: el pago
+// más reciente por fecha y la rutina vigente (client.routineActive), no payments[0] ni la primera
+// rutina con active=true.
+describe('ClientDetailPage - "Resumen Reciente" coincide con el encabezado (H-0007-2-05)', () => {
+  function resumenValue(label: string): HTMLElement {
+    const row = screen.getByText(label).closest('div.justify-between');
+    if (!row) throw new Error(`No se encontró la fila "${label}" de Resumen Reciente`);
+    return row.lastElementChild as HTMLElement;
+  }
+
+  it('muestra el pago más reciente y la rutina vigente', async () => {
+    renderClientDetailPage(
+      { ...CLIENT_CARLOS, routineActive: { id: ROUTINE_VIGENTE.id, name: ROUTINE_VIGENTE.name, goal: ROUTINE_VIGENTE.goal } },
+      { payments: [PAYMENT_ENERO, PAYMENT_SEPTIEMBRE], routines: [ROUTINE_ACTIVE, ROUTINE_VIGENTE] },
+    );
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    expect(resumenValue('Último Pago')).toHaveTextContent(`$${PAYMENT_SEPTIEMBRE.amount.toLocaleString()}`);
+    expect(resumenValue('Rutina Activa')).toHaveTextContent('Hipertrofia B');
+  });
+});

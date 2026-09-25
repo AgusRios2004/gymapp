@@ -87,7 +87,7 @@ export default function ClientDetailPage() {
   const { data: routines = [] } = useQuery({
     queryKey: ['client-routines', clientId],
     queryFn: () => getClientRoutines(clientId),
-    enabled: !!clientId && (activeTab === 'routines' || activeTab === 'general')
+    enabled: !!clientId && activeTab === 'routines'
   });
 
   const { data: products = [] } = useQuery({
@@ -303,7 +303,7 @@ export default function ClientDetailPage() {
                       <span className="text-xs font-semibold text-slate-700">Último Pago</span>
                     </div>
                     <span className="text-base font-black text-emerald-700 font-mono">
-                      {payments.length > 0 ? `$${payments[0].amount.toLocaleString()}` : '-'}
+                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/60 rounded-2xl">
@@ -312,7 +312,7 @@ export default function ClientDetailPage() {
                       <span className="text-xs font-semibold text-slate-700">Rutina Activa</span>
                     </div>
                     <span className="text-xs font-bold text-slate-900">
-                      {routines.find(r => r.active)?.name || 'Ninguna'}
+                      {activeRoutine?.name || 'Ninguna'}
                     </span>
                   </div>
                 </div>
