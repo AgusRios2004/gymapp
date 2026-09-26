@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class AssistanceService {
     private PaymentRepository paymentRepository;
     @Autowired
     private AuthenticatedStaffService authenticatedStaffService;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     public AssistanceResponseDTO registerAssistance(AssistanceRequestDTO dto) {
         if (dto.getIdClient() == null) {
@@ -55,7 +60,7 @@ public class AssistanceService {
                 .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId())
                 .orElseThrow(() -> new BusinessRuleException("El alumno no tiene una membresía registrada."));
 
-        if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now())) {
+        if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now(clock))) {
             throw new BusinessRuleException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
         }
 

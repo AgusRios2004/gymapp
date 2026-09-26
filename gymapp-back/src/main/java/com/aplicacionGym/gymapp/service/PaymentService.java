@@ -15,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,10 @@ public class PaymentService {
     private PaymentProductRepository paymentProductRepository;
     @Autowired
     private AuthenticatedStaffService authenticatedStaffService;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     // PROFESSOR: siempre cobra él mismo, el idProfessor del body se ignora. ADMIN: elige el
     // profesor, obligatorio y tiene que existir y estar activo. Cualquier otro rol no puede cobrar.
@@ -80,11 +85,11 @@ public class PaymentService {
                 .findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(client.getId());
 
         double amountToPay = newType.getPrice();
-        LocalDate paymentDate = dto.getDate() != null ? dto.getDate() : LocalDate.now();
+        LocalDate paymentDate = dto.getDate() != null ? dto.getDate() : LocalDate.now(clock);
 
         if (activePaymentOpt.isPresent()) {
             Payment activePayment = activePaymentOpt.get();
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(clock);
             
             // Check if existing payment is still valid (Expiration date in the future)
             if (activePayment.getExpirationDate() != null && activePayment.getExpirationDate().isAfter(today)) {
