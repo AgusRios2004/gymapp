@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import com.aplicacionGym.gymapp.entity.Client;
@@ -43,7 +44,8 @@ public class DashboardService {
         stats.setTotalRoutines(routineRepository.count());
 
         // Sum current month's revenue (simplified)
-        Double revenue = paymentRepository.sumAmountByMonth(LocalDate.now(clock).getMonthValue());
+        YearMonth currentMonth = YearMonth.now(clock);
+        Double revenue = paymentRepository.sumAmountBetween(currentMonth.atDay(1), currentMonth.atEndOfMonth());
         stats.setMonthlyRevenue(revenue != null ? revenue : 0.0);
 
         // Count low stock products
