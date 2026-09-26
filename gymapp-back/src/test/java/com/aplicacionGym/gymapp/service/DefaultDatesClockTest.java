@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -106,6 +107,7 @@ class DefaultDatesClockTest {
     }
 
     @Test
+    @DisplayName("AC-0010-07: agua y suplementos sin fecha usan el día de Argentina")
     void ac_0010_07_aguaYSuplementosSinFechaUsanElDiaDeArgentina() throws Exception {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
         when(waterLogRepository.findByClientIdAndDate(anyLong(), any())).thenReturn(Optional.empty());
@@ -132,6 +134,7 @@ class DefaultDatesClockTest {
     }
 
     @Test
+    @DisplayName("AC-0010-08: comidas y ejercicios sin fecha usan el día de Argentina")
     void ac_0010_08_comidasYEjerciciosSinFechaUsanElDiaDeArgentina() throws Exception {
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
         when(mealLogRepository.save(any(MealLog.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -149,6 +152,7 @@ class DefaultDatesClockTest {
     }
 
     @Test
+    @DisplayName("AC-0010-09: la rutina asignada sin fecha de inicio empieza el día de Argentina")
     void ac_0010_09_laRutinaAsignadaSinFechaDeInicioEmpiezaElDiaDeArgentina() {
         Routine routine = new Routine();
         routine.setId(5L);

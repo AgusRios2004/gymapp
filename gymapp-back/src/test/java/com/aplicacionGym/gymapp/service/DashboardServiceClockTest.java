@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -66,6 +67,7 @@ class DashboardServiceClockTest {
     private DashboardService dashboardService;
 
     @Test
+    @DisplayName("AC-0010-05: quien vence hoy no cuenta como deudor en el dashboard a las 21:40")
     void ac_0010_05_quienVenceHoyNoCuentaComoDeudorEnElDashboardALas2140() {
         when(clientRepository.findByActiveTrue()).thenReturn(List.of(client));
 

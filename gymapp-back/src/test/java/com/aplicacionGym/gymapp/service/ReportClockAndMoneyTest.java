@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,6 +46,7 @@ class ReportClockAndMoneyTest {
     private ReportService reportServiceMock;
 
     @Test
+    @DisplayName("AC-0010-10: el PDF muestra montos argentinos y la hora de Argentina")
     void ac_0010_10_elPdfMuestraMontosArgentinosYLaHoraDeArgentina() throws Exception {
         DashboardStatsDTO stats = new DashboardStatsDTO();
         stats.setMonthlyRevenue(150000);
@@ -60,6 +62,7 @@ class ReportClockAndMoneyTest {
     }
 
     @Test
+    @DisplayName("AC-0010-11: el archivo del PDF se nombra con la fecha y hora de Argentina")
     void ac_0010_11_elArchivoDelPdfSeNombraConLaFechaYHoraDeArgentina() throws Exception {
         ReportController controller = new ReportController();
         ReflectionTestUtils.setField(controller, "reportService", reportServiceMock);

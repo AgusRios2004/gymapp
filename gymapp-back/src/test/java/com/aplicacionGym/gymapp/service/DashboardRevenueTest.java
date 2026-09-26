@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -50,6 +51,7 @@ class DashboardRevenueTest {
     }
 
     @Test
+    @DisplayName("AC-0010-13: los ingresos del mes son los del mes y año actuales en hora argentina")
     void ac_0010_13_losIngresosDelMesSonLosDelMesYAnioActualesEnHoraArgentina() {
         pago(20000, LocalDate.of(2026, 9, 30));
         pago(10000, LocalDate.of(2025, 9, 10));

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -57,6 +58,7 @@ class GroupClassServiceClockTest {
     private GroupClassService groupClassService;
 
     @Test
+    @DisplayName("AC-0010-04: los alumnos de una clase que vencen hoy no son deudores a las 21:40")
     void ac_0010_04_losAlumnosDeUnaClaseQueVencenHoyNoSonDeudoresALas2140() {
         when(clientRepository.findByActiveClassId(7L)).thenReturn(List.of(client));
 

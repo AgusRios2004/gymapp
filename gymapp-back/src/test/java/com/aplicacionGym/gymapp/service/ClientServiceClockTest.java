@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -57,6 +58,7 @@ class ClientServiceClockTest {
     private ClientService clientService;
 
     @Test
+    @DisplayName("AC-0010-03: quien vence hoy no es deudor a las 21:40, ni en la lista ni en la ficha")
     void ac_0010_03_quienVenceHoyNoEsDeudorALas2140NiEnLaListaNiEnLaFicha() {
         when(clientRepository.findByActiveTrue()).thenReturn(List.of(client));
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Clock;
 import java.time.ZoneId;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
@@ -18,6 +19,7 @@ class ClockConfigTest {
             .withUserConfiguration(ClockConfig.class);
 
     @Test
+    @DisplayName("AC-0010-01: el reloj usa la zona del negocio y se puede configurar")
     void ac_0010_01_elRelojUsaLaZonaDelNegocioYSePuedeConfigurar() {
         runner.run(context -> assertThat(context.getBean(Clock.class).getZone())
                 .isEqualTo(ZoneId.of("America/Argentina/Buenos_Aires")));

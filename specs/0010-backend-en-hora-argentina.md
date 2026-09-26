@@ -1,7 +1,7 @@
 ---
 id: 0010
 titulo: Backend en hora argentina — vencimientos, deudores, ingresos del mes y PDF de cierre
-estado: aprobada              # draft | propuesta | aprobada | implementada | archivada
+estado: implementada          # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 26/09/2026
 adrs_relacionados: []

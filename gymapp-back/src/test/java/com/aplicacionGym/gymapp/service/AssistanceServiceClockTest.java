@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -81,6 +82,7 @@ class AssistanceServiceClockTest {
     }
 
     @Test
+    @DisplayName("AC-0010-02: la cuota que vence hoy no está vencida a las 21:40, pero sí pasada la medianoche")
     void ac_0010_02_laCuotaQueVenceHoyNoEstaVencidaALas2140PeroSiPasadaLaMedianoche() {
         when(assistanceRepository.save(any(Assistance.class))).thenAnswer(inv -> inv.getArgument(0));
 

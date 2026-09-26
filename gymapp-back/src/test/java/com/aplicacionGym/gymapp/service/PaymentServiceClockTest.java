@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -74,6 +75,7 @@ class PaymentServiceClockTest {
     }
 
     @Test
+    @DisplayName("AC-0010-06: el pago sin fecha queda con el día local y el mismo plan vigente se rechaza")
     void ac_0010_06_elPagoSinFechaQuedaConElDiaLocalYElMismoPlanVigenteSeRechaza() {
         when(paymentRepository.findFirstByClientIdAndMonthlyTypeIsNotNullOrderByDateDesc(1L)).thenReturn(Optional.empty());
         when(paymentRepository.save(any(Payment.class))).thenAnswer(inv -> inv.getArgument(0));
