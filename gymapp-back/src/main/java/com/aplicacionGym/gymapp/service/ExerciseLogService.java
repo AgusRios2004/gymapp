@@ -5,6 +5,7 @@ import com.aplicacionGym.gymapp.repository.ExerciseLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +16,13 @@ public class ExerciseLogService {
     @Autowired
     private ExerciseLogRepository exerciseLogRepository;
 
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
+
     public ExerciseLog saveLog(ExerciseLog log) {
         if (log.getDate() == null) {
-            log.setDate(LocalDate.now());
+            log.setDate(LocalDate.now(clock));
         }
         return exerciseLogRepository.save(log);
     }

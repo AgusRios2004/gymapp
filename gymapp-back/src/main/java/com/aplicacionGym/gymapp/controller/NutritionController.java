@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class NutritionController {
 
     @Autowired
     private NutritionService nutritionService;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     @GetMapping("/plan")
     public ResponseEntity<NutritionPlan> getActivePlan(@PathVariable Long clientId) {
@@ -35,7 +40,7 @@ public class NutritionController {
     public ResponseEntity<List<MealLog>> getMeals(
             @PathVariable Long clientId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        LocalDate targetDate = date != null ? date : LocalDate.now();
+        LocalDate targetDate = date != null ? date : LocalDate.now(clock);
         return ResponseEntity.ok(nutritionService.getMealsByClientAndDate(clientId, targetDate));
     }
 

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDate;
 
 @RestController
@@ -17,11 +18,15 @@ public class SupplementController {
     @Autowired
     private SupplementService supplementService;
 
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
+
     @GetMapping
     public ResponseEntity<SupplementLog> getLog(
             @PathVariable Long clientId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        LocalDate targetDate = date != null ? date : LocalDate.now();
+        LocalDate targetDate = date != null ? date : LocalDate.now(clock);
         return supplementService.getLogByDate(clientId, targetDate)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.ok(new SupplementLog(null, null, targetDate, false, false, "")));

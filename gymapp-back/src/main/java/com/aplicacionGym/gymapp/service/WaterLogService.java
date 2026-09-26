@@ -8,6 +8,7 @@ import com.aplicacionGym.gymapp.repository.WaterLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -19,6 +20,10 @@ public class WaterLogService {
     @Autowired
     private ClientRepository clientRepository;
 
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
+
     public Optional<WaterLog> getLogByDate(Long clientId, LocalDate date) {
         return waterLogRepository.findByClientIdAndDate(clientId, date);
     }
@@ -27,7 +32,7 @@ public class WaterLogService {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
 
-        LocalDate targetDate = date != null ? date : LocalDate.now();
+        LocalDate targetDate = date != null ? date : LocalDate.now(clock);
 
         WaterLog log = waterLogRepository.findByClientIdAndDate(clientId, targetDate)
                 .orElseGet(() -> {
