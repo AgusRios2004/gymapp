@@ -19,6 +19,7 @@ import Modal from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { toast } from 'react-toastify';
 import type { MonthlyType } from '../types';
+import { formatMoney } from '../utils/money';
 
 export default function MonthlyTypesPage() {
   const queryClient = useQueryClient();
@@ -148,7 +149,7 @@ export default function MonthlyTypesPage() {
                 </div>
 
                 <div className="flex items-baseline gap-1">
-                   <span className="text-3xl font-black text-gray-900">${plan.price.toLocaleString()}</span>
+                   <span className="text-3xl font-black text-gray-900">{formatMoney(plan.price)}</span>
                    <span className="text-gray-400 text-sm font-medium">/ cada {plan.durationDays} días</span>
                 </div>
 
