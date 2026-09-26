@@ -11,6 +11,7 @@ import com.aplicacionGym.gymapp.mapper.ClientMapper;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.entity.Payment;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -30,6 +31,10 @@ public class GroupClassService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     public List<GroupClass> getAllClasses() {
         return groupClassRepository.findAll();
@@ -52,7 +57,7 @@ public class GroupClassService {
         if (lastPayment.isEmpty())
             return true;
         LocalDate expirationDate = lastPayment.get().getExpirationDate();
-        return expirationDate == null || expirationDate.isBefore(LocalDate.now());
+        return expirationDate == null || expirationDate.isBefore(LocalDate.now(clock));
     }
 
     private static final List<String> WEEKDAY_ORDER = List.of(

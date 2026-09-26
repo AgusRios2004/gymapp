@@ -17,6 +17,7 @@ import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.repository.RoutineRepository;
 import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
 import com.aplicacionGym.gymapp.entity.Payment;
+import java.time.Clock;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -41,6 +42,10 @@ public class ClientService {
     private com.aplicacionGym.gymapp.repository.GroupClassRepository groupClassRepository;
     @Autowired
     private AuthenticatedStaffService authenticatedStaffService;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     public ClientResponseDTO assignClass(Long idClient, Long idClass) {
         Objects.requireNonNull(idClient, "idClient cannot be null");
@@ -161,7 +166,7 @@ public class ClientService {
                 dto.setDebtor(true);
             } else {
                 LocalDate expirationDate = lastPayment.get().getExpirationDate();
-                dto.setDebtor(expirationDate == null || expirationDate.isBefore(LocalDate.now()));
+                dto.setDebtor(expirationDate == null || expirationDate.isBefore(LocalDate.now(clock)));
             }
         }
         return dto;

@@ -9,6 +9,7 @@ import com.aplicacionGym.gymapp.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,10 @@ public class DashboardService {
     @Autowired
     private ProductRepository productRepository;
 
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
+
     public DashboardStatsDTO getDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
 
@@ -38,7 +43,7 @@ public class DashboardService {
         stats.setTotalRoutines(routineRepository.count());
 
         // Sum current month's revenue (simplified)
-        Double revenue = paymentRepository.sumAmountByMonth(LocalDate.now().getMonthValue());
+        Double revenue = paymentRepository.sumAmountByMonth(LocalDate.now(clock).getMonthValue());
         stats.setMonthlyRevenue(revenue != null ? revenue : 0.0);
 
         // Count low stock products
@@ -54,7 +59,7 @@ public class DashboardService {
                 debtors++; // Activo pero nunca pago
             } else {
                 LocalDate expirationDate = lastPayment.get().getExpirationDate();
-                if (expirationDate == null || expirationDate.isBefore(LocalDate.now())) {
+                if (expirationDate == null || expirationDate.isBefore(LocalDate.now(clock))) {
                     debtors++;
                 }
             }
