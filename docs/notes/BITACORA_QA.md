@@ -254,7 +254,7 @@ También apareció que el frontend trataba las fechas `LocalDate` como UTC: "hoy
 |:---:|:---|:---|:---:|
 | BUG-18 | Backend (fechas) | `LocalDate.now()` usa la zona de la JVM. Si el contenedor corre en UTC, tiene el mismo corrimiento que la spec 0008 corrigió en el frontend (ej.: `RoutineService.assignComplexRoutine` cuando no llega `startDate`). Hoy el frontend siempre manda la fecha, así que no se dispara en el flujo normal. Se arregla fijando la zona (`TZ` / `-Duser.timezone`), no con código. Fuera de alcance de la spec 0008. | ⬜ |
 | BUG-19 | Global (formato) | Los montos se muestran con `toLocaleString()` sin locale: `$22,000` en vez de `$22.000`. Es el mismo problema de locale implícito que la spec 0008 corrigió para las fechas. Pide una spec de formato de números. | ⬜ |
-| DES-14 | Rutinas (modal) | La spec 0007 §B.11 pide "Asignar y cargar otra" con **estilo texto** en mobile y quedó como botón con borde (`variant="outline"`). | ⬜ |
+| DES-14 | Rutinas (modal) | La spec 0007 §B.11 pide "Asignar y cargar otra" con **estilo texto** en mobile y quedó como botón con borde (`variant="outline"`). **Cerrado 26/09/2026:** en mobile queda sin borde ni fondo (`max-sm:`), en desktop conserva el borde (§B.12). Verificado con Playwright a 375px y 1280px. | ✅ |
 | QA-0007 | Rutinas / ficha | La revisión 1 de Sandcastle sobre la 0007 devolvió 6 hallazgos. El fixer corrigió los 4 de severidad alta/media; **los 2 de severidad baja no quedaron registrados** (el log del reviewer se pisó con la revisión 2). Para recuperarlos hay que correr una revisión nueva de la ficha y del modal. | ⬜ |
 
 ### 🔧 Fricción nueva

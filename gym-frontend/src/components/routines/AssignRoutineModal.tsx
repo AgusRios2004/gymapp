@@ -323,7 +323,8 @@ const AssignRoutineModal: React.FC<AssignRoutineModalProps> = ({
               size="sm"
               onClick={() => handleSave(false)}
               disabled={!canSave}
-              className="w-full sm:w-auto h-11 text-sm sm:text-xs whitespace-nowrap"
+              // §B.11: en mobile es un botón de texto (sin borde ni fondo); en desktop conserva el borde (§B.12).
+              className="w-full sm:w-auto h-11 text-sm sm:text-xs whitespace-nowrap max-sm:border-transparent max-sm:bg-transparent max-sm:hover:bg-transparent"
             >
               Asignar y cargar otra
             </Button>

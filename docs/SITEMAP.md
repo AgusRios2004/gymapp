@@ -75,7 +75,7 @@ docs/
 
 | Archivo | Descripción |
 |:---|:---|
-| [`notes/BITACORA_QA.md`](./notes/BITACORA_QA.md) | Sesiones de QA manual. Bugs encontrados, estados y decisiones tomadas. Sesión 01 (05/09/2026): 7 bugs críticos · 7 bugs de experiencia · 13 issues de diseño. Pendientes abiertos del 24/09/2026: BUG-18, BUG-19, DES-14, QA-0007. |
+| [`notes/BITACORA_QA.md`](./notes/BITACORA_QA.md) | Sesiones de QA manual. Bugs encontrados, estados y decisiones tomadas. Sesión 01 (05/09/2026): 7 bugs críticos · 7 bugs de experiencia · 13 issues de diseño. Pendientes abiertos del 24/09/2026: BUG-18, BUG-19, QA-0007 (DES-14 cerrado el 26/09). |
 
 ---
 
