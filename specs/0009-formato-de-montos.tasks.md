@@ -1,6 +1,6 @@
 # Tareas — spec 0009: formato de montos
 
-> Spec: [`0009-formato-de-montos.md`](./0009-formato-de-montos.md) · Estado de la spec: `propuesta`
+> Spec: [`0009-formato-de-montos.md`](./0009-formato-de-montos.md) · Estado de la spec: `aprobada`
 > Solo frontend. Tamaños **relativos** entre sí (chica / media / grande), sin base histórica para estimar en horas.
 
 | # | Tarea | Archivos | Depende de | AC | Tamaño |
