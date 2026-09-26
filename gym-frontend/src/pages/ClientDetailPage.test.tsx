@@ -184,7 +184,7 @@ describe('ClientDetailPage - "Último pago" del encabezado toma el más reciente
 
     const dl = headerDataList();
     const dt = within(dl).getByText('Último pago');
-    expect(dt.nextElementSibling).toHaveTextContent(`$${PAYMENT_SEPTIEMBRE.amount.toLocaleString()}`);
+    expect(dt.nextElementSibling).toHaveTextContent('$15.000'); // Formato argentino desde la spec 0009 (antes toLocaleString(): $15,000).
   });
 });
 
@@ -247,7 +247,7 @@ describe('ClientDetailPage - "Resumen Reciente" coincide con el encabezado (H-00
     );
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    expect(resumenValue('Último Pago')).toHaveTextContent(`$${PAYMENT_SEPTIEMBRE.amount.toLocaleString()}`);
+    expect(resumenValue('Último Pago')).toHaveTextContent('$15.000'); // Formato argentino desde la spec 0009 (antes toLocaleString(): $15,000).
     expect(resumenValue('Rutina Activa')).toHaveTextContent('Hipertrofia B');
   });
 });
@@ -330,5 +330,36 @@ describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
     const card = (await screen.findByText(/19:30/)).closest('div.rounded-2xl') as HTMLElement;
     expect(within(card).getByText('24')).toBeInTheDocument();
     expect(within(card).getByText('jueves')).toBeInTheDocument();
+  });
+});
+
+// Spec 0009: los montos de la ficha salían con toLocaleString() sin locale ($15,000 en inglés).
+describe('ClientDetailPage - montos en formato argentino (spec 0009)', () => {
+  it('AC-0009-11: "Último pago" del encabezado y de "Resumen Reciente" muestran $15.000', async () => {
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_SEPTIEMBRE] });
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    const dt = within(headerDataList()).getByText('Último pago');
+    expect(dt.nextElementSibling).toHaveTextContent('$15.000');
+    const resumenRow = screen.getByText('Último Pago').closest('div.justify-between')!;
+    expect(resumenRow.lastElementChild).toHaveTextContent('$15.000');
+  });
+
+  it('AC-0009-12: la pestaña Pagos muestra $15.000, y Compras $25.000 de precio y $50.000 de subtotal', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_SEPTIEMBRE] });
+    vi.mocked(getClientProductsPurchased).mockResolvedValue([
+      { nameProduct: 'Creatina', date: '2026-09-24', price: 25000, quantity: 2 },
+    ]);
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    await user.click(screen.getByRole('button', { name: 'Pagos' }));
+    const paymentRow = (await screen.findByText('15/09/2026')).closest('tr')!;
+    expect(paymentRow).toHaveTextContent('$15.000');
+
+    await user.click(screen.getByRole('button', { name: 'Compras' }));
+    const purchaseRow = (await screen.findByText('Creatina')).closest('tr')!;
+    expect(purchaseRow).toHaveTextContent('$25.000');
+    expect(purchaseRow).toHaveTextContent('$50.000');
   });
 });
