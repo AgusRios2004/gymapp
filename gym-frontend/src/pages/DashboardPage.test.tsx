@@ -54,3 +54,31 @@ describe('DashboardPage - nombre del PDF de cierre en hora local (spec 0008)', (
     expect(downloads[0]).toBe('Reporte_Cierre_Mes_2026-09-24.pdf');
   });
 });
+
+// Spec 0009: los montos del dashboard salían con toLocaleString() sin locale ($150,000) y el
+// promedio con toFixed(0), sin separador de miles.
+describe('DashboardPage - montos en formato argentino (spec 0009)', () => {
+  it('AC-0009-05: ingresos del mes $150.000 y promedio por alumno activo $18.750', async () => {
+    vi.mocked(getDashboardStats).mockResolvedValue({
+      totalClients: 10,
+      activeClients: 8,
+      totalProfessors: 2,
+      totalRoutines: 3,
+      monthlyRevenue: 150000,
+      lowStockCount: 0,
+      debtorsCount: 1,
+    });
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <MemoryRouter>
+          <DashboardPage />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const revenueCard = (await screen.findByText('Ingresos del Mes')).parentElement!;
+    expect(revenueCard).toHaveTextContent('$150.000');
+    const averageBox = screen.getByText('Promedio Ingresos/Cliente').parentElement!;
+    expect(averageBox).toHaveTextContent('$18.750');
+  });
+});

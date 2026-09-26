@@ -4,6 +4,7 @@ import { Users, UserCheck, Dumbbell, TrendingUp, DollarSign, Tag, AlertCircle, G
 import { getDashboardStats } from '../services/dashboardService';
 import type { DashboardStats } from '../types/index';
 import { todayLocalISO } from '../utils/date';
+import { formatMoney } from '../utils/money';
 
 interface StatCardProps {
   title: string;
@@ -108,7 +109,7 @@ export default function DashboardPage() {
         />
         <StatCard
           title="Ingresos del Mes"
-          value={`$${stats.monthlyRevenue.toLocaleString()}`}
+          value={formatMoney(stats.monthlyRevenue)}
           icon={<DollarSign size={24} />}
           color="bg-emerald-700"
           description="Recaudación mensual total"
@@ -177,7 +178,7 @@ export default function DashboardPage() {
                 <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200/60">
                    <p className="text-xs text-slate-500 uppercase font-extrabold tracking-wider mb-1">Promedio Ingresos/Cliente</p>
                    <p className="text-3xl font-black text-emerald-700 font-mono">
-                     ${(stats.monthlyRevenue / (stats.activeClients || 1)).toFixed(0)}
+                     {formatMoney(stats.monthlyRevenue / (stats.activeClients || 1))}
                    </p>
                 </div>
              </div>
