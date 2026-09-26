@@ -48,7 +48,8 @@ docs/
 │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
 │   ├── 0009-estandar-mobile.md
-│   └── 0010-capa2-revision-humana-obligatoria.md
+│   ├── 0010-capa2-revision-humana-obligatoria.md
+│   └── 0011-reloj-inyectado-zona-del-negocio.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
@@ -161,7 +162,8 @@ gymapp/
 │   │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
 │   │   ├── 0009-estandar-mobile.md
-│   │   └── 0010-capa2-revision-humana-obligatoria.md
+│   │   ├── 0010-capa2-revision-humana-obligatoria.md
+│   │   └── 0011-reloj-inyectado-zona-del-negocio.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/
