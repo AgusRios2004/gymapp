@@ -1,7 +1,7 @@
 ---
 id: 0009
 titulo: Formato de montos en pesos argentinos ($22.000, no $22,000)
-estado: aprobada              # draft | propuesta | aprobada | implementada | archivada
+estado: implementada          # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 26/09/2026
 adrs_relacionados: [ADR-0009]

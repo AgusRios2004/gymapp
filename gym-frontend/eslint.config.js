@@ -29,6 +29,12 @@ export default defineConfig([
           message:
             "toISOString() es UTC y corre la fecha un día en Argentina. Para la fecha de hoy usá todayLocalISO() de 'src/utils/date' (spec 0008).",
         },
+        {
+          // Spec 0009: sin locale usa el idioma del navegador y en inglés muestra $22,000.
+          selector: "CallExpression[callee.property.name='toLocaleString'][arguments.length=0]",
+          message:
+            "toLocaleString() sin locale usa el idioma del navegador ($22,000 en inglés). Para montos usá formatMoney() de 'src/utils/money'; para fechas, los helpers de 'src/utils/date' (spec 0009).",
+        },
       ],
     },
   },
