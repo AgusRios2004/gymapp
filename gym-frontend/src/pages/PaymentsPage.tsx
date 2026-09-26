@@ -16,6 +16,7 @@ import { Input } from '../components/ui/Input';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
 import { normalizeSearch } from '../utils/search';
 import { formatDate, todayLocalISO } from '../utils/date';
+import { formatMoney } from '../utils/money';
 
 const getClientLabel = (client: Client) =>
   `${client.name} ${client.lastName}${client.dni ? ` · DNI ${client.dni}` : ''}${client.isDebtor ? ' ⚠️ (DEUDOR)' : ''}`;
@@ -171,7 +172,7 @@ export default function PaymentsPage() {
                       {payment.monthlyTypeName || '-'}
                     </td>
                     <td className="px-6 py-4 font-bold text-gray-900">
-                      ${payment.amount.toLocaleString()}
+                      {formatMoney(payment.amount)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {payment.professorName}
@@ -227,7 +228,7 @@ export default function PaymentsPage() {
             >
               <option value="">Seleccionar cuota...</option>
               {monthlyTypes.map(m => (
-                <option key={m.id} value={m.id}>{m.type} - ${m.price}</option>
+                <option key={m.id} value={m.id}>{m.type} - {formatMoney(m.price)}</option>
               ))}
             </select>
           </div>

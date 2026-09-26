@@ -35,6 +35,7 @@ import {
 } from '../services/clientInfoService';
 import { getPhysicalRecords, createPhysicalRecord, deletePhysicalRecord } from '../services/physicalRecordService';
 import { formatDate, parseLocalDate, todayLocalISO } from '../utils/date';
+import { formatMoney } from '../utils/money';
 import type { PhysicalRecord } from '../types';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -214,7 +215,7 @@ export default function ClientDetailPage() {
                   <div className="hidden sm:block">
                     <dt className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Último pago</dt>
                     <dd className="text-slate-900 font-semibold text-sm mt-0.5">
-                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
+                      {latestPayment ? formatMoney(latestPayment.amount) : '-'}
                     </dd>
                   </div>
                 </dl>
@@ -304,7 +305,7 @@ export default function ClientDetailPage() {
                       <span className="text-xs font-semibold text-slate-700">Último Pago</span>
                     </div>
                     <span className="text-base font-black text-emerald-700 font-mono">
-                      {latestPayment ? `$${latestPayment.amount.toLocaleString()}` : '-'}
+                      {latestPayment ? formatMoney(latestPayment.amount) : '-'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/60 rounded-2xl">
@@ -345,7 +346,7 @@ export default function ClientDetailPage() {
                       <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                         <td className="py-4 px-2 text-xs text-slate-600 font-medium">{formatDate(p.date)}</td>
                         <td className="py-4 font-semibold text-slate-900 text-xs">{p.monthlyTypeName || 'Producto'}</td>
-                        <td className="py-4 text-emerald-700 font-mono font-black text-sm">${p.amount.toLocaleString()}</td>
+                        <td className="py-4 text-emerald-700 font-mono font-black text-sm">{formatMoney(p.amount)}</td>
                         <td className="py-4 text-xs text-slate-500">{p.professorName}</td>
                       </tr>
                     ))
@@ -533,8 +534,8 @@ export default function ClientDetailPage() {
                         <td className="py-4 px-2 font-semibold text-slate-800 text-xs">{p.nameProduct}</td>
                         <td className="py-4 text-xs text-slate-500">{formatDate(p.date)}</td>
                         <td className="py-4 text-xs text-slate-700">{p.quantity}</td>
-                        <td className="py-4 text-xs text-slate-600 font-mono">${p.price.toLocaleString()}</td>
-                        <td className="py-4 font-black text-emerald-600 font-mono text-sm">${(p.price * p.quantity).toLocaleString()}</td>
+                        <td className="py-4 text-xs text-slate-600 font-mono">{formatMoney(p.price)}</td>
+                        <td className="py-4 font-black text-emerald-600 font-mono text-sm">{formatMoney(p.price * p.quantity)}</td>
                       </tr>
                     ))
                   )}

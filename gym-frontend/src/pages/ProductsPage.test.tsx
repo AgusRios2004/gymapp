@@ -207,3 +207,55 @@ describe('ProductsPage - fecha mostrada en el historial de ventas (spec 0008)', 
     expect(row).toHaveTextContent('24/09/2026');
   });
 });
+
+// Spec 0009: los montos de productos salían con toLocaleString() sin locale ($25,000 en inglés).
+describe('ProductsPage - montos en formato argentino (spec 0009)', () => {
+  const PRODUCT_25K: Product = { id: 2, productName: 'Creatina', price: 25000, stock: 10 };
+
+  it('AC-0009-08: la fila del inventario muestra $25.000', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getProducts).mockResolvedValue([PRODUCT_25K]);
+    renderProductsPage();
+
+    const row = (await screen.findByText('Creatina')).closest('tr')!;
+    expect(row).toHaveTextContent('$25.000');
+  });
+
+  it('AC-0009-09: la tarjeta del punto de venta muestra $25.000, y con 2 unidades la línea dice "2 x $25.000" y el total $50.000', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getProducts).mockResolvedValue([PRODUCT_25K]);
+    const user = userEvent.setup();
+    renderProductsPage();
+
+    await goToPosTab(user);
+    const card = await screen.findByRole('button', { name: /Creatina/i });
+    expect(card).toHaveTextContent('$25.000');
+
+    await user.click(card);
+    await user.click(card);
+
+    expect(screen.getByText('2 x $25.000')).toBeInTheDocument();
+    expect(screen.getByText('$50.000')).toBeInTheDocument();
+  });
+
+  it('AC-0009-10: la fila del historial de ventas muestra $25.000', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      {
+        id: 61,
+        amount: 25000,
+        date: '2026-09-24',
+        paymentType: 'PRODUCTS',
+        clientName: 'Marina Suarez',
+        paymentProducts: [{ productName: 'Creatina', quantity: 1 }],
+      },
+    ]);
+    const user = userEvent.setup();
+    renderProductsPage();
+
+    await user.click(screen.getByRole('button', { name: /Historial Ventas/i }));
+
+    const row = (await screen.findByText('Marina Suarez')).closest('tr')!;
+    expect(row).toHaveTextContent('$25.000');
+  });
+});

@@ -27,6 +27,7 @@ import type { AxiosError } from 'axios';
 import type { ApiResponse } from '../types/api.types';
 import type { Product, Client, ProductDetailRequest, Payment, Professor } from '../types';
 import { formatDate, todayLocalISO } from '../utils/date';
+import { formatMoney } from '../utils/money';
 
 export default function ProductsPage() {
   const { user } = useAuth();
@@ -259,7 +260,7 @@ export default function ProductsPage() {
                 ) : filteredProducts.map(p => (
                   <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 font-bold text-gray-900">{p.productName}</td>
-                    <td className="px-6 py-4 text-gray-600 font-medium">${p.price.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-gray-600 font-medium">{formatMoney(p.price)}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span className={`font-bold ${p.stock <= 5 ? 'text-red-500' : 'text-gray-900'}`}>{p.stock}</span>
@@ -299,7 +300,7 @@ export default function ProductsPage() {
                   >
                     <div className="text-left">
                        <p className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{p.productName}</p>
-                       <p className="text-lg font-black text-blue-500">${p.price.toLocaleString()}</p>
+                       <p className="text-lg font-black text-blue-500">{formatMoney(p.price)}</p>
                        <p className="text-[10px] text-gray-400 uppercase font-bold mt-1">Stock: {p.stock}</p>
                     </div>
                     <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all">
@@ -370,7 +371,7 @@ export default function ProductsPage() {
                             <div key={item.product.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
                                <div>
                                   <p className="font-bold text-sm text-gray-900">{item.product.productName}</p>
-                                  <p className="text-xs text-blue-600">{item.quantity} x ${item.product.price.toLocaleString()}</p>
+                                  <p className="text-xs text-blue-600">{item.quantity} x {formatMoney(item.product.price)}</p>
                                </div>
                                <button onClick={() => removeFromCart(item.product.id)} className="min-h-11 min-w-11 flex items-center justify-center text-red-400 hover:text-red-600 transition-colors">
                                   <Trash2 size={16} />
@@ -384,7 +385,7 @@ export default function ProductsPage() {
                    <div className="pt-6 space-y-4">
                       <div className="flex justify-between items-center text-xl font-black text-gray-900">
                          <span>TOTAL</span>
-                         <span>${totalSale.toLocaleString()}</span>
+                         <span>{formatMoney(totalSale)}</span>
                       </div>
                       <Button
                         onClick={handleConfirmSale}
@@ -427,7 +428,7 @@ export default function ProductsPage() {
                         ))}
                      </div>
                   </td>
-                  <td className="px-6 py-4 font-black text-blue-600">${s.amount.toLocaleString()}</td>
+                  <td className="px-6 py-4 font-black text-blue-600">{formatMoney(s.amount)}</td>
                 </tr>
               ))}
             </tbody>
