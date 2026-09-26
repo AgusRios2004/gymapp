@@ -1,6 +1,6 @@
 ---
 id: 0010
-titulo: Backend en hora argentina — vencimientos, deudores y PDF de cierre sin corrimiento
+titulo: Backend en hora argentina — vencimientos, deudores, ingresos del mes y PDF de cierre
 estado: propuesta             # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 26/09/2026
@@ -9,15 +9,15 @@ adrs_relacionados: []
 
 ## Objetivo
 
-El backend decide qué día es "hoy" con `LocalDate.now()` y `LocalDateTime.now()`, que usan la zona de la JVM. La imagen de Docker (`eclipse-temurin:21-jre-alpine`) no configura zona, así que corre en **UTC**. En Argentina (UTC−3), entre las 21:00 y las 24:00 el backend ya vive en el día siguiente. Es el mismo bug que la [spec 0008](./0008-fechas-en-hora-local.md) corrigió en el frontend, pero acá decide reglas de negocio:
+El backend decide qué día es "hoy" con `LocalDate.now()` y `LocalDateTime.now()`, que usan la zona de la JVM. Producción corre con `docker-compose.yml` sobre la imagen de `gymapp-back/Dockerfile` (`eclipse-temurin:21-jre-alpine`), que no configura zona: **verificado el 26/09/2026 en `gymapp-backend:latest`**, el contenedor corre en UTC, sin `TZ` ni `/etc/localtime`, y con `LANG=en_US.UTF-8`. En Argentina (UTC−3), entre las 21:00 y las 24:00 el backend ya vive en el día siguiente. Es el mismo bug que la [spec 0008](./0008-fechas-en-hora-local.md) corrigió en el frontend, pero acá decide reglas de negocio:
 
 - **Asistencia rechazada:** un alumno con la cuota vencida *hoy* que llega a las 21:30 recibe "La membresía del alumno ha vencido", porque para el backend ya es mañana.
 - **Deudores de más:** la lista de clientes, los alumnos de una clase y el contador del dashboard marcan como deudor a quien vence hoy.
 - **Pago duplicado permitido:** el chequeo de "Ya existe un pago del plan … vigente" deja pasar un segundo cobro del mismo plan a un alumno que vence mañana.
-- **Ingresos del mes:** el 30/09 a las 22:00, el dashboard suma los ingresos de octubre (cero).
+- **Ingresos del mes:** el 30/09 a las 22:00, el dashboard suma los ingresos de octubre (cero). Además, la consulta filtra solo por número de mes (`MONTH(p.date) = :month`), sin el año: en septiembre de 2027 sumaría también septiembre de 2026.
 - **PDF de cierre:** "Emitido el" sale con 3 horas de diferencia, y los montos salen como `$150000.00` (`String.format("%.2f")`, sin separador de miles), a diferencia del formato de la [spec 0009](./0009-formato-de-montos.md).
 
-Registrado como BUG-18 y BUG-20 en la [bitácora de QA](../docs/notes/BITACORA_QA.md). Lo sufre el admin y, sobre todo, el alumno al que no dejan entrar.
+Registrado como BUG-18, BUG-20 y BUG-21 en la [bitácora de QA](../docs/notes/BITACORA_QA.md). Lo sufre el admin y, sobre todo, el alumno al que no dejan entrar.
 
 ## Restricciones
 
@@ -35,19 +35,22 @@ Registrado como BUG-18 y BUG-20 en la [bitácora de QA](../docs/notes/BITACORA_Q
    - **Vencimientos y deudores:** `AssistanceService`, `PaymentService`, `ClientService`, `GroupClassService` y `DashboardService`.
    - **Fechas por defecto cuando no llega una:** `WaterLogService`, `SupplementService`, `NutritionService`, `ExerciseLogService` y `RoutineService`, y los controllers `WaterLogController`, `SupplementController` y `NutritionController`.
    - **Hora de emisión del PDF:** `ReportService` y el nombre del archivo en `ReportController`.
-3. Quedan afuera los seeders (`DataLoader`, `HeavyDataLoader`), que solo generan datos de desarrollo, y `JwtUtil`, que compara instantes (`new Date()`) y no depende de la zona.
-4. Un test recorre `src/main/java` y falla si aparece un `LocalDate.now()` o `LocalDateTime.now()` sin argumentos fuera de los seeders.
+3. Los ingresos del mes del dashboard suman solo los pagos del **mes y año** actuales según ese reloj. La consulta pasa a filtrar por rango de fechas (del primer al último día del mes) en vez de `MONTH(p.date)`.
+4. Quedan afuera los seeders (`DataLoader`, `HeavyDataLoader`), que solo generan datos de desarrollo, y `JwtUtil`, que compara instantes (`new Date()`) y no depende de la zona.
+5. Un test recorre `src/main/java` y falla si aparece un `LocalDate.now()` o `LocalDateTime.now()` sin argumentos fuera de los seeders.
 
 ### B. Montos del PDF en formato argentino
 
-5. Los montos del PDF de cierre ("Ingresos Mensuales" y "Promedio por Cliente") se formatean con la misma regla que `formatMoney` del frontend: `$` pegado, punto para los miles, sin decimales si es entero y con dos decimales y coma si no lo es.
-6. "Emitido el" muestra la fecha y hora de Argentina (`dd/MM/yyyy HH:mm hs`).
+6. Los montos del PDF de cierre ("Ingresos Mensuales" y "Promedio por Cliente") se formatean con la misma regla que `formatMoney` del frontend: `$` pegado, punto para los miles, sin decimales si es entero y con dos decimales y coma si no lo es.
+7. "Emitido el" muestra la fecha y hora de Argentina (`dd/MM/yyyy HH:mm hs`).
 
 ## Casos de borde
 
 - **21:40 del 24/09 en Argentina** (00:40 UTC del 25): para el backend es el 24. Es el caso central de todos los AC.
 - **00:10 del 25/09 en Argentina** (03:10 UTC): ya es el 25. La cuota que vencía el 24 ahora sí está vencida. Esto evita "arreglar" el bug corriendo la fecha un día para el otro lado.
 - **Cambio de mes a la noche** (30/09 a las 22:00 en Argentina): los ingresos del dashboard son los de septiembre.
+- **Mismo mes de otro año:** un pago del 10/09/2025 no suma en los ingresos de septiembre de 2026.
+- **Último día del mes:** un pago del 30/09 suma en septiembre (el rango incluye el último día).
 - **Cuota que vence hoy:** no está vencida (se mantiene el `isBefore(hoy)` actual) y el alumno puede entrar hasta las 23:59 de Argentina.
 - **Propiedad `app.zone-id` inválida:** la aplicación no levanta, y el error dice qué valor falló. Es preferible a arrancar en UTC sin avisar.
 - **Horario de verano:** Argentina no lo usa hoy. Si volviera, `ZoneId` lo resuelve sin cambios de código.
@@ -62,7 +65,7 @@ En todos los tests el reloj se fija con `Clock.fixed(<instante>, ZoneId.of("Amer
 | AC-0010-02 | `AssistanceService`, alumno activo con la cuota que vence el `2026-09-24`: a las 21:40 del 24 registrar la asistencia **no** lanza "ha vencido". Con el reloj en `2026-09-25T03:10:00Z` (25/09 00:10) sí lo lanza. |  |
 | AC-0010-03 | `ClientService`, alumno con la cuota que vence el `2026-09-24`, a las 21:40 del 24: el DTO del cliente tiene `isDebtor = false`, tanto en la lista como en `getClientById`. |  |
 | AC-0010-04 | `GroupClassService.getStudentsByClass`, con ese mismo alumno inscripto y a la misma hora: el DTO tiene `isDebtor = false`. |  |
-| AC-0010-05 | `DashboardService`: a las 21:40 del 24/09, ese alumno no cuenta en `debtorsCount`. Con el reloj en `2026-10-01T01:00:00Z` (30/09 22:00), `sumAmountByMonth` se llama con `9`. |  |
+| AC-0010-05 | `DashboardService`: a las 21:40 del 24/09, el alumno con la cuota que vence el `2026-09-24` no cuenta en `debtorsCount`. |  |
 | AC-0010-06 | `PaymentService`: un pago mensual sin `date` a las 21:40 del 24/09 se guarda con fecha `2026-09-24`. Un segundo pago del **mismo plan** a un alumno cuya cuota vence el `2026-09-25`, a esa misma hora, lanza "Ya existe un pago del plan … vigente". |  |
 | AC-0010-07 | `WaterLogService` y `SupplementService` sin fecha, y `GET` de `WaterLogController` y `SupplementController` sin el parámetro `date`, a las 21:40 del 24/09: usan `2026-09-24`. |  |
 | AC-0010-08 | `NutritionService` y `ExerciseLogService` guardan el registro sin fecha con `2026-09-24` a las 21:40 del 24/09. El `GET` de `NutritionController` sin `date` consulta `2026-09-24`. |  |
@@ -70,10 +73,10 @@ En todos los tests el reloj se fija con `Clock.fixed(<instante>, ZoneId.of("Amer
 | AC-0010-10 | `ReportService`, con `monthlyRevenue = 150000` y 8 alumnos activos, a las 21:40 del 24/09: el texto del PDF contiene `$150.000`, `$18.750` y `Emitido el: 24/09/2026 21:40 hs`, y no contiene `150000.00`. |  |
 | AC-0010-11 | `GET /reports/monthly` a las 21:40 del 24/09 responde con `Content-Disposition` `attachment; filename=Reporte_GYM_2026_09_24_2140.pdf`. |  |
 | AC-0010-12 | Un test que recorre `src/main/java` no encuentra `LocalDate.now()` ni `LocalDateTime.now()` sin argumentos fuera de `config/DataLoader.java` y `config/HeavyDataLoader.java`. Si se agrega uno, el test falla y nombra el archivo y la línea. |  |
+| AC-0010-13 | Dashboard contra la base (H2), con pagos de `$20.000` el `2026-09-30`, `$10.000` el `2025-09-10` y `$5.000` el `2026-10-01`, y el reloj en `2026-10-01T01:00:00Z` (30/09 22:00 en Argentina): `monthlyRevenue` es `20000`. |  |
 
 ## Fuera de alcance
 
-- **La suma de ingresos del mes ignora el año** (`MONTH(p.date) = :month` en `PaymentRepository.sumAmountByMonth`). En septiembre de 2027 sumaría también los pagos de septiembre de 2026. Es un bug de la consulta, no de la zona horaria, y se anota como BUG-21. AC-0010-05 solo verifica que el mes que se pide sea el correcto.
 - **Configurar la zona en la imagen de Docker** (`TZ` o `-Duser.timezone`). Con el `Clock` inyectado, el código deja de depender de la zona de la JVM. Configurarla también ocultaría el bug en producción sin arreglarlo en los tests, y la imagen Alpine no trae `tzdata`.
 - **Los seeders** (`DataLoader`, `HeavyDataLoader`). Solo arman datos de desarrollo; un día de diferencia ahí no afecta a nadie.
 - **La zona de la conexión JDBC.** Las fechas de negocio son columnas `DATE` mapeadas a `LocalDate`, que Hibernate no corre de zona. Si aparece un corrimiento en la base, es otro bug.
@@ -83,12 +86,12 @@ En todos los tests el reloj se fija con `Clock.fixed(<instante>, ZoneId.of("Amer
 
 **Qué se asumió:**
 - La zona es `America/Argentina/Buenos_Aires` para todo el negocio. No hay sucursales en otras zonas.
+- La consulta de ingresos filtra por rango de fechas (`p.date BETWEEN :desde AND :hasta`) y no con `YEAR()`/`MONTH()`: es portable entre MySQL y H2 y puede usar un índice sobre `date`.
 - El mecanismo es un `Clock` inyectado, no configurar la zona de la JVM. Es una decisión de arquitectura: T1 la registra como ADR-0011.
 - Los montos del PDF siguen la misma regla que `formatMoney` del frontend (spec 0009), así el mismo número se ve igual en la app y en el PDF.
 
 **Preguntas abiertas:**
-1. ¿Sumamos BUG-21 (ingresos del mes sin año) a esta spec? Toca el mismo cálculo de `DashboardService` que AC-0010-05, pero es otro bug. Lo dejé afuera para no mezclar.
-2. ¿Producción corre en la imagen de Docker (UTC) o en otro lado? Si ya corre con zona argentina, hoy el bug no se ve en producción, pero la spec sigue valiendo para no depender de eso.
+- Ninguna. BUG-21 (ingresos del mes sin año) se sumó a esta spec por pedido del usuario (26/09/2026). Que producción corre en la imagen de Docker en UTC se verificó ese mismo día.
 
 **Lo más probable que salga mal:**
 - **Que un servicio quede usando `LocalDate.now()` sin argumentos** porque el reloj no llegó a un camino poco transitado. AC-0010-12 existe para eso: recorre el código en vez de confiar en que la lista de la sección A esté completa.
