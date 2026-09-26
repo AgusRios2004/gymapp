@@ -282,3 +282,23 @@ describe('PaymentsPage - fecha mostrada en la lista (spec 0008)', () => {
     expect(row).not.toHaveTextContent('23/09');
   });
 });
+
+// Spec 0009: el monto de la lista salía con toLocaleString() sin locale y la opción del tipo de
+// cuota sin ningún formato ($20000).
+describe('PaymentsPage - montos en formato argentino (spec 0009)', () => {
+  it('AC-0009-07: la fila muestra $20.000 y la opción del tipo de cuota dice "Plan Full - $20.000"', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      { id: 51, amount: 20000, date: '2026-09-24', paymentType: 'MONTHLY', clientName: 'Nora Vega' },
+    ]);
+    const user = userEvent.setup();
+    renderPaymentsPage();
+
+    const row = (await screen.findByText('Nora Vega')).closest('tr')!;
+    expect(row).toHaveTextContent('$20.000');
+
+    await user.click(screen.getByRole('button', { name: /Registrar Pago/i }));
+    const dialog = screen.getByRole('dialog');
+    expect(await within(dialog).findByRole('option', { name: 'Plan Full - $20.000' })).toBeInTheDocument();
+  });
+});
