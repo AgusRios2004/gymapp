@@ -1,6 +1,6 @@
 # Tareas — spec 0010: backend en hora argentina
 
-> Spec: [`0010-backend-en-hora-argentina.md`](./0010-backend-en-hora-argentina.md) · Estado de la spec: `propuesta`
+> Spec: [`0010-backend-en-hora-argentina.md`](./0010-backend-en-hora-argentina.md) · Estado de la spec: `aprobada`
 > Solo backend. Tamaños **relativos** entre sí (chica / media / grande), sin base histórica para estimar en horas.
 
 | # | Tarea | Archivos | Depende de | AC | Tamaño |
