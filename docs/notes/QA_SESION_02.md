@@ -1,7 +1,7 @@
 # QA Sesión 02 — checklist (sábado 03/10/2026)
 
 > **Objetivo:** cerrar el [Sprint 1](../sprints/06-09-2026-sprint-1-refactor-core-admin.md) **sin bugs críticos**. Es la condición para que el sprint cierre el 04/10 (ver [`ROADMAP.md`](../ROADMAP.md)).
-> **Alcance:** volver a probar los bugs de la [Sesión 01](./BITACORA_QA.md) y lo que entregaron las specs 0001 a 0010. Los ítems de diseño del Sprint 2 están al final: se prueban si sobra tiempo y **no bloquean** esta sesión, porque son el objetivo de la QA Sesión 03 (17/10).
+> **Alcance:** volver a probar los bugs de la [Sesión 01](./BITACORA_QA.md) y lo que entregaron las specs 0001 a 0010, salvo la 0006 (espacios y choques de horario), que sigue en `propuesta`. Los ítems de diseño del Sprint 2 están al final: se prueban si sobra tiempo y **no bloquean** esta sesión, porque son el objetivo de la QA Sesión 03 (17/10).
 > **Duración estimada:** 2 hs. Armado el 28/09/2026.
 
 ---
@@ -34,12 +34,12 @@ Al terminar, volcar los hallazgos a [`BITACORA_QA.md`](./BITACORA_QA.md) como "S
 
 ---
 
-## 1. Acceso y roles
+## 1. Acceso
 
 | # | Paso | Esperado | Origen | Resultado |
 |:---:|:---|:---|:---:|:---:|
-| 1.1 | Entrar como ADMIN y mirar el menú lateral | Aparece "Espacios" | AC-0006-17 | |
-| 1.2 | Entrar como PROFESSOR y mirar el menú lateral | "Espacios" **no** aparece | AC-0006-17 | |
+| 1.1 | Login con contraseña incorrecta | Mensaje en español que dice que las credenciales no son válidas | spec 0001 | |
+| 1.2 | Login como ADMIN y como PROFESSOR (en incógnito) | Los dos entran al dashboard | — | |
 | 1.3 | Cualquier error de la sesión | El toast muestra un mensaje en español, nunca un texto técnico como `Professor not found with id: 1` | BUG-05, spec 0001 | |
 
 ## 2. Dashboard
@@ -107,20 +107,19 @@ Al terminar, volcar los hallazgos a [`BITACORA_QA.md`](./BITACORA_QA.md) como "S
 | 6.3 | Registrar la de Roberto (inactivo) | Mensaje que dice que el alumno está inactivo | AC-0004-06 | |
 | 6.4 | Registrar la de un alumno cuya cuota vence **hoy** | Se guarda: la cuota sigue vigente todo el día | spec 0010 | |
 
-## 7. Clases y espacios
+## 7. Clases
+
+> Los espacios y los choques de horario (spec 0006) **no entran**: la spec sigue en `propuesta` y no está implementada.
 
 | # | Paso | Esperado | Origen | Resultado |
 |:---:|:---|:---|:---:|:---:|
-| 7.1 | Como ADMIN, crear el espacio "  Sala QA " | Se guarda como "Sala QA" | AC-0006-01 | |
-| 7.2 | Crear otro espacio "sala qa" | Mensaje de que ya existe; no se crea | AC-0006-03 | |
-| 7.3 | Crear la clase A: lunes y miércoles, 10:00–11:00, Sala QA, Marcos | Se crea con los dos días | BUG-07, T-14 | |
-| 7.4 | Crear la clase B: miércoles y viernes, 10:30–11:30, Sala QA, Sofía | Error que nombra "Sala QA", el miércoles, el horario y la clase A; el modal sigue abierto con los datos | AC-0006-11/13/21 | |
-| 7.5 | Crear la clase C: lunes, 11:00–12:00, Sala QA | Se crea (los horarios que se tocan no chocan) | AC-0006-12 | |
-| 7.6 | Crear una clase el lunes 10:30–11:30 con Marcos en **otro** espacio | Error que nombra a Marcos y a la clase A | AC-0006-14 | |
-| 7.7 | Crear una clase con fin antes del inicio | Error; no se crea | AC-0006-10 | |
-| 7.8 | Dar de baja Sala QA y abrir "Nueva clase" | Sala QA no aparece en el selector | AC-0006-19 | |
-| 7.9 | Editar la clase A (con Sala QA dada de baja) y cambiarle el nombre | Se guarda; el selector muestra Sala QA elegida | AC-0006-09/20 | |
-| 7.10 | Mirar las cards de las clases del seeder | Las que no tienen espacio dicen "Sin espacio"; se distinguen bien entre sí | AC-0006-22, DES-12 | |
+| 7.1 | Nueva clase sin elegir ningún día | No se puede guardar | AC-0003-10 | |
+| 7.2 | Crear "Funcional QA": lunes y viernes, 19:00–20:00, Marcos | Aparece en las columnas Lunes y Viernes, y no en Martes | BUG-07, T-14, AC-0003-09/10 | |
+| 7.3 | Editar "Funcional QA" | Lunes y Viernes aparecen marcados y el resto no | AC-0003-11 | |
+| 7.4 | Cambiarle los días a solo martes y guardar | Queda solo en la columna Martes | AC-0003-05 | |
+| 7.5 | Asignar un alumno a una clase desde el formulario del alumno | El selector de clase muestra los días de cada clase | AC-0003-12 | |
+| 7.6 | Ver los alumnos de una clase | Marca como deudor solo a quien tiene la cuota vencida, no a quien vence hoy | spec 0010 | |
+| 7.7 | Mirar las cards de las clases | Se distinguen bien entre sí | DES-12 | |
 
 ## 8. Rutinas
 
@@ -156,7 +155,7 @@ Los tests cubren el caso de las 21:00 a las 24:00 con un reloj fijo. En la app s
 | 10.2 | Layout en desktop ancho | Ocupa todo el ancho | DES-02 | |
 | 10.3 | Toasts | Centrados | DES-03 | |
 | 10.4 | Contraste de textos grises | Se leen bien | DES-04 | |
-| 10.5 | Borrar algo (registro físico, espacio) | Pide confirmación con un modal | DES-05 | |
+| 10.5 | Borrar algo (un registro físico) | Pide confirmación con un modal | DES-05 | |
 | 10.6 | Una vista que falla o no tiene datos | Muestra un estado vacío o de error, no una pantalla en blanco | DES-06 | |
 | 10.7 | Todas las páginas a 375px | Sin scroll horizontal de la página | — | |
 
