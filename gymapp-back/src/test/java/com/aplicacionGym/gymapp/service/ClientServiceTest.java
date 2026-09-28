@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -31,6 +33,11 @@ class ClientServiceTest {
 
     @Mock
     private PaymentRepository paymentRepository;
+
+    // ClientService usa el reloj del negocio desde la spec 0010 (ADR-0011). Este test arma la cuota
+    // vencida con LocalDate.now(), así que el reloj va en la zona del sistema.
+    @Spy
+    private Clock clock = Clock.systemDefaultZone();
 
     @InjectMocks
     private ClientService clientService;

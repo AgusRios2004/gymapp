@@ -1,6 +1,7 @@
 package com.aplicacionGym.gymapp.service;
 
 import com.aplicacionGym.gymapp.dto.response.DashboardStatsDTO;
+import com.aplicacionGym.gymapp.util.MoneyFormatter;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,6 +21,10 @@ public class ReportService {
 
         @Autowired
         private DashboardService dashboardService;
+
+        // Reloj del negocio (spec 0010, ADR-0011): "Emitido el" en hora argentina.
+        @Autowired
+        private Clock clock;
 
         public void generateMonthlyReport(HttpServletResponse response) throws IOException {
                 DashboardStatsDTO stats = dashboardService.getDashboardStats();
@@ -41,7 +47,7 @@ public class ReportService {
 
                 // Fecha de emisión
                 Paragraph date = new Paragraph(
-                                "Emitido el: " + LocalDateTime.now()
+                                "Emitido el: " + LocalDateTime.now(clock)
                                                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + " hs",
                                 subTitleFont);
                 date.setAlignment(Paragraph.ALIGN_CENTER);
@@ -62,13 +68,12 @@ public class ReportService {
                 addMetricCell(table, "Alumnos Activos", String.valueOf(stats.getActiveClients()), metricValueFont);
                 addMetricCell(table, "Total Profesores", String.valueOf(stats.getTotalProfessors()), metricValueFont);
                 addMetricCell(table, "Rutinas Creadas", String.valueOf(stats.getTotalRoutines()), metricValueFont);
-                addMetricCell(table, "Ingresos Mensuales", "$" + String.format("%.2f", stats.getMonthlyRevenue()),
+                addMetricCell(table, "Ingresos Mensuales", MoneyFormatter.format(stats.getMonthlyRevenue()),
                                 metricValueFont);
                 addMetricCell(table, "Promedio por Cliente",
-                                "$" + String.format("%.2f",
-                                                stats.getMonthlyRevenue() / (stats.getActiveClients() > 0
-                                                                ? stats.getActiveClients()
-                                                                : 1)),
+                                MoneyFormatter.format(stats.getMonthlyRevenue() / (stats.getActiveClients() > 0
+                                                ? stats.getActiveClients()
+                                                : 1)),
                                 metricValueFont);
 
                 document.add(table);

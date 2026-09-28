@@ -8,6 +8,7 @@ import com.aplicacionGym.gymapp.repository.SupplementLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -19,6 +20,10 @@ public class SupplementService {
     @Autowired
     private ClientRepository clientRepository;
 
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
+
     public Optional<SupplementLog> getLogByDate(Long clientId, LocalDate date) {
         return supplementLogRepository.findByClientIdAndDate(clientId, date);
     }
@@ -27,7 +32,7 @@ public class SupplementService {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
 
-        LocalDate targetDate = logData.getDate() != null ? logData.getDate() : LocalDate.now();
+        LocalDate targetDate = logData.getDate() != null ? logData.getDate() : LocalDate.now(clock);
 
         SupplementLog log = supplementLogRepository.findByClientIdAndDate(clientId, targetDate)
                 .orElseGet(() -> {

@@ -11,6 +11,7 @@ import com.aplicacionGym.gymapp.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -26,15 +27,19 @@ public class RoutineService {
     private final ExerciseRepository exerciseRepository;
     private final ClientRepository clientRepository;
     private final ClientRoutineRepository clientRoutineRepository;
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    private final Clock clock;
 
     public RoutineService(RoutineRepository routineRepository,
             ExerciseRepository exerciseRepository,
             ClientRepository clientRepository,
-            ClientRoutineRepository clientRoutineRepository) {
+            ClientRoutineRepository clientRoutineRepository,
+            Clock clock) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.clientRepository = clientRepository;
         this.clientRoutineRepository = clientRoutineRepository;
+        this.clock = clock;
     }
 
     public RoutineResponseDTO createRoutine(RoutineRequestDTO dto) {
@@ -146,7 +151,7 @@ public class RoutineService {
         clientRoutine.setClient(client);
         clientRoutine.setRoutine(routine);
         clientRoutine.setActive(true);
-        clientRoutine.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now());
+        clientRoutine.setStartDate(request.getStartDate() != null ? request.getStartDate() : LocalDate.now(clock));
 
         if (request.getSchedule() != null) {
             List<ClientSchedule> schedules = request.getSchedule().stream().map(sch -> {

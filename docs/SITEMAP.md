@@ -48,7 +48,8 @@ docs/
 │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
 │   ├── 0009-estandar-mobile.md
-│   └── 0010-capa2-revision-humana-obligatoria.md
+│   ├── 0010-capa2-revision-humana-obligatoria.md
+│   └── 0011-reloj-inyectado-zona-del-negocio.md
 ├── notes/                  ← notas internas, bitácoras, QA logs
 │   └── BITACORA_QA.md
 ├── prd/                    ← product requirements documents (uno por capa)
@@ -75,7 +76,7 @@ docs/
 
 | Archivo | Descripción |
 |:---|:---|
-| [`notes/BITACORA_QA.md`](./notes/BITACORA_QA.md) | Sesiones de QA manual. Bugs encontrados, estados y decisiones tomadas. Sesión 01 (05/09/2026): 7 bugs críticos · 7 bugs de experiencia · 13 issues de diseño. Pendientes abiertos: BUG-18, BUG-20, BUG-21 (spec 0010) y QA-0007 (DES-14 y BUG-19 cerrados el 26/09). |
+| [`notes/BITACORA_QA.md`](./notes/BITACORA_QA.md) | Sesiones de QA manual. Bugs encontrados, estados y decisiones tomadas. Sesión 01 (05/09/2026): 7 bugs críticos · 7 bugs de experiencia · 13 issues de diseño. Pendiente abierto: QA-0007 (DES-14, BUG-18, BUG-19, BUG-20 y BUG-21 cerrados el 26/09). |
 
 ---
 
@@ -161,7 +162,8 @@ gymapp/
 │   │   ├── 0007-gate-interactivo-en-main-sin-spec-coverage.md
 │   │   ├── 0008-paleta-categorica-tipo-entrenamiento.md
 │   │   ├── 0009-estandar-mobile.md
-│   │   └── 0010-capa2-revision-humana-obligatoria.md
+│   │   ├── 0010-capa2-revision-humana-obligatoria.md
+│   │   └── 0011-reloj-inyectado-zona-del-negocio.md
 │   ├── notes/
 │   │   └── BITACORA_QA.md
 │   ├── prd/

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -18,11 +19,15 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
+    // Reloj del negocio (spec 0010, ADR-0011): el nombre del PDF lleva la fecha y hora de Argentina.
+    @Autowired
+    private Clock clock;
+
     @GetMapping("/monthly")
     public void generateMonthlyReport(HttpServletResponse response) throws IOException {
         response.setContentType("application/pdf");
         String headerKey = "Content-Disposition";
-        String fileName = "Reporte_GYM_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmm"))
+        String fileName = "Reporte_GYM_" + LocalDateTime.now(clock).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmm"))
                 + ".pdf";
         String headerValue = "attachment; filename=" + fileName;
         response.setHeader(headerKey, headerValue);

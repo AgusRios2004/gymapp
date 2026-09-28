@@ -10,6 +10,7 @@ import com.aplicacionGym.gymapp.repository.NutritionPlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,10 @@ public class NutritionService {
     private MealLogRepository mealLogRepository;
     @Autowired
     private ClientRepository clientRepository;
+
+    // Reloj del negocio (spec 0010, ADR-0011): "hoy" en hora argentina, no en la zona de la JVM.
+    @Autowired
+    private Clock clock;
 
     public Optional<NutritionPlan> getActivePlan(Long clientId) {
         return nutritionPlanRepository.findFirstByClientIdAndActiveTrueOrderByIdDesc(clientId);
@@ -44,7 +49,7 @@ public class NutritionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
         mealLog.setClient(client);
         if (mealLog.getDate() == null) {
-            mealLog.setDate(LocalDate.now());
+            mealLog.setDate(LocalDate.now(clock));
         }
         return mealLogRepository.save(mealLog);
     }
