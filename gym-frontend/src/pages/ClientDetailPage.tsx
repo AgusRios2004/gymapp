@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { toast } from 'react-toastify';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -56,6 +57,7 @@ export default function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabType>('general');
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [recordToDelete, setRecordToDelete] = useState<PhysicalRecord | null>(null);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [recordForm, setRecordForm] = useState({
@@ -142,6 +144,21 @@ export default function ClientDetailPage() {
     { id: 'assistance', label: 'Asistencias', icon: <Calendar size={18} /> },
     { id: 'products', label: 'Compras', icon: <ShoppingBag size={18} /> },
   ];
+
+  // Patrón de pestañas de WAI-ARIA con activación automática: las flechas mueven foco y selección.
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const last = tabs.length - 1;
+    const next = {
+      ArrowRight: index === last ? 0 : index + 1,
+      ArrowLeft: index === 0 ? last : index - 1,
+      Home: 0,
+      End: last,
+    }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    setActiveTab(tabs[next].id as TabType);
+    tabRefs.current[next]?.focus();
+  };
 
   const activeRoutine = client.routineActive ?? null;
   // findByClientId no tiene ORDER BY: el array llega en orden de inserción, no por fecha.
@@ -237,12 +254,19 @@ export default function ClientDetailPage() {
 
         {/* Tabs */}
         <div className="relative border-t border-slate-100 px-2 sm:px-6">
-          <div className="flex overflow-x-auto no-scrollbar">
-            {tabs.map((tab) => (
+          <div role="tablist" aria-label="Secciones de la ficha" className="flex overflow-x-auto no-scrollbar">
+            {tabs.map((tab, index) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as TabType)}
+                ref={(el) => { tabRefs.current[index] = el; }}
+                type="button"
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-controls="client-tabpanel"
                 aria-selected={activeTab === tab.id}
+                tabIndex={activeTab === tab.id ? 0 : -1}
+                onClick={() => setActiveTab(tab.id as TabType)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
                 className={`min-h-11 flex items-center gap-2 px-4 border-b-2 text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'border-emerald-700 text-emerald-700'
@@ -259,7 +283,7 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Content Area */}
-      <div className="space-y-6">
+      <div role="tabpanel" id="client-tabpanel" aria-labelledby={`tab-${activeTab}`} className="space-y-6">
         {activeTab === 'general' && (
           <div className="space-y-6">
             <RecompositionWidget 

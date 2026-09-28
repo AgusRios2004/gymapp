@@ -218,15 +218,67 @@ describe('ClientDetailPage - pestañas (AC-0007-06)', () => {
       'Asistencias',
       'Compras',
     ];
-    tabNames.forEach((name) => expect(screen.getByRole('button', { name })).toBeInTheDocument());
+    tabNames.forEach((name) => expect(screen.getByRole('tab', { name })).toBeInTheDocument());
 
-    const pagosTab = screen.getByRole('button', { name: 'Pagos' });
+    const pagosTab = screen.getByRole('tab', { name: 'Pagos' });
     await user.click(pagosTab);
 
     expect(await screen.findByText('Historial de Pagos')).toBeInTheDocument();
     const marcada =
       pagosTab.getAttribute('aria-selected') === 'true' || pagosTab.hasAttribute('aria-current');
     expect(marcada).toBe(true);
+  });
+});
+
+// H-0007-1-05: aria-selected sobre un <button> sin role="tab" no lo anuncia ningún lector de
+// pantalla. Las pestañas siguen el patrón tablist/tab/tabpanel: solo la activa entra en el orden
+// de tabulación y las flechas mueven la selección.
+describe('ClientDetailPage - pestañas accesibles (H-0007-1-05)', () => {
+  it('expone tablist, tab y tabpanel, y la pestaña activa es la única tabulable', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_RECENT] });
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    const tablist = screen.getByRole('tablist', { name: 'Secciones de la ficha' });
+    const tabs = within(tablist).getAllByRole('tab');
+    expect(tabs).toHaveLength(7);
+
+    await user.click(within(tablist).getByRole('tab', { name: 'Pagos' }));
+
+    tabs.forEach((tab) => {
+      const activa = tab.textContent === 'Pagos';
+      expect(tab).toHaveAttribute('aria-selected', String(activa));
+      expect(tab).toHaveAttribute('tabindex', activa ? '0' : '-1');
+    });
+    const panel = screen.getByRole('tabpanel', { name: 'Pagos' });
+    expect(within(panel).getByText('Historial de Pagos')).toBeInTheDocument();
+  });
+
+  it('las flechas, Inicio y Fin mueven el foco y la selección entre pestañas', async () => {
+    const user = userEvent.setup();
+    renderClientDetailPage(CLIENT_CARLOS, { payments: [PAYMENT_RECENT] });
+    await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
+
+    const general = screen.getByRole('tab', { name: 'General' });
+    general.focus();
+
+    await user.keyboard('{ArrowRight}');
+    const pagos = screen.getByRole('tab', { name: 'Pagos' });
+    expect(pagos).toHaveFocus();
+    expect(pagos).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{End}');
+    expect(screen.getByRole('tab', { name: 'Compras' })).toHaveFocus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(general).toHaveFocus();
+    expect(general).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('tab', { name: 'Compras' })).toHaveFocus();
+
+    await user.keyboard('{Home}');
+    expect(general).toHaveFocus();
   });
 });
 
@@ -282,7 +334,7 @@ describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
     renderClientDetailPage(CLIENT_CARLOS);
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    await user.click(screen.getByRole('button', { name: 'Progreso' }));
+    await user.click(screen.getByRole('tab', { name: 'Progreso' }));
     await user.click(await screen.findByRole('button', { name: /Nuevo Registro/ }));
     await user.type(inputByLabel('Peso (kg)'), '80');
     await user.type(inputByLabel('Músculo (%)'), '35');
@@ -299,11 +351,11 @@ describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
     vi.mocked(getClientProductsPurchased).mockResolvedValue([PURCHASE_24]);
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    await user.click(screen.getByRole('button', { name: 'Pagos' }));
+    await user.click(screen.getByRole('tab', { name: 'Pagos' }));
     const paymentRow = (await screen.findByText('24/09/2026')).closest('tr')!;
     expect(paymentRow).not.toHaveTextContent('23/09');
 
-    await user.click(screen.getByRole('button', { name: 'Compras' }));
+    await user.click(screen.getByRole('tab', { name: 'Compras' }));
     const purchaseRow = (await screen.findByText('Proteína')).closest('tr')!;
     expect(purchaseRow).toHaveTextContent('24/09/2026');
   });
@@ -314,7 +366,7 @@ describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
     vi.mocked(getPhysicalRecords).mockResolvedValue([RECORD_24]);
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    await user.click(screen.getByRole('button', { name: 'Progreso' }));
+    await user.click(screen.getByRole('tab', { name: 'Progreso' }));
 
     expect(await screen.findByText('24/09/2026')).toBeInTheDocument();
   });
@@ -325,7 +377,7 @@ describe('ClientDetailPage - fechas en hora local (spec 0008)', () => {
     vi.mocked(getClientAssistance).mockResolvedValue([ASSISTANCE_24]);
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    await user.click(screen.getByRole('button', { name: 'Asistencias' }));
+    await user.click(screen.getByRole('tab', { name: 'Asistencias' }));
 
     const card = (await screen.findByText(/19:30/)).closest('div.rounded-2xl') as HTMLElement;
     expect(within(card).getByText('24')).toBeInTheDocument();
@@ -353,11 +405,11 @@ describe('ClientDetailPage - montos en formato argentino (spec 0009)', () => {
     ]);
     await screen.findByRole('heading', { level: 1, name: 'Carlos Perez' });
 
-    await user.click(screen.getByRole('button', { name: 'Pagos' }));
+    await user.click(screen.getByRole('tab', { name: 'Pagos' }));
     const paymentRow = (await screen.findByText('15/09/2026')).closest('tr')!;
     expect(paymentRow).toHaveTextContent('$15.000');
 
-    await user.click(screen.getByRole('button', { name: 'Compras' }));
+    await user.click(screen.getByRole('tab', { name: 'Compras' }));
     const purchaseRow = (await screen.findByText('Creatina')).closest('tr')!;
     expect(purchaseRow).toHaveTextContent('$25.000');
     expect(purchaseRow).toHaveTextContent('$50.000');
