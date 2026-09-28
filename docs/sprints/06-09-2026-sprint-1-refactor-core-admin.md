@@ -111,7 +111,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-15 | Crear `SearchableSelect.tsx` — combobox con buscador, genérico y tipado | `components/ui/SearchableSelect.tsx` | 3 hs | — | 0005 | ✅ |
 | T-16 | Reemplazar select de cliente en pagos con `SearchableSelect` (DNI + nombre) | `PaymentsPage.tsx` | 1 h | T-15 | 0005 | ✅ |
 | T-25 | Toggle activo/inactivo inline en fila de tabla de clientes | `ClientsPage.tsx` | 1 h | T-08 | 0004 | ✅ |
-| — | QA Sesión 02 (sábado 03/10) | — | 2 hs | todo lo anterior | — | ⬜ |
+| — | QA Sesión 02 (sábado 03/10) — checklist en [`QA_SESION_02.md`](../notes/QA_SESION_02.md) | — | 2 hs | todo lo anterior | — | ⬜ |
 
 **Estimación Semana 4: ~11 hs**
 
