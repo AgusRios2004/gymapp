@@ -1,5 +1,6 @@
 package com.aplicacionGym.gymapp.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,8 @@ public class ClientResponseDTO {
         return active;
     }
 
+    // Sin la anotación Jackson lo publica como "debtor" y el frontend lee "isDebtor" (spec 0012).
+    @JsonProperty("isDebtor")
     public boolean isDebtor() {
         return isDebtor;
     }
