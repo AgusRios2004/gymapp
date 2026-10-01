@@ -1,7 +1,7 @@
 ---
 id: 0012
 titulo: Deudor visible en la UI — el campo `isDebtor` llega al frontend
-estado: aprobada           # draft | propuesta | aprobada | implementada | archivada
+estado: implementada         # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 29/09/2026
 adrs_relacionados: [ADR-0011]
