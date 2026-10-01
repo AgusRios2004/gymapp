@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,6 +45,11 @@ class AssistanceControllerErrorsTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    // "Hoy" del negocio (ADR-0011): con el reloj de la JVM el test fallaba entre las 21 y las 24 de
+    // Argentina en un runner en UTC.
+    @Autowired
+    private Clock clock;
 
     @Autowired
     private ClientRepository clientRepository;
@@ -90,13 +96,13 @@ class AssistanceControllerErrorsTest {
     // AC-0001-07: cliente sin ningún pago de cuota responde 409 con message en español.
     @Test
     void registerAssistance_forClientWithoutAnyMonthlyPayment_respondsConflictInSpanish() throws Exception {
-        Client client = saveClient("50111222");
+        Client client = saveClient("52111222");
         Professor professor = saveProfessor("90111222");
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("idClient", client.getId());
         body.put("idProfessor", professor.getId());
-        body.put("date", LocalDate.now().toString());
+        body.put("date", LocalDate.now(clock).toString());
         body.put("inputHour", "09:00:00");
 
         MvcResult result = mockMvc.perform(post("/api/assistance")
@@ -116,11 +122,11 @@ class AssistanceControllerErrorsTest {
     // AC-0001-08: la última cuota del cliente venció ayer; responde 409 y el message contiene esa fecha.
     @Test
     void registerAssistance_forClientWithExpiredMonthlyPayment_respondsConflictWithExpirationDate() throws Exception {
-        Client client = saveClient("50111223");
+        Client client = saveClient("52111223");
         Professor professor = saveProfessor("90111223");
         MonthlyType monthlyType = saveMonthlyType(30);
 
-        LocalDate expirationDate = LocalDate.now().minusDays(1);
+        LocalDate expirationDate = LocalDate.now(clock).minusDays(1);
         LocalDate paymentDate = expirationDate.minusDays(monthlyType.getDurationDays());
 
         Payment payment = new Payment();
@@ -135,7 +141,7 @@ class AssistanceControllerErrorsTest {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("idClient", client.getId());
         body.put("idProfessor", professor.getId());
-        body.put("date", LocalDate.now().toString());
+        body.put("date", LocalDate.now(clock).toString());
         body.put("inputHour", "09:00:00");
 
         MvcResult result = mockMvc.perform(post("/api/assistance")
