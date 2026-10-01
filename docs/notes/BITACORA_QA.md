@@ -263,3 +263,27 @@ También apareció que el frontend trataba las fechas `LocalDate` como UTC: "hoy
 
 - **Sandcastle se corta sin reanudarse limpio:** la corrida terminó en la última vuelta del fixer, con un cambio de test sin commitear en el worktree. Al terminarlo a mano hubo que reconstruir qué hallazgos quedaban leyendo el log del fixer.
 - **Los hallazgos de la revisión 1 se pierden** cuando corre la revisión 2, porque escriben el mismo archivo de log. Deuda para commons: guardar cada revisión por separado.
+
+---
+
+## 📅 Sesión 02 — 30 Sep 2026
+**Ejecutó:** Claude Code (Playwright) a pedido de Agustín | **Branch:** `main` (`47db51c` + fix de test `5253e79`) | **Tipo:** checklist completo de [`QA_SESION_02.md`](./QA_SESION_02.md), adelantado del sábado 03/10. App local sin Docker, `gym_db` con `mysqldump` previo y restaurado al terminar.
+
+Corrida de 23:20 a 00:00: cubre la ventana de 21 a 24 de la spec 0010 (pasos 9.2, 6.4, 2.2 y 4.7 con la hora real). Antes de empezar se cerraron los tres críticos de la pasada previa (specs 0011, 0012 y 0013).
+
+**Resultado:** 59 de 64 pasos en ✅, 1 fuera del sprint (8.8, wizard de rutinas) y **1 crítico nuevo**. El Sprint 1 no cierra hasta resolver BUG-25.
+
+| ID | Severidad | Módulo | Descripción | Paso | Estado |
+|:---:|:---:|:---|:---|:---:|:---:|
+| BUG-25 | 🔴 Crítico | Ficha → Nutrición y hábitos (BE) | `WaterLogController` y `SupplementController` devuelven la entidad (`WaterLog`/`SupplementLog`) con el `Client` completo. Para un alumno con rutina activa se repite el ciclo de la spec 0011 (`routineActive → clients → routineActive…`): **status 200 con JSON inválido** (228 KB, con el error del handler pegado al final). La UI no avisa nada: "+250 ml" no suma y después de recargar el contador sigue en 0 ml, aunque el backend guardó el agua (visto con Carlos Perez). Además la respuesta expone `password`, DNI, email y teléfono del alumno. `NutritionController` (`NutritionPlan`, `MealLog`) devuelve entidades con la misma forma; `/api/exercise-logs` ya estaba anotado fuera de alcance en la spec 0011. | 9.1 | ⬜ |
+| BUG-22 | 🟠 Experiencia | Backend (mensajes) | Los mensajes con fecha salen en ISO: "vigente hasta 2026-10-06", "ha vencido el: 2026-09-28". La spec 0010 lo dejó fuera de alcance sin ID. | 4.5, 6.2 | ⬜ |
+| BUG-23 | 🟠 Experiencia | Tienda / Dashboard | El KPI "Stock bajo" cuenta `stock < 5` (`DashboardService`), pero Inventario marca en rojo `stock <= 5`: un producto con 5 unidades está en rojo y no suma al KPI. | 5.4 | ⬜ |
+| BUG-24 | 🟠 Experiencia | Rutinas (armado) | El selector de ejercicio de "Nueva rutina" es un `<select>` plano, sin grupos ni buscador, con más de 10 opciones (regla `SearchableSelect`). La página Ejercicios sí agrupa por grupo muscular (T-27). | 8.10 | ⬜ |
+| DES-15 | 🎨 Diseño | Alumnos / Tienda | Desactivar un alumno y borrar un producto confirman con el `window.confirm` nativo, no con el modal del design system (DES-05). | 3.5, 10.5 | ⬜ |
+
+### 📝 Observaciones que no son hallazgos
+
+- 3.1: el botón de guardar no se deshabilita sin DNI, pero no guarda y muestra "El DNI es requerido". Cumple BUG-03.
+- 4.6, 5.3, 6.3: Roberto (inactivo) no aparece en los buscadores de pagos, ventas ni asistencia; por API, el backend rechaza los tres con mensaje en español.
+- `GET /api/clients/{id}/nutrition/plan` responde 404 a un alumno sin plan y el interceptor lo loguea como "Endpoint no encontrado". La pestaña se ve bien.
+- Los datos del `HeavyDataLoader` están casi todos renombrados "Prueba Actualizada Automatizada" en la base local: algún test o corrida vieja los pisó. No afecta la QA, pero dificulta buscar por nombre.
