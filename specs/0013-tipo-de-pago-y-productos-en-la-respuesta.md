@@ -1,7 +1,7 @@
 ---
 id: 0013
 titulo: Pagos — tipo de pago y productos vendidos en la respuesta
-estado: aprobada           # draft | propuesta | aprobada | implementada | archivada
+estado: implementada         # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 29/09/2026
 adrs_relacionados: []
