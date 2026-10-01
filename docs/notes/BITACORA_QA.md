@@ -271,7 +271,7 @@ También apareció que el frontend trataba las fechas `LocalDate` como UTC: "hoy
 
 Corrida de 23:20 a 00:00: cubre la ventana de 21 a 24 de la spec 0010 (pasos 9.2, 6.4, 2.2 y 4.7 con la hora real). Antes de empezar se cerraron los tres críticos de la pasada previa (specs 0011, 0012 y 0013).
 
-**Resultado:** 59 de 64 pasos en ✅, 1 fuera del sprint (8.8, wizard de rutinas) y **1 crítico nuevo**. El Sprint 1 no cierra hasta resolver BUG-25.
+**Resultado:** 61 de 64 pasos en ✅ (algunos con un hallazgo menor anotado), 8.8 fuera del sprint (wizard de rutinas), 8.10 con BUG-24 y 9.1 con **un crítico nuevo**, BUG-25. El Sprint 1 no cierra hasta resolver BUG-25.
 
 | ID | Severidad | Módulo | Descripción | Paso | Estado |
 |:---:|:---:|:---|:---|:---:|:---:|
