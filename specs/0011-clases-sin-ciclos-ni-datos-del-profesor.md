@@ -1,7 +1,7 @@
 ---
 id: 0011
 titulo: Clases — respuesta sin ciclos ni datos privados del profesor
-estado: aprobada           # draft | propuesta | aprobada | implementada | archivada
+estado: implementada         # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 29/09/2026
 adrs_relacionados: []

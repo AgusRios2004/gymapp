@@ -1,8 +1,10 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.response.GroupClassResponseDTO;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponse;
 import com.aplicacionGym.gymapp.dto.response.WebApiResponseBuilder;
 import com.aplicacionGym.gymapp.entity.GroupClass;
+import com.aplicacionGym.gymapp.mapper.GroupClassMapper;
 import com.aplicacionGym.gymapp.service.GroupClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,9 @@ public class GroupClassController {
 
     @GetMapping
     public ResponseEntity<WebApiResponse> getAllClasses() {
-        List<GroupClass> classes = groupClassService.getAllClasses();
+        List<GroupClassResponseDTO> classes = groupClassService.getAllClasses().stream()
+                .map(GroupClassMapper::toDTO)
+                .toList();
         return ResponseEntity.ok(WebApiResponseBuilder.success("Classes fetched successfully", classes));
     }
 
@@ -32,7 +36,7 @@ public class GroupClassController {
 
     @PostMapping
     public ResponseEntity<WebApiResponse> createClass(@RequestBody GroupClass groupClass) {
-        GroupClass created = groupClassService.createClass(groupClass);
+        GroupClassResponseDTO created = GroupClassMapper.toDTO(groupClassService.createClass(groupClass));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Class created successfully", created));
     }
 
@@ -44,7 +48,7 @@ public class GroupClassController {
 
     @PutMapping("/{id}")
     public ResponseEntity<WebApiResponse> updateClass(@PathVariable Long id, @RequestBody GroupClass groupClass) {
-        GroupClass updated = groupClassService.updateClass(id, groupClass);
+        GroupClassResponseDTO updated = GroupClassMapper.toDTO(groupClassService.updateClass(id, groupClass));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Class updated successfully", updated));
     }
 }

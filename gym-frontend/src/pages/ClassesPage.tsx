@@ -16,6 +16,7 @@ import { Input } from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
 import ConfirmModal from '../components/ui/ConfirmModal';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
+import { EmptyState } from '../components/ui/EmptyState';
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 const TRANSLATIONS: Record<string, string> = {
@@ -74,11 +75,13 @@ export default function ClassesPage() {
     activeClassId: ''
   });
 
-  const { data: classes = [] } = useQuery<GroupClass[]>({
+  const { data: classes = [], isError: isClassesError } = useQuery<GroupClass[]>({
     queryKey: ['classes'],
     queryFn: async () => {
        const data = await getClasses();
-       return Array.isArray(data) ? data : [];
+       // Una respuesta que no es lista es una falla, no "no hay clases" (spec 0011).
+       if (!Array.isArray(data)) throw new Error('La respuesta de clases no es una lista');
+       return data;
     }
   });
 
@@ -242,104 +245,108 @@ export default function ClassesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {DAYS.map(day => (
-          <div key={day} className="flex flex-col h-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className={`${DAY_STYLES[day].header} px-6 py-4`}>
-               <h3 className="text-white font-black text-xl uppercase tracking-wider">{TRANSLATIONS[day]}</h3>
-            </div>
+      {isClassesError ? (
+        <EmptyState variant="error" title="No pudimos cargar las clases" />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {DAYS.map(day => (
+            <div key={day} className="flex flex-col h-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className={`${DAY_STYLES[day].header} px-6 py-4`}>
+                 <h3 className="text-white font-black text-xl uppercase tracking-wider">{TRANSLATIONS[day]}</h3>
+              </div>
 
-            <div className="space-y-3 flex-1 p-4">
-               {classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).length === 0 ? (
-                 <div className="flex flex-col items-center justify-center py-12 opacity-30">
-                    <CalendarDays size={48} className="text-gray-400 mb-2" />
-                    <p className="text-sm italic">Sin clases programadas</p>
-                 </div>
-               ) : (
-                 classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).map((c: GroupClass) => {
-                    const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
-                    const isFull = assignedStudentsCount >= c.capacity;
-                    return (
-                    <div key={c.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300 group">
-                       <div className="flex justify-between items-start gap-2">
-                          <div>
-                            <h4 className="text-base font-black text-slate-900 leading-tight">{c.className}</h4>
-                          </div>
-                          <div className="flex gap-1 shrink-0">
-                             <button
-                               onClick={() => {
-                                  setForm({
-                                      className: c.className,
-                                      professorId: String(c.professor?.id || ''),
-                                      routineId: String(c.routine?.id || ''),
-                                      daysOfWeek: c.daysOfWeek,
-                                      startTime: c.startTime,
-                                      endTime: c.endTime,
-                                      capacity: String(c.capacity)
-                                  });
-                                  setEditingClassId(c.id);
-                                  setIsEditModalOpen(true);
-                               }}
-                               className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-blue-500 transition-colors"
-                             >
-                               <Edit size={15} />
-                             </button>
-                             <button
-                               onClick={() => setClassToDelete(c)}
-                               className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"
-                             >
-                               <Trash2 size={15} />
-                             </button>
-                          </div>
-                       </div>
-
-                       <div className="flex flex-wrap gap-1.5 mt-2">
-                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${DAY_STYLES[day].pill}`}>
-                             <Clock size={11} /> {c.startTime} - {c.endTime}
-                          </span>
-                          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${isFull ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
-                             <Users size={11} /> {assignedStudentsCount} / {c.capacity}
-                          </span>
-                       </div>
-
-                       <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-2">
-                          <UserIcon size={13} className="text-slate-400" />
-                          {c.professor?.name} {c.professor?.lastName}
-                       </p>
-
-                       {c.routine && (
-                         <div className="mt-2 bg-violet-50 text-violet-700 border border-violet-200 rounded-lg px-2.5 py-1 text-[11px] font-semibold w-fit">
-                            🏋️ {c.routine.name}
+              <div className="space-y-3 flex-1 p-4">
+                 {classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).length === 0 ? (
+                   <div className="flex flex-col items-center justify-center py-12 opacity-30">
+                      <CalendarDays size={48} className="text-gray-400 mb-2" />
+                      <p className="text-sm italic">Sin clases programadas</p>
+                   </div>
+                 ) : (
+                   classes.filter((c: GroupClass) => c.daysOfWeek.includes(day)).map((c: GroupClass) => {
+                      const assignedStudentsCount = clients.filter((client: Client) => client.activeClassId === c.id).length;
+                      const isFull = assignedStudentsCount >= c.capacity;
+                      return (
+                      <div key={c.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300 group">
+                         <div className="flex justify-between items-start gap-2">
+                            <div>
+                              <h4 className="text-base font-black text-slate-900 leading-tight">{c.className}</h4>
+                            </div>
+                            <div className="flex gap-1 shrink-0">
+                               <button
+                                 onClick={() => {
+                                    setForm({
+                                        className: c.className,
+                                        professorId: String(c.professor?.id || ''),
+                                        routineId: String(c.routine?.id || ''),
+                                        daysOfWeek: c.daysOfWeek,
+                                        startTime: c.startTime,
+                                        endTime: c.endTime,
+                                        capacity: String(c.capacity)
+                                    });
+                                    setEditingClassId(c.id);
+                                    setIsEditModalOpen(true);
+                                 }}
+                                 className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-blue-500 transition-colors"
+                               >
+                                 <Edit size={15} />
+                               </button>
+                               <button
+                                 onClick={() => setClassToDelete(c)}
+                                 className="min-h-11 min-w-11 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors"
+                               >
+                                 <Trash2 size={15} />
+                               </button>
+                            </div>
                          </div>
-                       )}
 
-                       <div className="grid grid-cols-2 gap-2 mt-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedClassForStudents(c.id)}
-                            className="w-full rounded-lg py-2 text-xs gap-1.5"
-                          >
-                            <Users size={14} /> Alumnos
-                          </Button>
-                          <Button
-                            variant={isFull ? 'secondary' : 'primary'}
-                            size="sm"
-                            disabled={isFull}
-                            onClick={() => setSelectedClassForAssign(c.id)}
-                            className={`w-full rounded-lg py-2 text-xs gap-1.5 ${isFull ? '' : 'bg-emerald-600 hover:bg-emerald-700 text-white border-none'}`}
-                          >
-                            <UserPlus size={14} /> {isFull ? 'Completo' : 'Inscribir'}
-                          </Button>
-                       </div>
-                    </div>
-                  );
-                 })
-                )}
+                         <div className="flex flex-wrap gap-1.5 mt-2">
+                            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${DAY_STYLES[day].pill}`}>
+                               <Clock size={11} /> {c.startTime} - {c.endTime}
+                            </span>
+                            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 ${isFull ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
+                               <Users size={11} /> {assignedStudentsCount} / {c.capacity}
+                            </span>
+                         </div>
+
+                         <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-2">
+                            <UserIcon size={13} className="text-slate-400" />
+                            {c.professor?.name} {c.professor?.lastName}
+                         </p>
+
+                         {c.routine && (
+                           <div className="mt-2 bg-violet-50 text-violet-700 border border-violet-200 rounded-lg px-2.5 py-1 text-[11px] font-semibold w-fit">
+                              🏋️ {c.routine.name}
+                           </div>
+                         )}
+
+                         <div className="grid grid-cols-2 gap-2 mt-3">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setSelectedClassForStudents(c.id)}
+                              className="w-full rounded-lg py-2 text-xs gap-1.5"
+                            >
+                              <Users size={14} /> Alumnos
+                            </Button>
+                            <Button
+                              variant={isFull ? 'secondary' : 'primary'}
+                              size="sm"
+                              disabled={isFull}
+                              onClick={() => setSelectedClassForAssign(c.id)}
+                              className={`w-full rounded-lg py-2 text-xs gap-1.5 ${isFull ? '' : 'bg-emerald-600 hover:bg-emerald-700 text-white border-none'}`}
+                            >
+                              <UserPlus size={14} /> {isFull ? 'Completo' : 'Inscribir'}
+                            </Button>
+                         </div>
+                      </div>
+                    );
+                   })
+                  )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <Modal 
         isOpen={!!selectedClassForStudents} 

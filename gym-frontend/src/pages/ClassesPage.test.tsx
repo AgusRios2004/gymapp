@@ -217,3 +217,35 @@ describe('ClassesPage - asistencia desde una clase en hora local (spec 0008)', (
     expect(vi.mocked(registerAssistance).mock.calls[0][0]).toMatchObject({ idClient: 21, date: '2026-09-24' });
   });
 });
+
+// Spec 0011: una respuesta rota de /api/classes se convertía en [] y la página decía "Sin clases
+// programadas" en todos los días, sin ningún aviso.
+describe('ClassesPage - estado de error al cargar las clases (spec 0011)', () => {
+  it('AC-0011-06: si getClasses rechaza, se ve el error y ninguna columna con "Sin clases programadas"', async () => {
+    vi.mocked(getClasses).mockRejectedValue(new Error('Network Error'));
+    renderClassesPage();
+
+    expect(await screen.findByText('No pudimos cargar las clases')).toBeInTheDocument();
+    expect(screen.queryByText('Sin clases programadas')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Nueva Clase/i })).toBeInTheDocument();
+  });
+
+  it.each([
+    ['undefined', undefined],
+    ['un string', '{"data":[{"id":1,"routine":{"clients":[{"routineActive"'],
+  ])('AC-0011-07: si getClasses resuelve %s, se ve el mismo estado de error', async (_label, response) => {
+    vi.mocked(getClasses).mockResolvedValue(response as unknown as GroupClass[]);
+    renderClassesPage();
+
+    expect(await screen.findByText('No pudimos cargar las clases')).toBeInTheDocument();
+    expect(screen.queryByText('Sin clases programadas')).not.toBeInTheDocument();
+  });
+
+  it('AC-0011-08: si getClasses resuelve [], se ven las columnas con "Sin clases programadas" y no el error', async () => {
+    vi.mocked(getClasses).mockResolvedValue([]);
+    renderClassesPage();
+
+    expect(await screen.findAllByText('Sin clases programadas')).toHaveLength(6);
+    expect(screen.queryByText('No pudimos cargar las clases')).not.toBeInTheDocument();
+  });
+});
