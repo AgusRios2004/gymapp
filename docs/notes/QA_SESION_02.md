@@ -1,8 +1,22 @@
 # QA Sesión 02 — checklist (sábado 03/10/2026)
 
 > **Objetivo:** cerrar el [Sprint 1](../sprints/06-09-2026-sprint-1-refactor-core-admin.md) **sin bugs críticos**. Es la condición para que el sprint cierre el 04/10 (ver [`ROADMAP.md`](../ROADMAP.md)).
-> **Alcance:** volver a probar los bugs de la [Sesión 01](./BITACORA_QA.md) y lo que entregaron las specs 0001 a 0010, salvo la 0006 (espacios y choques de horario), que sigue en `propuesta`. Los ítems de diseño del Sprint 2 están al final: se prueban si sobra tiempo y **no bloquean** esta sesión, porque son el objetivo de la QA Sesión 03 (17/10).
+> **Alcance:** volver a probar los bugs de la [Sesión 01](./BITACORA_QA.md) y lo que entregaron las specs 0001 a 0013, salvo la 0006 (espacios y choques de horario), que sigue en `propuesta`. Los ítems de diseño del Sprint 2 están al final: se prueban si sobra tiempo y **no bloquean** esta sesión, porque son el objetivo de la QA Sesión 03 (17/10).
 > **Duración estimada:** 2 hs. Armado el 28/09/2026.
+
+---
+
+## Pasada previa (29/09/2026)
+
+Una recorrida rápida antes de la sesión encontró tres críticos. Cada uno pasó a una spec, aprobada e implementada el 30/09/2026 (compuerta completa en verde, 137/137 criterios con test). En la sesión se vuelven a probar en los pasos indicados.
+
+| Crítico | Spec | Se vuelve a probar en | Estado |
+|:---|:---|:---:|:---:|
+| La página de Clases queda vacía ("Sin clases programadas") si una clase tiene la rutina activa de un alumno (JSON inválido), y la respuesta expone el hash de la contraseña, el email, el DNI y el teléfono del profesor | [0011](../../specs/0011-clases-sin-ciclos-ni-datos-del-profesor.md) | sección 7 | ✅ |
+| Ninguna pantalla marca a los deudores: el backend mandaba `debtor` y el frontend lee `isDebtor` | [0012](../../specs/0012-deudor-visible-en-la-ui.md) | 7.6 | ✅ |
+| Todo pago figura como "Producto" y el historial de ventas de Tienda está vacío (reabre BUG-06) | [0013](../../specs/0013-tipo-de-pago-y-productos-en-la-respuesta.md) | 4.8 | ✅ |
+
+Anotado, sin bloquear: en la respuesta de `POST`/`PUT /api/classes`, `professor.name` y `lastName` salen `null` porque `GroupClassService` guarda la referencia que llega en el body (solo el id). La UI no se ve afectada porque vuelve a pedir la lista después de guardar.
 
 ---
 
