@@ -128,6 +128,9 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 | [0003 — Clases multi-día](../../specs/0003-clases-multi-dia.md) | T-07, T-14 | Sandcastle BE + FE | ✅ implementada (15/09, T3/T4 y colisiones de test entre specs resueltas a mano — Sandcastle se cortó antes de terminar el frontend) |
 | [0004 — Activar/desactivar cliente](../../specs/0004-activar-desactivar-cliente.md) | T-08, T-25 | Sandcastle BE + FE | ✅ implementada (15/09, mergeada tras revisión manual — Sandcastle se cortó antes del reviewer) |
 | [0005 — `SearchableSelect`](../../specs/0005-searchable-select.md) | T-15, T-16 | Interactivo | ✅ implementada (15/09) |
+| [0011 — Clases sin ciclos ni datos del profesor](../../specs/0011-clases-sin-ciclos-ni-datos-del-profesor.md) | crítico de la pasada previa de la QA 02 | Interactivo | ✅ implementada (30/09) |
+| [0012 — Deudor visible en la UI](../../specs/0012-deudor-visible-en-la-ui.md) | crítico de la pasada previa de la QA 02 | Interactivo | ✅ implementada (30/09) |
+| [0013 — Tipo de pago y productos en la respuesta](../../specs/0013-tipo-de-pago-y-productos-en-la-respuesta.md) | crítico de la pasada previa de la QA 02 (reabre BUG-06) | Interactivo | ✅ implementada (30/09) |
 
 ---
 
