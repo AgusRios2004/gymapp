@@ -91,11 +91,12 @@ class ClientDebtorJsonTest {
         return clientRepository.save(client);
     }
 
-    // Cuota de 30 días pagada hace 4 días: vigente hasta el 20/10.
-    private Client saveClientWithCurrentFee(String dni, String lastName) {
+    // Cuota de 30 días pagada hace 4 días: vigente hasta el 20/10. Con profesor, como todo pago real:
+    // la H2 es compartida y GET /api/payments de otros tests mapea este pago.
+    private Client saveClientWithCurrentFee(String dni, String lastName, Professor cashier) {
         Client client = saveClient(dni, lastName);
         MonthlyType plan = monthlyTypeRepository.save(new MonthlyType(null, "Plan Full", 20000, 30));
-        paymentRepository.save(new Payment(null, client, null, plan, 20000, HOY.minusDays(4), PaymentType.MONTHLY));
+        paymentRepository.save(new Payment(null, client, cashier, plan, 20000, HOY.minusDays(4), PaymentType.MONTHLY));
         return client;
     }
 
@@ -150,7 +151,7 @@ class ClientDebtorJsonTest {
     @DisplayName("AC-0012-02: la ficha de un alumno con la cuota vigente trae isDebtor false")
     void ac_0012_02_fichaDeAlumnoConCuotaVigenteTraeIsDebtorFalse() throws Exception {
         Administrator admin = saveAdministrator("71200002");
-        Client client = saveClientWithCurrentFee("61200002", "Alcorta");
+        Client client = saveClientWithCurrentFee("61200002", "Alcorta", saveProfessor("95120002"));
 
         mockMvc.perform(get("/api/clients/{id}", client.getId())
                         .with(user(admin.getEmail()).password("x").roles("ADMIN")))
@@ -179,10 +180,10 @@ class ClientDebtorJsonTest {
     @DisplayName("AC-0012-04: los alumnos de una clase traen isDebtor según su cuota")
     void ac_0012_04_alumnosDeUnaClaseTraenIsDebtorSegunSuCuota() throws Exception {
         Administrator admin = saveAdministrator("71200004");
-        Professor professor = saveProfessor("91200001");
+        Professor professor = saveProfessor("95120001");
         GroupClass groupClass = saveGroupClass(professor);
         Client debtor = saveClient("61200004", "Sinpago");
-        Client upToDate = saveClientWithCurrentFee("61200005", "Aldia");
+        Client upToDate = saveClientWithCurrentFee("61200005", "Aldia", professor);
 
         for (Client client : List.of(debtor, upToDate)) {
             mockMvc.perform(post("/api/clients/{idClient}/assign-class/{idClass}", client.getId(), groupClass.getId())
