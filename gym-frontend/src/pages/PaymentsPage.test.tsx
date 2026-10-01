@@ -302,3 +302,22 @@ describe('PaymentsPage - montos en formato argentino (spec 0009)', () => {
     expect(await within(dialog).findByRole('option', { name: 'Plan Full - $20.000' })).toBeInTheDocument();
   });
 });
+
+// Spec 0013: el backend mandaba paymentType en null y todo pago salía como "Producto" (BUG-06).
+describe('PaymentsPage - tipo de pago en la lista (spec 0013)', () => {
+  it('AC-0013-04: la cuota dice "Mensual" y la venta dice "Producto"', async () => {
+    mockUser({ id: 5, role: 'PROFESSOR' });
+    vi.mocked(getAllPayments).mockResolvedValue([
+      { id: 60, amount: 20000, date: '2026-09-24', paymentType: 'MONTHLY', clientName: 'Nora Vega' },
+      { id: 61, amount: 15000, date: '2026-09-24', paymentType: 'PRODUCTS', clientName: 'Walter Soto' },
+    ]);
+    renderPaymentsPage();
+
+    const monthlyRow = (await screen.findByText('Nora Vega')).closest('tr')!;
+    const saleRow = screen.getByText('Walter Soto').closest('tr')!;
+    expect(within(monthlyRow).getByText('Mensual')).toBeInTheDocument();
+    expect(within(monthlyRow).queryByText('Producto')).not.toBeInTheDocument();
+    expect(within(saleRow).getByText('Producto')).toBeInTheDocument();
+    expect(within(saleRow).queryByText('Mensual')).not.toBeInTheDocument();
+  });
+});

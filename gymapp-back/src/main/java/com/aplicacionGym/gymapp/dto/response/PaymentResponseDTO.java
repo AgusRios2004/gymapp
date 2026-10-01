@@ -17,13 +17,13 @@ public class PaymentResponseDTO {
 
     private Long monthlyType;
     private String monthlyTypeName;
-    private List<PaymentProductResponseDTO> products;
+    private List<PaymentProductResponseDTO> paymentProducts;
 
     public PaymentResponseDTO() {
     }
 
     public PaymentResponseDTO(Long id, Long idCliente, Long idProfessor, Double amount, LocalDate date,
-            Long monthlyType, String paymentType, List<PaymentProductResponseDTO> products) {
+            Long monthlyType, String paymentType, List<PaymentProductResponseDTO> paymentProducts) {
         this.id = id;
         this.idCliente = idCliente;
         this.idProfessor = idProfessor;
@@ -31,7 +31,7 @@ public class PaymentResponseDTO {
         this.date = date;
         this.monthlyType = monthlyType;
         this.paymentType = paymentType;
-        this.products = products;
+        this.paymentProducts = paymentProducts;
     }
 
     public Long getId() {
@@ -90,12 +90,12 @@ public class PaymentResponseDTO {
         this.paymentType = paymentType;
     }
 
-    public List<PaymentProductResponseDTO> getProducts() {
-        return products;
+    public List<PaymentProductResponseDTO> getPaymentProducts() {
+        return paymentProducts;
     }
 
-    public void setProducts(List<PaymentProductResponseDTO> products) {
-        this.products = products;
+    public void setPaymentProducts(List<PaymentProductResponseDTO> paymentProducts) {
+        this.paymentProducts = paymentProducts;
     }
 
     public String getClientName() {

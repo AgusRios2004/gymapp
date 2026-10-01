@@ -25,6 +25,8 @@ public class PaymentMapper {
         paymentResponseDTO.setIdProfessor(payment.getProfessor().getId());
         paymentResponseDTO
                 .setProfessorName(payment.getProfessor().getName() + " " + payment.getProfessor().getLastName());
+        // Fuera del if/else: un pago con tipo nulo no entra a ninguna rama (spec 0013).
+        paymentResponseDTO.setPaymentType(payment.getPaymentType() == null ? null : payment.getPaymentType().name());
 
         if (payment.getPaymentType() == PaymentType.MONTHLY) {
             paymentResponseDTO.setMonthlyType(payment.getMonthlyType().getId());
@@ -42,7 +44,7 @@ public class PaymentMapper {
 
             }).toList();
 
-            paymentResponseDTO.setProducts(products);
+            paymentResponseDTO.setPaymentProducts(products);
 
         }
         return paymentResponseDTO;
