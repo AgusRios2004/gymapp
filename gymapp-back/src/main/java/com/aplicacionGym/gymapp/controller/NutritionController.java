@@ -1,7 +1,10 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.response.MealLogResponseDTO;
+import com.aplicacionGym.gymapp.dto.response.NutritionPlanResponseDTO;
 import com.aplicacionGym.gymapp.entity.MealLog;
 import com.aplicacionGym.gymapp.entity.NutritionPlan;
+import com.aplicacionGym.gymapp.mapper.NutritionMapper;
 import com.aplicacionGym.gymapp.service.NutritionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,28 +28,31 @@ public class NutritionController {
     private Clock clock;
 
     @GetMapping("/plan")
-    public ResponseEntity<NutritionPlan> getActivePlan(@PathVariable Long clientId) {
+    public ResponseEntity<NutritionPlanResponseDTO> getActivePlan(@PathVariable Long clientId) {
         return nutritionService.getActivePlan(clientId)
+                .map(NutritionMapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/plan")
-    public ResponseEntity<NutritionPlan> createPlan(@PathVariable Long clientId, @RequestBody NutritionPlan plan) {
-        return ResponseEntity.ok(nutritionService.createPlan(clientId, plan));
+    public ResponseEntity<NutritionPlanResponseDTO> createPlan(@PathVariable Long clientId, @RequestBody NutritionPlan plan) {
+        return ResponseEntity.ok(NutritionMapper.toDTO(nutritionService.createPlan(clientId, plan)));
     }
 
     @GetMapping("/meals")
-    public ResponseEntity<List<MealLog>> getMeals(
+    public ResponseEntity<List<MealLogResponseDTO>> getMeals(
             @PathVariable Long clientId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         LocalDate targetDate = date != null ? date : LocalDate.now(clock);
-        return ResponseEntity.ok(nutritionService.getMealsByClientAndDate(clientId, targetDate));
+        return ResponseEntity.ok(nutritionService.getMealsByClientAndDate(clientId, targetDate).stream()
+                .map(NutritionMapper::toDTO)
+                .toList());
     }
 
     @PostMapping("/meals")
-    public ResponseEntity<MealLog> logMeal(@PathVariable Long clientId, @RequestBody MealLog mealLog) {
-        return ResponseEntity.ok(nutritionService.logMeal(clientId, mealLog));
+    public ResponseEntity<MealLogResponseDTO> logMeal(@PathVariable Long clientId, @RequestBody MealLog mealLog) {
+        return ResponseEntity.ok(NutritionMapper.toDTO(nutritionService.logMeal(clientId, mealLog)));
     }
 
     @DeleteMapping("/meals/{mealId}")
