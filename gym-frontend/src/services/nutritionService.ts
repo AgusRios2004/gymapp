@@ -1,3 +1,4 @@
+import type { AxiosError } from 'axios';
 import api from '../lib/axios';
 import type { NutritionPlan, MealLog } from '../types/index';
 
@@ -5,8 +6,12 @@ export const getActiveNutritionPlan = async (clientId: number): Promise<Nutritio
   try {
     const response = await api.get<NutritionPlan>(`/clients/${clientId}/nutrition/plan`);
     return response.data;
-  } catch {
-    return null;
+  } catch (error) {
+    // 404 = el alumno no tiene plan activo. Cualquier otra falla es un error de carga (spec 0014).
+    if ((error as AxiosError).response?.status === 404) {
+      return null;
+    }
+    throw error;
   }
 };
 
