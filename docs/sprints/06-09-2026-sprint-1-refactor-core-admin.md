@@ -131,6 +131,7 @@ Las specs agrupan tareas que se verifican juntas. Las tareas sin spec (T-09, T-1
 | [0011 — Clases sin ciclos ni datos del profesor](../../specs/0011-clases-sin-ciclos-ni-datos-del-profesor.md) | crítico de la pasada previa de la QA 02 | Interactivo | ✅ implementada (30/09) |
 | [0012 — Deudor visible en la UI](../../specs/0012-deudor-visible-en-la-ui.md) | crítico de la pasada previa de la QA 02 | Interactivo | ✅ implementada (30/09) |
 | [0013 — Tipo de pago y productos en la respuesta](../../specs/0013-tipo-de-pago-y-productos-en-la-respuesta.md) | crítico de la pasada previa de la QA 02 (reabre BUG-06) | Interactivo | ✅ implementada (30/09) |
+| [0014 — Nutrición y hábitos sin entidades](../../specs/0014-nutricion-y-habitos-sin-entidades.md) | BUG-25, crítico de la QA 02 | Interactivo | ✅ implementada (03/10) |
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 id: 0014
 titulo: Nutrición y hábitos — respuestas sin el alumno completo y errores visibles
-estado: aprobada          # draft | propuesta | aprobada | implementada | archivada
+estado: implementada      # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 03/10/2026
 adrs_relacionados: []
