@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Pill, CheckCircle2, Circle } from 'lucide-react';
+import { toast } from 'react-toastify';
+import type { AxiosError } from 'axios';
 import { getSupplementLog, saveSupplementLog } from '../services/supplementService';
+import { EmptyState } from './ui/EmptyState';
 import type { SupplementLog } from '../types/index';
+import type { ApiResponse } from '../types/api.types';
 
 interface Props {
   clientId: number;
@@ -10,13 +14,19 @@ interface Props {
 export const SupplementTracker: React.FC<Props> = ({ clientId }) => {
   const [log, setLog] = useState<SupplementLog | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const fetchLog = async () => {
     try {
       const data = await getSupplementLog(clientId);
+      // Una respuesta que no es un objeto (JSON roto, BUG-25) es un error, no "todo pendiente".
+      if (typeof data !== 'object' || data === null) {
+        throw new Error('Respuesta inválida de suplementos');
+      }
       setLog(data);
-    } catch (e) {
-      console.error(e);
+      setLoadError(false);
+    } catch {
+      setLoadError(true);
     }
   };
 
@@ -35,8 +45,9 @@ export const SupplementTracker: React.FC<Props> = ({ clientId }) => {
     try {
       const saved = await saveSupplementLog(clientId, updated);
       setLog(saved);
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      const message = (error as AxiosError<ApiResponse<unknown>>).response?.data?.message || 'No se pudieron guardar los suplementos';
+      toast.error(`❌ ${message}`);
     } finally {
       setLoading(false);
     }
@@ -54,63 +65,67 @@ export const SupplementTracker: React.FC<Props> = ({ clientId }) => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div
-          onClick={() => !loading && toggleSupplement('creatine')}
-          className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
-            log?.creatineTaken
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-              : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            {log?.creatineTaken ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            ) : (
-              <Circle className="w-5 h-5 text-slate-400" />
-            )}
-            <div>
-              <p className="text-xs font-bold">Creatina Monohidrato (5g)</p>
-              <p className="text-[11px] text-slate-500">Toma diaria post-entrenamiento</p>
+      {loadError ? (
+        <EmptyState variant="error" title="No pudimos cargar los suplementos" className="py-6" />
+      ) : (
+        <div className="space-y-3">
+          <div
+            onClick={() => !loading && toggleSupplement('creatine')}
+            className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
+              log?.creatineTaken
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              {log?.creatineTaken ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              ) : (
+                <Circle className="w-5 h-5 text-slate-400" />
+              )}
+              <div>
+                <p className="text-xs font-bold">Creatina Monohidrato (5g)</p>
+                <p className="text-[11px] text-slate-500">Toma diaria post-entrenamiento</p>
+              </div>
             </div>
+            <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
+              log?.creatineTaken 
+                ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                : 'bg-white text-slate-500 border-slate-200'
+            }`}>
+              {log?.creatineTaken ? 'Tomado' : 'Pendiente'}
+            </span>
           </div>
-          <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
-            log?.creatineTaken 
-              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
-              : 'bg-white text-slate-500 border-slate-200'
-          }`}>
-            {log?.creatineTaken ? 'Tomado' : 'Pendiente'}
-          </span>
-        </div>
 
-        <div
-          onClick={() => !loading && toggleSupplement('protein')}
-          className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
-            log?.proteinTaken
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-              : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            {log?.proteinTaken ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-            ) : (
-              <Circle className="w-5 h-5 text-slate-400" />
-            )}
-            <div>
-              <p className="text-xs font-bold">Proteína en Polvo (Whey)</p>
-              <p className="text-[11px] text-slate-500">1 scoop (25-30g proteína)</p>
+          <div
+            onClick={() => !loading && toggleSupplement('protein')}
+            className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition ${
+              log?.proteinTaken
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              {log?.proteinTaken ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              ) : (
+                <Circle className="w-5 h-5 text-slate-400" />
+              )}
+              <div>
+                <p className="text-xs font-bold">Proteína en Polvo (Whey)</p>
+                <p className="text-[11px] text-slate-500">1 scoop (25-30g proteína)</p>
+              </div>
             </div>
+            <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
+              log?.proteinTaken 
+                ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+                : 'bg-white text-slate-500 border-slate-200'
+            }`}>
+              {log?.proteinTaken ? 'Tomado' : 'Pendiente'}
+            </span>
           </div>
-          <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg border ${
-            log?.proteinTaken 
-              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
-              : 'bg-white text-slate-500 border-slate-200'
-          }`}>
-            {log?.proteinTaken ? 'Tomado' : 'Pendiente'}
-          </span>
         </div>
-      </div>
+      )}
     </div>
   );
 };
