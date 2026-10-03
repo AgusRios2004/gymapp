@@ -1,6 +1,8 @@
 package com.aplicacionGym.gymapp.controller;
 
+import com.aplicacionGym.gymapp.dto.response.SupplementLogResponseDTO;
 import com.aplicacionGym.gymapp.entity.SupplementLog;
+import com.aplicacionGym.gymapp.mapper.HabitLogMapper;
 import com.aplicacionGym.gymapp.service.SupplementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,17 +25,18 @@ public class SupplementController {
     private Clock clock;
 
     @GetMapping
-    public ResponseEntity<SupplementLog> getLog(
+    public ResponseEntity<SupplementLogResponseDTO> getLog(
             @PathVariable Long clientId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         LocalDate targetDate = date != null ? date : LocalDate.now(clock);
         return supplementService.getLogByDate(clientId, targetDate)
+                .map(HabitLogMapper::toDTO)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.ok(new SupplementLog(null, null, targetDate, false, false, "")));
+                .orElse(ResponseEntity.ok(HabitLogMapper.emptySupplementLog(clientId, targetDate)));
     }
 
     @PostMapping
-    public ResponseEntity<SupplementLog> saveLog(@PathVariable Long clientId, @RequestBody SupplementLog logData) {
-        return ResponseEntity.ok(supplementService.updateOrCreateLog(clientId, logData));
+    public ResponseEntity<SupplementLogResponseDTO> saveLog(@PathVariable Long clientId, @RequestBody SupplementLog logData) {
+        return ResponseEntity.ok(HabitLogMapper.toDTO(supplementService.updateOrCreateLog(clientId, logData)));
     }
 }
