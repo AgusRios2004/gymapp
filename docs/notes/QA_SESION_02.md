@@ -156,7 +156,7 @@ Los tests cubren el caso de las 21:00 a las 24:00 con un reloj fijo. En la app s
 
 | # | Paso | Esperado | Origen | Resultado |
 |:---:|:---|:---|:---:|:---:|
-| 9.1 | Cualquier formulario con fecha por defecto (pago, registro físico, agua) | Muestra la fecha de hoy | spec 0008, spec 0010 || BUG-25 |
+| 9.1 | Cualquier formulario con fecha por defecto (pago, registro físico, agua) | Muestra la fecha de hoy | spec 0008, spec 0010 || ✅ re-test 03/10 tras la spec 0014 (BUG-25 cerrado) |
 | 9.2 | **Solo si la sesión pasa de las 21:00:** repetir 6.4, 2.2 y 4.7 | Mismo resultado que antes de las 21 | spec 0010 || ✅ (sesión de 23:20 a 00:00) |
 
 ---

@@ -285,6 +285,7 @@ Corrida de 23:20 a 00:00: cubre la ventana de 21 a 24 de la spec 0010 (pasos 9.2
 
 ### 📝 Observaciones que no son hallazgos
 
+- **Re-test 9.1 (03/10/2026, después de la spec 0014), con Carlos Perez (rutina activa):** +250 ml se ve en 65 ms y queda después de recargar; la creatina y una comida de prueba se guardan y se ven; todas las respuestas son JSON válido, con `clientId` y sin datos del alumno. Con respuestas rotas simuladas (JSON truncado, 500) las tres cards muestran su estado de error, pero el interceptor dispara **4 `alert()` seguidos** (DES-16). Los datos de prueba se deshicieron desde la UI.
 - 3.1: el botón de guardar no se deshabilita sin DNI, pero no guarda y muestra "El DNI es requerido". Cumple BUG-03.
 - 4.6, 5.3, 6.3: Roberto (inactivo) no aparece en los buscadores de pagos, ventas ni asistencia; por API, el backend rechaza los tres con mensaje en español.
 - `GET /api/clients/{id}/nutrition/plan` responde 404 a un alumno sin plan y el interceptor lo loguea como "Endpoint no encontrado". La pestaña se ve bien.
