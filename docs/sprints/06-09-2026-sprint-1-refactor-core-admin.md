@@ -2,7 +2,7 @@
 > **Período:** 07/09/2026 → 04/10/2026 (4 semanas)  
 > **Ramas:** una rama corta por bloque de trabajo → merge a `main`. Sandcastle trabaja en `sandcastle/spec-NNNN`.  
 > **Origen:** Bugs y mejoras detectadas en QA Manual Sesión 01 (05/09/2026)  
-> **Estado:** 🔵 En curso — **recalendarizado el 13/09/2026** (ver [ADR-0006](../adr/0006-partir-sprint-1-diseno-a-sprint-2.md))
+> **Estado:** ✅ Cerrado el 04/10/2026 — QA Sesión 02 corrida el 30/09, su único crítico (BUG-25) cerrado el 03/10 por la spec 0014. **Recalendarizado el 13/09/2026** (ver [ADR-0006](../adr/0006-partir-sprint-1-diseno-a-sprint-2.md))
 
 ---
 
@@ -111,7 +111,7 @@ Sin tareas del backlog cerradas. Lo que se hizo: saneamiento de docs y recalenda
 | T-15 | Crear `SearchableSelect.tsx` — combobox con buscador, genérico y tipado | `components/ui/SearchableSelect.tsx` | 3 hs | — | 0005 | ✅ |
 | T-16 | Reemplazar select de cliente en pagos con `SearchableSelect` (DNI + nombre) | `PaymentsPage.tsx` | 1 h | T-15 | 0005 | ✅ |
 | T-25 | Toggle activo/inactivo inline en fila de tabla de clientes | `ClientsPage.tsx` | 1 h | T-08 | 0004 | ✅ |
-| — | QA Sesión 02 (sábado 03/10) — checklist en [`QA_SESION_02.md`](../notes/QA_SESION_02.md) | — | 2 hs | todo lo anterior | — | ⬜ |
+| — | QA Sesión 02 (sábado 03/10) — checklist en [`QA_SESION_02.md`](../notes/QA_SESION_02.md). Corrida el 30/09 (adelantada): 61 de 64 pasos en verde y un crítico, BUG-25, cerrado el 03/10 por la spec 0014 con re-test del paso 9.1 en verde | — | 2 hs | todo lo anterior | — | ✅ |
 
 **Estimación Semana 4: ~11 hs**
 
@@ -177,18 +177,18 @@ T-15 ──► T-16
 
 ## ✅ Criterios de aceptación del sprint
 
-- [ ] `bash .harness/scripts/verify.sh` en verde en `main`, sin depender de la MySQL local
-- [ ] Spec 0001 corrida de punta a punta por Sandcastle, con tiempo, costo y fricción anotados en la bitácora
-- [ ] Ningún error del back se muestra en crudo al usuario
-- [ ] Mensajes de validación del backend en español (no "DNI cannot be blank")
-- [ ] DNI obligatorio y validado en FE + BE
-- [ ] Venta de productos funciona end-to-end sin errores
-- [ ] Profesor logueado se auto-asigna en pagos y asistencias
-- [ ] Select de cliente en pagos con buscador por DNI y nombre
-- [ ] Dashboard muestra 7 KPIs incluyendo profesores y stock bajo
-- [ ] Clases permiten múltiples días
-- [ ] Toggle activo/inactivo funciona en tabla de clientes
-- [ ] QA Sesión 02 (03/10) pasa sin bugs críticos
+- [x] `bash .harness/scripts/verify.sh` en verde en `main`, sin depender de la MySQL local
+- [x] Spec 0001 corrida de punta a punta por Sandcastle, con tiempo, costo y fricción anotados en la bitácora — el costo quedó anotado como consumo del plan (5 corridas agotaron el límite de sesión), no en plata
+- [x] Ningún error del back se muestra en crudo al usuario — QA 1.3 en verde. Quedan 26 mensajes 404 en inglés (BUG-26) y el `alert()` del interceptor (DES-16): de experiencia y diseño, van a la QA Sesión 03
+- [x] Mensajes de validación del backend en español (no "DNI cannot be blank")
+- [x] DNI obligatorio y validado en FE + BE
+- [x] Venta de productos funciona end-to-end sin errores
+- [x] Profesor logueado se auto-asigna en pagos y asistencias
+- [x] Select de cliente en pagos con buscador por DNI y nombre
+- [x] Dashboard muestra 7 KPIs incluyendo profesores y stock bajo — el umbral de "Stock bajo" no coincide con el de Inventario (BUG-23, va a la QA Sesión 03)
+- [x] Clases permiten múltiples días
+- [x] Toggle activo/inactivo funciona en tabla de clientes
+- [x] QA Sesión 02 (03/10) pasa sin bugs críticos — corrida el 30/09 con un crítico (BUG-25), cerrado el 03/10 por la spec 0014
 
 > Pasaron al Sprint 2: inputs con fondo blanco, layout 100%, ESC en todos los modales, toast centrado, buscador en *todos* los selects de +10 ítems.
 
@@ -207,16 +207,43 @@ T-15 ──► T-16
 
 ---
 
-## 🔄 Retrospectiva (completar al cerrar — 04/10/2026)
+## 🔄 Retrospectiva (cierre del 04/10/2026, escrita el 07/10/2026)
 
-```
-¿Qué salió bien?
+> Armada por Claude Code con lo que consta en [`BITACORA_QA.md`](../notes/BITACORA_QA.md), en los commits y en este doc. Es un borrador de hechos: falta la lectura de Agustín sobre qué salió bien y qué salió mal.
 
-¿Qué salió mal?
+**¿Qué salió bien?**
 
-¿Qué se quedó fuera del sprint y por qué?
+- Las tareas planificadas cerraron el 15/09, en la semana 2 de un plan de 4. La capacidad que sobró se usó para adelantar el Sprint 2 completo (16/09) y la pasada de mobile del Sprint 3 (21 y 22/09).
+- La QA Sesión 02 dio 61 de 64 pasos en verde.
+- Los críticos que encontró la QA se cerraron con spec y test rojo primero, en el día: las specs 0011 a 0013 el 30/09 y la 0014 el 03/10.
+- La spec 0002 corrió por Sandcastle de punta a punta y mergeó sola en un intento (~50 min).
+- `verify.sh` en verde en `main` al cierre: 148 de 148 criterios de specs con test y 121 tests de frontend (corrida del 07/10).
 
-Velocidad real vs estimada:
+**¿Qué salió mal?**
 
-Sandcastle — tiempo, costo y retrabajo por spec:
-```
+- El Checkpoint 1 original (13/09) no se cumplió: la semana 1 se fue en documentación y harness, y hubo que partir el sprint ([ADR-0006](../adr/0006-partir-sprint-1-diseno-a-sprint-2.md)).
+- Sandcastle se cortó antes de terminar en las specs 0003, 0004 y 0007, y las tres se terminaron a mano. El piloto de la 0001 necesitó 5 intentos; 4 fallaron por el pipeline, no por el código.
+- La QA encontró cuatro críticos que los tests no habían detectado (specs 0011 a 0014). Dos eran controllers que devolvían entidades JPA con ciclos y datos privados (0011 y 0014).
+- El doc del sprint quedó sin cerrar hasta el 07/10, tres días después de la fecha.
+
+**¿Qué se quedó fuera del sprint y por qué?**
+
+- [Spec 0006 — Espacios y choques de clases](../../specs/0006-espacios-y-choques-de-clases.md): sigue en `propuesta`, sin aprobar.
+- Wizard de rutinas (DES-10): fuera de alcance por decisión técnica 5.
+- BUG-22, BUG-23, BUG-24, BUG-26, DES-15 y DES-16: de experiencia y diseño, no bloquean el cierre. Van a la QA Sesión 03 (17/10).
+
+**Velocidad real vs estimada:**
+
+No se midieron horas reales. La estimación era de ~37,5 hs en las semanas 2 a 4, y las tareas planificadas cerraron el 15/09. Después del 15/09 entraron nueve specs que no estaban en el plan (0006 a 0014).
+
+**Sandcastle — tiempo, costo y retrabajo por spec:**
+
+El costo no se midió en plata: el límite fue el uso del plan de Claude, que cortó corridas en la 0001 y en la 0007.
+
+| Spec | Corrida | Retrabajo a mano |
+|:---:|:---|:---|
+| 0001 | 5 intentos; el quinto, ~33 min de punta a punta. La revisión bloqueó el merge | 5 hallazgos (2 de severidad alta), con 6 tests nuevos |
+| 0002 | 1 intento, ~50 min, mergeó sola | 3 hallazgos de severidad media |
+| 0003 | Se cortó antes de terminar el frontend | T3, T4 y colisiones de tests entre specs |
+| 0004 | Se cortó antes del reviewer | Revisión manual y merge |
+| 0007 | Se cortó en la vuelta 2 del fixer por límite de uso | 3 hallazgos y el pie del modal en desktop |

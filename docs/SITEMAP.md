@@ -1,7 +1,7 @@
 # 🗺️ SITEMAP — Índice General de Documentación GymApp
 
 > Punto de entrada único para toda la documentación del proyecto.
-> **Última actualización:** 13/09/2026 (Sprint 1 partido, Sprint 2 creado — ADR-0006)
+> **Última actualización:** 07/10/2026 (Sprint 1 cerrado, Sprint 2 activo)
 
 ---
 
@@ -9,7 +9,7 @@
 
 | Capa | Estado | Descripción |
 |:---|:---:|:---|
-| **Capa 1 — Admin** | 🟡 En refactor | Funcional con bugs y deuda UX. Sprint 1 en curso (07/09 → 04/10), Sprint 2 (05/10 → 18/10) cierra la capa. |
+| **Capa 1 — Admin** | 🟡 En refactor | Sin bugs críticos abiertos; quedan bugs de experiencia y diseño para la QA Sesión 03. Sprint 1 cerrado (07/09 → 04/10), Sprint 2 en curso (05/10 → 18/10) cierra la capa. |
 | **Capa 2 — Entrenador** | ⬜ Pendiente | Arranca cuando Capa 1 pase QA sin bugs críticos. Incluirá LLM. |
 | **Capa 3 — Alumno** | ⬜ Pendiente | Después de Capa 2. |
 
@@ -100,7 +100,7 @@ docs/
 
 | Sprint | Período | Objetivo | Estado |
 |:---:|:---|:---|:---:|
-| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — Fase 0 (pipeline de agentes) + bugs críticos + UX base | ✅ Todas las tareas cerradas, falta QA Sesión 02 (03/10) |
+| [Sprint 1](./sprints/06-09-2026-sprint-1-refactor-core-admin.md) | 07/09 → 04/10/2026 | Refactor core admin — Fase 0 (pipeline de agentes) + bugs críticos + UX base | ✅ Cerrado (04/10/2026) |
 | [Sprint 2](./sprints/05-10-2026-sprint-2-diseno-light-mode.md) | 05/10 → 18/10/2026 | Diseño light mode + UX restante — cierra Capa 1 | ✅ Todas las tareas cerradas, falta QA Sesión 03 (17/10) |
 | [Sprint 3](./sprints/16-09-2026-sprint-3-mobile-frontend.md) | 16/09/2026 (adelantado, sin fecha fija) | Pasada completa de mobile + frontend contra [ADR-0009](./adr/0009-estandar-mobile.md) | 🔵 En curso |
 

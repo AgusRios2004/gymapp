@@ -186,5 +186,5 @@ Los tests cubren el caso de las 21:00 a las 24:00 con un reloj fijo. En la app s
 Corrida el 30/09/2026 de 23:20 a 00:00 (adelantada al sábado 03/10), con Playwright contra la app local y una copia de `gym_db` restaurada al terminar. Detalle de cada hallazgo en [`BITACORA_QA.md`](./BITACORA_QA.md) → "Sesión 02".
 
 - [ ] **Cero críticos:** marcar la tarea "QA Sesión 02" como ✅ en el [doc del Sprint 1](../sprints/06-09-2026-sprint-1-refactor-core-admin.md) y tildar el hito en [`ROADMAP.md`](../ROADMAP.md).
-- [ ] **Hay críticos:** cada uno pasa a una spec nueva en `specs/` antes del cierre del 04/10.
-- [ ] Los de experiencia y diseño quedan anotados para la QA Sesión 03 (17/10).
+- [x] **Hay críticos:** cada uno pasa a una spec nueva en `specs/` antes del cierre del 04/10. BUG-25 pasó a la [spec 0014](../../specs/0014-nutricion-y-habitos-sin-entidades.md), implementada el 03/10 con re-test del paso 9.1 en verde. Con eso la tarea "QA Sesión 02" quedó ✅ en el doc del Sprint 1 y el hito tildado en `ROADMAP.md` (07/10/2026).
+- [x] Los de experiencia y diseño quedan anotados para la QA Sesión 03 (17/10): BUG-22, BUG-23, BUG-24, BUG-26, DES-15 y DES-16.

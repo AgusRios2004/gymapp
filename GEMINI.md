@@ -35,11 +35,11 @@ Fuente de verdad del diseño: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 Vista completa de meses/capas en [`docs/ROADMAP.md`](docs/ROADMAP.md). Resumen — 3 capas (ver [`docs/prd/PRD_REFACTOR.md`](docs/prd/PRD_REFACTOR.md)):
 
-1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 en curso (07/09 → 04/10/2026: bugs críticos + pipeline de agentes), después Sprint 2 (05/10 → 18/10/2026: diseño + UX). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
+1. **Capa 1 — Admin** (ACTUAL): gestión operativa completa. En refactor — Sprint 1 cerrado (07/09 → 04/10/2026: bugs críticos + pipeline de agentes), Sprint 2 en curso (05/10 → 18/10/2026: diseño + UX; falta la QA Sesión 03 del 17/10). No se avanza a Capa 2 hasta pasar QA sin bugs críticos.
 2. **Capa 2 — Entrenador**: rutinas inteligentes + LLM. Pendiente.
 3. **Capa 3 — Alumno**: consumo de su plan. Pendiente.
 
-Sprint activo: [`docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md`](docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md) · Siguiente: [`docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md`](docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md)
+Sprint activo: [`docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md`](docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md) · Anterior (cerrado): [`docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md`](docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md)
 
 Reglas globales de arquitectura del refactor (repetidas de `PRD_REFACTOR.md`, no dupliques lógica — leé el original si hay dudas):
 - Errores: el backend siempre devuelve `message` descriptivo; el frontend lo muestra literal en un toast.
@@ -52,7 +52,7 @@ Reglas globales de arquitectura del refactor (repetidas de `PRD_REFACTOR.md`, no
 ## Antes de escribir código
 
 1. Leé `docs/SITEMAP.md` para saber si ya existe un doc sobre lo que vas a tocar.
-2. Si es un bug o tarea del sprint activo, buscá su ID en `docs/sprints/06-09-2026-sprint-1-refactor-core-admin.md` — puede tener dependencias con otras tareas (ver mapa de dependencias del sprint).
+2. Si es un bug o tarea del sprint activo, buscá su ID en `docs/sprints/05-10-2026-sprint-2-diseno-light-mode.md` — puede tener dependencias con otras tareas. Los bugs abiertos de la QA están en la tabla de `docs/notes/BITACORA_QA.md`.
 3. Si tocás UI, respetá `docs/DESIGN_SYSTEM.md` (light mode, marca emerald) — usá `EmptyState`/`Skeleton` para loading/empty/error, no dejes una vista en blanco.
 4. Backend: seguí `gymapp-back/GEMINI.md` (capas, DTOs, `WebApiResponse`, `GlobalExceptionHandler`).
 5. Frontend: seguí `gym-frontend/GEMINI.md` (estructura de carpetas, TypeScript estricto, RHF+Zod, servicios centralizados en `src/services/`).
