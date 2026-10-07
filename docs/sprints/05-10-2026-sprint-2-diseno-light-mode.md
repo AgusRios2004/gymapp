@@ -61,6 +61,17 @@ Lo del diseño va **sin spec**: es cosmético y se valida en la QA. T-18 y T-19 
 
 ---
 
+## 🧩 Specs que entran antes de la QA Sesión 03
+
+Son los hallazgos de experiencia y diseño que dejó la QA Sesión 02 (tabla en [`BITACORA_QA.md`](../notes/BITACORA_QA.md) → "Sesión 02"). No estaban en el plan original del sprint.
+
+| Spec | Cubre | Estado |
+|:---:|:---|:---:|
+| [0015 — Mensajes del backend en español y con fechas legibles](../../specs/0015-mensajes-del-backend-en-espanol.md) | BUG-22, BUG-26 | 🔵 `aprobada` (07/10), sin implementar |
+| Sin escribir | BUG-23, BUG-24, BUG-27, BUG-28, DES-15, DES-16 | ⬜ |
+
+---
+
 ## 📊 Resumen de estimación
 
 | Bloque | Estimación |
