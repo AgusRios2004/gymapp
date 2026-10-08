@@ -32,7 +32,7 @@ public class ProductService {
         if (product.getAdministrator() != null && product.getAdministrator().getId() != null) {
             Administrator admin = administratorRepository.findById(product.getAdministrator().getId())
                     .orElseThrow(() -> new ResourceNotFoundException(
-                            "Admin not found with id: " + product.getAdministrator().getId()));
+                            "Administrador no encontrado con id: " + product.getAdministrator().getId()));
             product.setAdministrator(admin);
         } else {
             administratorRepository.findById(1L).ifPresent(product::setAdministrator);
@@ -53,7 +53,7 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         productRepository.deleteById(id);
     }
 

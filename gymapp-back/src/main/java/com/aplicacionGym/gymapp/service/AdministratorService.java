@@ -30,11 +30,11 @@ public class AdministratorService {
 
     public AdministratorResponseDTO getAdministratorById(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
+            throw new IllegalArgumentException("El ID no puede ser nulo.");
         }
         return administratorRepository.findById(id)
                 .map(AdministratorMapper::toDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado con id: " + id));
     }
 
     public List<AdministratorResponseDTO> getAllAdministrator() {
@@ -46,10 +46,10 @@ public class AdministratorService {
 
     public AdministratorResponseDTO updateAdministrator(Long id, AdministratorRequestDTO dto) {
         if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
+            throw new IllegalArgumentException("El ID no puede ser nulo.");
         }
         Administrator administrator = administratorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado con id: " + id));
 
         administrator.setName(dto.getName());
         administrator.setLastName(dto.getLastName());
@@ -64,10 +64,10 @@ public class AdministratorService {
 
     public void deleteAdministrator(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
+            throw new IllegalArgumentException("El ID no puede ser nulo.");
         }
         Administrator administrator = administratorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrator not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado con id: " + id));
         administratorRepository.delete(administrator);
     }
 

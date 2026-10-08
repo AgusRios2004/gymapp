@@ -27,7 +27,7 @@ public class MonthlyTypeController {
     @GetMapping("/{id}")
     public ResponseEntity<WebApiResponse> getMonthlyTypeById(@PathVariable Long id){
         MonthlyType monthlyType = monthlyTypeService.getMonthlyTypeById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Monthly type not found with id: " +id));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly type find successfully", monthlyType));
     }
 
@@ -40,7 +40,7 @@ public class MonthlyTypeController {
     @PutMapping("/{id}")
     public ResponseEntity<WebApiResponse> updateMonthlyType(@PathVariable Long id, @RequestBody MonthlyType monthlyType){
         MonthlyType monthlyTypeUpdated = monthlyTypeService.updateMonthlyType(id, monthlyType)
-                .orElseThrow(() -> new ResourceNotFoundException("Monthly type not found with id: " +id));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Monthly updated succesfully", monthlyTypeUpdated));
     }
 

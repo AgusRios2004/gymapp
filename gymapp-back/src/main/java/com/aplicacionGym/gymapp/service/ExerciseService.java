@@ -45,10 +45,10 @@ public class ExerciseService {
     public void deleteExercise(Long id) {
         java.util.Objects.requireNonNull(id);
         if (isExerciseInUse(id)) {
-            throw new ResourceNotFoundException("Exercise in use in some RoutineExercise");
+            throw new ResourceNotFoundException("No se puede eliminar el ejercicio porque está en uso en una o más rutinas.");
         }
         if (!exerciseRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Exercise not exists");
+            throw new ResourceNotFoundException("Ejercicio no encontrado con id: " + id);
         }
         exerciseRepository.deleteById(id);
     }

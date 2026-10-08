@@ -36,7 +36,7 @@ public class ProfessorController {
     @GetMapping("/{id}")
     public ResponseEntity<WebApiResponse> getProfessorById(@PathVariable Long id){
         Professor professor = professorService.getProfessorById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Profesor no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor found successfully", professor));
     }
 
@@ -49,7 +49,7 @@ public class ProfessorController {
     @PutMapping("/{id}")
     public ResponseEntity<WebApiResponse> updateProfessor(@PathVariable Long id, @RequestBody Professor updatedProfessor){
         Professor professor = professorService.updateProfessor(id, updatedProfessor)
-                .orElseThrow(() -> new ResourceNotFoundException("Professor not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Profesor no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Professor updated successfully", professor));
     }
 

@@ -27,7 +27,7 @@ public class ExerciseController {
     @GetMapping("/{id}")
     public ResponseEntity<WebApiResponse> getExerciseById(@PathVariable Long id){
         Exercise exercise = exerciseService.getExerciseById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise with id not found: "));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise found successfully", exercise));
     }
 
@@ -40,7 +40,7 @@ public class ExerciseController {
     @PutMapping("/{id}")
     public ResponseEntity<WebApiResponse> updateExercise(@PathVariable Long id, @RequestBody Exercise exercise){
         Exercise exerciseUpdated = exerciseService.updateExercise(id, exercise)
-                .orElseThrow(() -> new ResourceNotFoundException("Exercise not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Exercise updated successfully", exerciseUpdated));
     }
 

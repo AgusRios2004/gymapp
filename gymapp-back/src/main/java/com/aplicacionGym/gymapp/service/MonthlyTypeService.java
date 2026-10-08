@@ -42,9 +42,9 @@ public class MonthlyTypeService {
 
     public void deleteMonthlyType(Long id) {
         monthlyTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("MonthlyType not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de plan mensual no encontrado con id: " + id));
         if (paymentRepository.existsByMonthlyTypeId(id)) {
-            throw new ResourceNotFoundException("Monthly Type have registers in Payments");
+            throw new ResourceNotFoundException("No se puede eliminar el tipo de plan porque tiene pagos registrados.");
         }
         monthlyTypeRepository.deleteById(id);
     }

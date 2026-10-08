@@ -27,7 +27,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<WebApiResponse> getProductsById(@PathVariable Long id){
         Product product = productService.getProductById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product find successfully", product));
     }
 
@@ -40,7 +40,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<WebApiResponse> updateProduct(@PathVariable Long id, @RequestBody Product productUpdate){
         Product product = productService.updateProduct(id, productUpdate)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " +id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         return ResponseEntity.ok(WebApiResponseBuilder.success("Product find successfully", product));
     }
 
