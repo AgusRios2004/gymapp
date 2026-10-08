@@ -62,7 +62,7 @@ public class RoutineService {
 
     public RoutineResponseDTO getRoutineById(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + id));
         return RoutineMapper.toDTO(routine);
     }
 
@@ -70,7 +70,7 @@ public class RoutineService {
         validateUniqueDays(routineRequestDTO.getDays());
 
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + id));
         updateRoutineData(routine, routineRequestDTO);
 
         routine.getDays().clear();
@@ -82,10 +82,10 @@ public class RoutineService {
 
     public void deleteRoutine(Long id) {
         Routine routine = routineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + id));
 
         if (clientRepository.existsClientWithRoutine(id)) {
-            throw new ResourceNotFoundException("The routine is assigned to one or more clients.");
+            throw new ResourceNotFoundException("No se puede eliminar la rutina porque está asignada a uno o más alumnos.");
         }
 
         routineRepository.delete(routine);
@@ -97,7 +97,7 @@ public class RoutineService {
         Set<Integer> uniqueDays = new HashSet<>();
         for (RoutineDayRequestDTO day : days) {
             if (!uniqueDays.add(day.getDayOrder())) {
-                throw new IllegalArgumentException("Duplicate day found in routine: " + day.getDayOrder());
+                throw new IllegalArgumentException("La rutina tiene el día " + day.getDayOrder() + " repetido.");
             }
         }
     }
@@ -119,7 +119,7 @@ public class RoutineService {
             List<RoutineExercise> routineExercises = dayDTO.getExercises().stream().map(exDTO -> {
                 Exercise exercise = exerciseRepository.findById(exDTO.getIdExercise())
                         .orElseThrow(() -> new ResourceNotFoundException(
-                                "Exercise not found with id: " + exDTO.getIdExercise()));
+                                "Ejercicio no encontrado con id: " + exDTO.getIdExercise()));
 
                 RoutineExercise re = new RoutineExercise();
                 re.setExercise(exercise);
@@ -136,10 +136,10 @@ public class RoutineService {
 
     public void assignComplexRoutine(AssignRoutineRequestDTO request) {
         Client client = clientRepository.findById(request.getClientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found: " + request.getClientId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + request.getClientId()));
 
         Routine routine = routineRepository.findById(request.getRoutineTemplateId())
-                .orElseThrow(() -> new ResourceNotFoundException("Routine not found: " + request.getRoutineTemplateId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id: " + request.getRoutineTemplateId()));
 
         if (!client.getRoutines().contains(routine)) {
             client.getRoutines().add(routine);
