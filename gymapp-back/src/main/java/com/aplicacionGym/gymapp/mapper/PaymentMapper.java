@@ -82,7 +82,7 @@ public class PaymentMapper {
                     .filter(p -> p.getId().equals(details.getIdProduct()))
                     .findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException(
-                            "Product not found with id: " + details.getIdProduct()));
+                            "Producto no encontrado con id: " + details.getIdProduct()));
 
             PaymentProduct paymentProduct = new PaymentProduct();
             paymentProduct.setProduct(product);

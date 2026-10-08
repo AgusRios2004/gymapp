@@ -35,7 +35,7 @@ public class NutritionService {
 
     public NutritionPlan createPlan(Long clientId, NutritionPlan plan) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clientId));
         plan.setClient(client);
         return nutritionPlanRepository.save(plan);
     }
@@ -46,7 +46,7 @@ public class NutritionService {
 
     public MealLog logMeal(Long clientId, MealLog mealLog) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clientId));
         mealLog.setClient(client);
         if (mealLog.getDate() == null) {
             mealLog.setDate(LocalDate.now(clock));
@@ -56,7 +56,7 @@ public class NutritionService {
 
     public void deleteMeal(Long mealId) {
         if (!mealLogRepository.existsById(mealId)) {
-            throw new ResourceNotFoundException("Meal log not found with id: " + mealId);
+            throw new ResourceNotFoundException("Comida no encontrada con id: " + mealId);
         }
         mealLogRepository.deleteById(mealId);
     }

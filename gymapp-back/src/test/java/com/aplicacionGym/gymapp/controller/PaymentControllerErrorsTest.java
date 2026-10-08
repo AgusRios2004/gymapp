@@ -14,6 +14,7 @@ import com.aplicacionGym.gymapp.repository.ProfessorRepository;
 import com.aplicacionGym.gymapp.util.DateFormatter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -208,5 +209,29 @@ class PaymentControllerErrorsTest {
                 .andExpect(jsonPath("$.succes").value(false));
 
         assertThat(productRepository.findById(product.getId()).orElseThrow().getStock()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("AC-0015-09: vender un producto inexistente responde 404 y lo nombra en español")
+    void ac_0015_09_laVentaDeUnProductoInexistenteRespondeEnEspanol() throws Exception {
+        Client client = saveClient("61500007");
+        Professor professor = saveProfessor("91500004");
+
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("idProduct", 999999);
+        item.put("quantity", 1);
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("idClient", client.getId());
+        body.put("idProfessor", professor.getId());
+        body.put("date", LocalDate.now().toString());
+        body.put("products", List.of(item));
+
+        mockMvc.perform(post("/api/payments/product")
+                        .with(user(professor.getEmail()).password("x").roles("PROFESSOR"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Producto no encontrado con id: 999999"));
     }
 }

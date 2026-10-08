@@ -33,7 +33,7 @@ public class PhysicalRecordService {
 
     public PhysicalRecordResponseDTO createRecord(Long clientId, PhysicalRecordRequestDTO recordDTO) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clientId));
         
         PhysicalRecord record = physicalRecordMapper.toEntity(recordDTO);
         record.setClient(client);
@@ -51,7 +51,7 @@ public class PhysicalRecordService {
 
     public void deleteRecord(Long id) {
         if (!physicalRecordRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Physical record not found with id: " + id);
+            throw new ResourceNotFoundException("Registro físico no encontrado con id: " + id);
         }
         physicalRecordRepository.deleteById(id);
     }

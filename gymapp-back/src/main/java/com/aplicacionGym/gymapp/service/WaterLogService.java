@@ -30,7 +30,7 @@ public class WaterLogService {
 
     public WaterLog addWater(Long clientId, LocalDate date, int addedMl) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clientId));
 
         LocalDate targetDate = date != null ? date : LocalDate.now(clock);
 

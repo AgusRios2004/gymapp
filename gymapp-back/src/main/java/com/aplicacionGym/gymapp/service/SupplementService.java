@@ -30,7 +30,7 @@ public class SupplementService {
 
     public SupplementLog updateOrCreateLog(Long clientId, SupplementLog logData) {
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clientId));
 
         LocalDate targetDate = logData.getDate() != null ? logData.getDate() : LocalDate.now(clock);
 
