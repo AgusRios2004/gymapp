@@ -10,6 +10,7 @@ import com.aplicacionGym.gymapp.exception.ResourceNotFoundException;
 import com.aplicacionGym.gymapp.mapper.PaymentMapper;
 import com.aplicacionGym.gymapp.repository.*;
 import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
+import com.aplicacionGym.gymapp.util.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -97,7 +98,7 @@ public class PaymentService {
                 // CASE 1: Same plan already paid (ERROR)
                 if (activePayment.getMonthlyType().getId().equals(newType.getId())) {
                     throw new BusinessRuleException("Ya existe un pago del plan '" +
-                        newType.getType() + "' vigente hasta " + activePayment.getExpirationDate() + ".");
+                        newType.getType() + "' vigente hasta " + DateFormatter.format(activePayment.getExpirationDate()) + ".");
                 }
 
                 // CASE 2: Upgrade to a better plan (CHARGING DIFFERENCE)

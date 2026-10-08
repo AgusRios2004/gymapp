@@ -13,6 +13,7 @@ import com.aplicacionGym.gymapp.repository.AssistanceRepository;
 import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.security.AuthenticatedStaffService;
+import com.aplicacionGym.gymapp.util.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class AssistanceService {
                 .orElseThrow(() -> new BusinessRuleException("El alumno no tiene una membresía registrada."));
 
         if (latestPayment.getExpirationDate() != null && latestPayment.getExpirationDate().isBefore(LocalDate.now(clock))) {
-            throw new BusinessRuleException("La membresía del alumno ha vencido el: " + latestPayment.getExpirationDate());
+            throw new BusinessRuleException("La membresía del alumno ha vencido el: " + DateFormatter.format(latestPayment.getExpirationDate()));
         }
 
         Assistance assistance = AssistanceMapper.toEntity(client, staff, dto);

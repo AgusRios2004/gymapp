@@ -9,6 +9,7 @@ import com.aplicacionGym.gymapp.repository.ClientRepository;
 import com.aplicacionGym.gymapp.repository.MonthlyTypeRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.repository.ProfessorRepository;
+import com.aplicacionGym.gymapp.util.DateFormatter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -153,6 +154,6 @@ class AssistanceControllerErrorsTest {
 
         JsonNode json = objectMapper.readTree(result.getResponse().getContentAsString());
         String message = json.get("message").asText();
-        assertThat(message).contains(expirationDate.toString());
+        assertThat(message).contains(DateFormatter.format(expirationDate));
     }
 }

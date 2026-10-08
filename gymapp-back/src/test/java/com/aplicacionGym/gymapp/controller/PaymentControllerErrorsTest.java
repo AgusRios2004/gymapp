@@ -11,6 +11,7 @@ import com.aplicacionGym.gymapp.repository.MonthlyTypeRepository;
 import com.aplicacionGym.gymapp.repository.PaymentRepository;
 import com.aplicacionGym.gymapp.repository.ProductRepository;
 import com.aplicacionGym.gymapp.repository.ProfessorRepository;
+import com.aplicacionGym.gymapp.util.DateFormatter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -136,7 +137,7 @@ class PaymentControllerErrorsTest {
 
         JsonNode json = objectMapper.readTree(result.getResponse().getContentAsString());
         String message = json.get("message").asText();
-        assertThat(message).contains(currentExpirationDate.toString());
+        assertThat(message).contains(DateFormatter.format(currentExpirationDate));
     }
 
     // AC-0001-10: venta con stock insuficiente en un ítem responde 409 y no descuenta stock de
