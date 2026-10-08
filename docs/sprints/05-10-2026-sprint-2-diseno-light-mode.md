@@ -67,7 +67,7 @@ Son los hallazgos de experiencia y diseño que dejó la QA Sesión 02 (tabla en 
 
 | Spec | Cubre | Estado |
 |:---:|:---|:---:|
-| [0015 — Mensajes del backend en español y con fechas legibles](../../specs/0015-mensajes-del-backend-en-espanol.md) | BUG-22, BUG-26 | 🔵 `aprobada` (07/10), sin implementar |
+| [0015 — Mensajes del backend en español y con fechas legibles](../../specs/0015-mensajes-del-backend-en-espanol.md) | BUG-22, BUG-26 | ✅ implementada (07/10), en la rama `spec-0015` |
 | Sin escribir | BUG-23, BUG-24, BUG-27, BUG-28, DES-15, DES-16 | ⬜ |
 
 ---

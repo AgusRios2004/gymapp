@@ -1,7 +1,7 @@
 ---
 id: 0015
 titulo: Mensajes de error del backend en español y con fechas legibles
-estado: aprobada          # draft | propuesta | aprobada | implementada | archivada
+estado: implementada      # draft | propuesta | aprobada | implementada | archivada
 autor_humano: Agustín
 fecha: 07/10/2026
 adrs_relacionados: [ADR-0011]
