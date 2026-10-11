@@ -1,17 +1,4 @@
 {
-  "$comentario": [
-    "Hooks del harness. Esquema verificado contra la doc de Claude Code el 08/09/2026.",
-    "Se copia a .claude/settings.json del proyecto. Los comandos reales no viven acá:",
-    "los scripts leen harness.config.yml, así un mismo settings.json sirve para Python,",
-    "Java o TypeScript sin tocarlo.",
-    "",
-    "PreToolUse  -> barrera de I/O: bloquea leer archivos grandes enteros.",
-    "PostToolUse -> compuerta rápida sobre el archivo editado (formato + lint).",
-    "Stop        -> compuerta completa: lint, typecheck, tests y spec_coverage.",
-    "",
-    "Los tres scripts salen con 2 cuando corresponde, que es lo que devuelve el",
-    "error al agente en vez de dejarlo gastar o cerrar la tarea."
-  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -62,5 +49,21 @@
         ]
       }
     ]
+  },
+  "$comentario": [
+    "Hooks del harness. Esquema verificado contra la doc de Claude Code el 08/09/2026.",
+    "Se copia a .claude/settings.json del proyecto. Los comandos reales no viven acá:",
+    "los scripts leen harness.config.yml, así un mismo settings.json sirve para Python,",
+    "Java o TypeScript sin tocarlo.",
+    "",
+    "PreToolUse  -> barrera de I/O: bloquea leer archivos grandes enteros.",
+    "PostToolUse -> compuerta rápida sobre el archivo editado (formato + lint).",
+    "Stop        -> compuerta completa: lint, typecheck, tests y spec_coverage.",
+    "",
+    "Los tres scripts salen con 2 cuando corresponde, que es lo que devuelve el",
+    "error al agente en vez de dejarlo gastar o cerrar la tarea."
+  ],
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
   }
 }
