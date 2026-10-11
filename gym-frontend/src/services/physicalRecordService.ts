@@ -13,3 +13,7 @@ export const createPhysicalRecord = async (clientId: number, data: Partial<Physi
     const response = await api.post<ApiResponse<PhysicalRecord>>(`${path}/client/${clientId}`, data);
     return response.data.data;
 };
+
+export const deletePhysicalRecord = async (id: number): Promise<void> => {
+    await api.delete(`${path}/${id}`);
+};

@@ -13,7 +13,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  TrendingUp
+  TrendingUp,
+  Trash2
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -31,7 +32,7 @@ import {
   getClientRoutines, 
   getClientProductsPurchased 
 } from '../services/clientInfoService';
-import { getPhysicalRecords, createPhysicalRecord } from '../services/physicalRecordService';
+import { getPhysicalRecords, createPhysicalRecord, deletePhysicalRecord } from '../services/physicalRecordService';
 import type { PhysicalRecord } from '../types';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -102,6 +103,15 @@ export default function ClientDetailPage() {
       setRecordForm({ weight: '', muscleMass: '', fatPercentage: '', notes: '' });
     },
     onError: () => toast.error("❌ Error al guardar registro")
+  });
+
+  const deleteRecordMutation = useMutation({
+    mutationFn: (id: number) => deletePhysicalRecord(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-physical', clientId] });
+      toast.success("🗑️ Registro eliminado");
+    },
+    onError: () => toast.error("❌ Error al eliminar registro")
   });
 
   if (isLoadingClient) {
@@ -317,7 +327,8 @@ export default function ClientDetailPage() {
                       contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     />
                     <Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6, fill: '#3b82f6' }} activeDot={{ r: 8 }} />
-                    <Line type="monotone" dataKey="muscleMass" name="Masa Muscular" stroke="#10b981" strokeWidth={3} dot={{ r: 6, fill: '#10b981' }} />
+                    <Line type="monotone" dataKey="muscleMass" name="Masa Muscular (%)" stroke="#10b981" strokeWidth={3} dot={{ r: 6, fill: '#10b981' }} />
+                    <Line type="monotone" dataKey="fatPercentage" name="Grasa (%)" stroke="#f59e0b" strokeWidth={3} dot={{ r: 6, fill: '#f59e0b' }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -335,7 +346,17 @@ export default function ClientDetailPage() {
                 </div>
               ) : (
                 physicalRecords.map((record) => (
-                  <div key={record.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                  <div key={record.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4 hover:shadow-md transition-shadow group relative">
+                    <button 
+                      onClick={() => {
+                        if(confirm('¿Estás seguro de eliminar este registro?')) {
+                          deleteRecordMutation.mutate(record.id);
+                        }
+                      }}
+                      className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                     <div className="flex items-center justify-between border-b border-gray-50 pb-3">
                        <span className="text-sm font-bold text-gray-900">{new Date(record.date).toLocaleDateString()}</span>
                        <Badge variant="neutral">Medición</Badge>
